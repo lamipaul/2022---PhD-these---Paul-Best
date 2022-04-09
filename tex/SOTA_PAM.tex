@@ -138,7 +138,7 @@ Probably more than in any field, in the machine learning community, researchers 
 
 Some directly learn convolution kernels from scratch to be applied in the time domain \cite{ferrari2020docc10, palaz2015convolutional}. Others optimize known filters parameters, such as cardinal sinus \cite{ravanelli2018speaker}, spline \cite{balestriero2018spline}, gammatone \cite{sainath2015learning}, or gabor \cite{zeghidour2021leaf}.
 
-The latter, called Leaf, may have broken \ac{SOTA} with 8 differe  nt acoustic recognition tasks, but is still quite recent and remains very costly in computation (two orders of magnitude higher than for a regular spectrogram). Thus, to this day the \ac{STFT} and optionally its Mel transform remain the standard approach to feature extraction for acoustic recognition, despite their debatable anthropocentric nature and all the efforts invested in replacing them.
+The latter, called Leaf, may have broken \ac{SOTA} with 8 different acoustic recognition tasks but is still quite recent and remains very costly in computation (two orders of magnitude higher than for a regular spectrogram). Thus, to this day the \ac{STFT} and optionally its Mel transform remain the standard approach to feature extraction for acoustic recognition, despite their debatable anthropocentric nature and all the efforts invested in replacing them.
 
 
 \subsection{Data augmentations for acoustics} \label{accoustic_augm}
@@ -183,9 +183,9 @@ Now that \acp{CNN} have been introduced in their original field of computer visi
 
 \subsubsection{Annotation optimization}
 
-The amount of training data is crucial to a robust deep learning model. Besides, despite efforts to develop reliable unsupervised algorithms, the performance they offer is still not sufficient for relevant use in \ac{PAM} contexts without human intervention. Large amounts of labelled examples are thus needed prior to developing automated detection systems.
+The amount of training data is crucial to a robust deep learning model. Besides, despite efforts to develop reliable unsupervised algorithms, the performance they offer is still not sufficient for relevant use in \ac{PAM} contexts without human intervention. Large amounts of labelled examples are therefore needed prior to developing automated detection systems.
 
-The usual annotation scenario starts with the access to a bank of audio signals. When recorded by autonomous antennas, this typically means weeks or months of recordings, with no other prior information than the presumed presence of some species' vocalizations. Listening to the whole recordings would be too time consuming and thus is not viable. To efficiently browse through recordings and potentially annotate certain sections, several approaches are found in the literature :
+The usual annotation scenario starts with the access to a bank of audio signals. When recorded by autonomous antennas, this typically means weeks or months of recordings, with no other prior information than the presumed presence of some species' vocalizations. Listening to the whole recordings would be too tedious and is therefore not viable. To efficiently browse through recordings and potentially annotate certain sections, several approaches are found in the literature :
 
 \begin{itemize}
     \item \ac{LTSA} enable a quick view of several hours of data \cite{sirovic2011marine}
@@ -209,7 +209,7 @@ The yielded annotations will found the bases of knowledge for our model, and wil
 \paragraph{Deep representation learning for bioacoustic signals}\label{SSL_bioac}
 Clustering similar signals into groups can drastically reduce the annotation effort. For this purpose, similarity can be measured using hand-crafted features such as \ac{MFCC} \cite{cuevas2017unsupervised}, or features learnt via \ac{SSL} for instance. Several papers explored this approach such as \citet{tolkova2021parsing} for birdsong annotation using an \ac{AE} framework, \citet{goffinet2019inferring} similarly with a variational \ac{AE} \cite{kingma2019introduction}, or \citet{Jahangirnezhad_Mashhadi_2021} combining an \ac{AE} reconstruction loss with the \ac{DEC} loss \cite{Xie_Girshick_Farhadi_2016}.
 
-The embedding space learnt via deep representation learning can not only enable clustering for efficient annotation, but also serve classification models directly. Indeed, either via a semi-supervised loss, or via network pre-training, the performance of classifiers can be enhanced despite a reduced quantity labels when fine tuning from robust embedding spaces.
+The embedding space learnt via deep representation learning can not only enable clustering for efficient annotation, but also serve classification models directly. Indeed, either via a semi-supervised loss, or via network pre-training, the performance of classifiers can be enhanced despite a reduced quantity labels when fine tuning from relevant embedding spaces.
 
 \paragraph{Transfer learning}
 This method of using weights optimized on a third party task to initialize your model (pre-training or transfer learning) has indeed proven efficiency, especially when dealing with small datasets. The third party task can be for instance a \ac{SSL} paradigm such as training an \ac{AE} on similar data than the end task \cite{bergler2019deep, thakur2019deep}, but also potentially a totally unrelated task. Indeed, fine-tuning from models trained on AudioSet \cite{hershey2017cnn} or even ImageNet \cite{deng2009imagenet} was shown to be relevant for bioacoustic event detection \cite{baptista2021bioacoustic, zhong2020beluga, thakur2019deep}. The assumption here is that early feature extraction are quite generic, and that knowledge gained from very large datasets are useful for other tasks.

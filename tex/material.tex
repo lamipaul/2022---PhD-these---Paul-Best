@@ -1,28 +1,27 @@
 \chapter{Material}
 \minitoc
 
-In this chapter, I will introduce the material used for the experiments conducted throughout this thesis. It takes form as underwater acoustic data, containing different signals, and recorded at different places and times. This chapter will thus revolve around two axis : the studied signals, and the recording setups. 
+In this chapter will be introduced the material used for the experiments conducted throughout this thesis. It takes form as underwater acoustic data, containing several types of signals, and recorded at different places and times. This chapter will thus revolve around two axis : the studied signals, and the recording setups. 
 
-The diverse set of target signals I will describe are those for which I have built detection systems. Their characteristics are summarised in Table \ref{tab:recap_data}, and each subsection then underpins the current scientific knowledge about them, especially regarding their context of emission.
-
+The diverse set of target signals described here are those for which detection and classification systems were built. Their characteristics are summarised in Table \ref{tab:recap_data}, and each subsection then underpins the current scientific knowledge about them, especially regarding their context of emission.
 
 
 \section{Target species and signals}
-%TODO fit table
-\def\arraystretch{1.3}
+
 \begin{table}[ht]
-    \centering
-    \begin{tabularx}{1\linewidth}{|X|X|X|X|X|X|X|}
+\centering\resizebox{\linewidth}{!}{
+\begin{tabular}{|l|c|c|c|c|c|}
         \hline
-        \textbf{Species} & \textbf{Sperm whale clicks} & \textbf{Fin whale 20Hz pulses} & \textbf{Orca calls} & \textbf{Dolphin whistles} & \textbf{Humpback whale calls} \\ \hline
+        \textbf{Species} & \textbf{Sperm whale} & \textbf{Fin whale} & \textbf{Orca} & \textbf{Dolphin} & \textbf{Humpback whale} \\ \hline
         \textbf{Sub-order} & Odontoceti & Mysticeti & Odontoceti & Odontoceti & Mysticeti \\ \hline
+        \textbf{Signal} & clicks & 20Hz pulses & pulsed calls & whistles & calls \\ \hline
         \textbf{Signal type} & Transitory & Transitory & Stationary & Stationary & Stationary \\ \hline
-        \textbf{Centroid frequency (Hz)} & 12,000 & 20 & [500; 5,000] & [5,000. 20,000] & [300; 3,000] \\ \hline
+        \textbf{Frequency (Hz)} & 12,000 & 20 & [500; 5,000] & [5,000. 20,000] & [300; 3,000] \\ \hline
         \textbf{Bandwidth} & 20kHz & 2Hz & 100Hz & 20Hz & 50Hz \\ \hline
         \textbf{Duration (sec)} & 0.001 & 1 & [0.5; 2] & [1; 2] & [0.5; 1] \\ \hline
 %        \textbf{Interval between signals (sec)} & [0.1, 1] & [10, 25] &  &  &  \\ \hline
-    \end{tabularx}
-    \caption{Summary of the target signals for the detection systems built through this thesis.}
+    \end{tabular}}
+    \caption{Summary of the target signals for the detection systems built through this thesis. For transitory waves, the frequency denotes the approximate centroid frequency, when For stationary waves it is the range}
     \label{tab:recap_signals}
 \end{table}
 
@@ -104,8 +103,10 @@ Each components of the hierarchical structure of the humpback whale songs are st
 \subsection{Data from Toulon University}\label{chap:data_Toulon}
 Table \ref{tab:recap_data} summarises some of the data yielded by the partnerships and projects that H. Glotin set up at Toulon University. They are stored locally in a \ac{NAS} system, funded by the DYNI team projects and maintained by the LIS laboratory.
 
-\begin{sidewaystable}
-\centering
+% \begin{sidewaystable}
+% \centering
+\begin{table}
+\centering \resizebox{\linewidth}{!}{
 \begin{tabular}{|l|c|c|c|c|c|c|}
 \hline
  \textbf{Data source} & \textbf{Boussole} \cite{parsuivi} & \textbf{Bombyx} \cite{vamos2017} & \textbf{OrcaLab} \cite{orcalab} & \textbf{Carimam} \cite{carimam} & \textbf{Antares} \cite{giacomelli2009antares} \\ \hline
@@ -118,9 +119,10 @@ Table \ref{tab:recap_data} summarises some of the data yielded by the partnershi
 %Bombyx 1/5 until Oct. 17, then 5/15
 \textbf{Channels} & 2 & 2 & 5 & 15 & 3 \\ \hline
 \textbf{Recorded time (hours)} & 1,752 & 3,533 &  & 5,677 & 514 \\ \hline
-\end{tabular}
+\end{tabular}}
 \caption{\label{tab:recap_data}Summary of the recording characteristics for each data source available at Toulon University.}
-\end{sidewaystable}
+\end{table}
+% \end{sidewaystable}
 
 \begin{figure}[!htb]
    \begin{minipage}{0.7\textwidth}

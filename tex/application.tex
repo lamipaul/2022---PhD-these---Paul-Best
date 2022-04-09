@@ -55,8 +55,9 @@ Specifications of the input parameters and processing time for the two target si
     Mel bands & 64 & 64 \\
     Mel start (Hz) & 2,000 & 0 \\
     Mel end (Hz) & 25,000 & 100 \\
-    Spectrogram computation (sec) & & \\
-    \ac{CNN} inference (sec) & & \\
+    Signal loading (sec) & 1 & 5 \\
+    Spectrogram computation (sec) & 12 & 26 \\
+    \ac{CNN} inference (sec) & 4 & 4 \\
     \end{tabular}
     \caption{Specifications and corresponding processing times on the PIC32 microprocessor, for the detection mechanisms of sperm whale clicks and 20Hz fin whale pulses.}
     \label{tab:pic_implem}
@@ -340,3 +341,21 @@ ICI sperm whales bombyx
 \section{Language modelling}
 Application to Orcalab
 
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} \hline
+ & N1 & N2 & N23 & N3 & N4 & N5 & N9 & other & Total \\ \hline 
+ N1 &0.21 & 0.03 & 0.06 & 0.01 & 0.24 & 0.1 & 0.12 & 0.09 & 15,551 \\ \hline 
+ N2 &0.07 & 0.15 & 0.06 & 0.01 & 0.23 & 0.1 & 0.11 & 0.1 & 6,446 \\ \hline 
+ N23 &0.07 & 0.03 & 0.23 & 0.01 & 0.23 & 0.05 & 0.1 & 0.1 & 15,752 \\ \hline 
+ N3 &0.04 & 0.02 & 0.04 & 0.39 & 0.17 & 0.05 & 0.09 & 0.05 & 5,187 \\ \hline 
+ N4 &0.05 & 0.02 & 0.04 & 0.01 & 0.54 & 0.06 & 0.11 & 0.06 & 82,625 \\ \hline 
+ N5 &0.07 & 0.03 & 0.04 & 0.01 & 0.27 & 0.22 & 0.14 & 0.08 & 17,722 \\ \hline 
+ N9 &0.06 & 0.02 & 0.05 & 0.01 & 0.31 & 0.08 & 0.27 & 0.06 & 29,808 \\ \hline 
+ other &0.05 & 0.02 & 0.05 & 0.01 & 0.18 & 0.05 & 0.07 & 0.1 & 27,081 \\ \hline
+    \end{tabular}
+    \caption{Caption}
+    \label{tab:my_label}
+\end{table}
+
+\cite{ford1989acoustic}

@@ -24,12 +24,20 @@ Leaving land some 50 million years ago \cite{whitehead2015cultural}, cetaceans n
 
 \subsection{Echolocation}
 
-One way to use sound to sense the environment is echolocation. Alike an active sonar, emitting a sound and measuring how it bounces back to you (its echo) allows to sense distance from surrounding objects, as well as their shape \cite{pack1996dolphins}, or even their texture \cite{grunwald2004classification}. Bats use echolocation to navigate and hunt in dark caves, odontocetes use echolocation in a similar way underwater. 
+A first use of acoustics underwater is echolocation. Alike an active sonar, emitting a sound and measuring how it bounces back to you (its echo) allows to sense distance from surrounding objects, as well as their shape \cite{pack1996dolphins}, or even their texture \cite{grunwald2004classification}. Bats use echolocation to navigate and hunt in dark caves, odontocetes use echolocation in a similar way underwater. 
 
 Short impulse like sounds, commonly named `clicks' (transitory waves) are typically suited for echolocation purposes. Indeed, echolocating comes down to measuring the delay between the emission of a sound and the reception of its echo. This task becomes easier with impulsive short sounds as opposed long and locally periodic sounds (stationary waves).
 
-However, there is not one optimal click for echolocation : it coincides with habitats and feeding behaviours \cite{ketten1994functional}. Using short high frequency clicks, more can be sent in a small time period without them mixing up, thus increasing the potential temporal resolution of the echolocation. This is typically suited for hunting at high speeds, like small odontocetes do. On the other hand, clicks at lower frequencies will travel further, and thus are more suited for hunting from long distances, like sperm whales do.
+However, there is not one optimal click for echolocation : it coincides with habitats and feeding behaviours \cite{ketten1994functional}. Using short high frequency clicks, more can be sent in a small time period without them mixing up, thus increasing the potential temporal resolution of the echolocation. This is typically suited for hunting at high speeds, like small odontocetes do. On the other hand, clicks at lower frequencies will travel further, and thus would be more suited for hunting from long distances like sperm whales do (extremely high Kogia clicks go against this hypothesis).
 
+Finally, despite the old consensus that only odontocetes echolocate with their high frequency clicks, new studies suggest that mysticetes might also make use of their low frequency signals as sonars \cite{frazer2000sonar}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.7\linewidth]{fig/echolocation.pdf}
+    \caption{A dolphin using echolocation to hunt (image credit : Uko Gorter - American Cetacean Society)}
+    \label{fig:my_label}
+\end{figure}
 
 \subsection{Communication}
 
@@ -40,6 +48,7 @@ We typically use the term song when there is a strong relationship between the a
 On the other hand, communication is also observed in odontocetes social groups. Alike songs, these signals are typically a sequence of stereotyped vocalizations, which fall into discrete categories \cite{ford1987catalogue, weilgart1993coda} (similar to our phonemes). However, because they are heard all year round, emitted by every member of the families, and in relatively less deterministic sequences, the term language seems more appropriate for this phenomenon. Obviously, the term `language' has long been (and still is) subject to vigorous debates, which lie well beyond the scope of this thesis. There is no ambition to answer the question of animal language existence here. It will simply be pointed out that the spoken, learnt, and combinatorial features of human language are shared by these animal communication systems, and that the semanticity and grammatical features are not yet proven for their own language, but they have demonstrated the ability to process it in synthetic languages \cite{herman1984comprehension}.
 
 In most cases, these phonemes occur with tonal, whistled or pulsed calls. Their associated categories (`call type') are commonly defined by characteristics on their time / frequency contour. As an exception, sperm whales produce clicks in stereotyped sequences (named codas, similar to morse code) which were also attributed to communication purposes \cite{weilgart1993coda}. It is however not excluded that other odontocetes use clicks as means of communication, but no similar stereotyped sequences have yet been observed among them.
+
 
 \subsection{Culture}
 
@@ -57,6 +66,7 @@ In cetaceans, it takes form as specialisation in diets or hunting techniques (e.
    \end{minipage}\hfill
    \caption{(left) Location of two sperm whale communities. (right) Cultural differences in codas patterns (dialects) between the two communities. Figures are taken from \citet{amano2014differences}}\label{fig:codas}
 \end{figure}
+
 
 \subsection{Human activity impacts}
 
@@ -76,19 +86,22 @@ Eventually, arising from a dense marine traffic, presumably combined with disori
     \caption{Evolution of the worldwide sperm (top) and fin (bottom) whale populations and the main human-induced direct mortality threats. The threats are expressed in relative value. This figure is taken from \citet{sebe2020interdisciplinary}.}
 \end{figure}
 
+
 \section{Passive acoustic monitoring of cetaceans}
 
 \ac{PAM} is a field of bioacoustic studies that combines several scientific and technical domains, from electronics for recording hardware, to signal processing and statistical analysis. The term passive refers to the notion of listening from a distance, without interfering with the animals, as opposed to active sonar systems or attaching acoustic tags to the animals. The analysis of the acoustic activity of cetaceans can yield significant insights on their behavior, population dynamics, social structures, or even physiology.
 
+
 \subsection{Comparison acoustic / visual surveys}
 
-Besides PAM, visual surveys is the second main approach to the biological study of cetaceans. Each comes with its pros and cons. The acoustic approach enables cheap long term surveys : placing a fixed antenna allows to monitor biological activities for months in a row, demanding human intervention only for the installation and extraction of the recording system. On the other hand, the visual approach demands a continuous human implication throughout the survey, in the relatively inaccessible marine environment.
+Besides PAM, visual surveys is the second main approach to the biological study of cetaceans. Each comes with its pros and cons. The acoustic approach enables low-cost, long term surveys : placing a fixed antenna allows to monitor biological activities for months in a row, requiring human intervention only for the installation and extraction of the recording system. In contrast, the visual approach demands a continuous human implication throughout the survey, in the relatively inaccessible marine environment.
 
 In terms of detection capacities, cetaceans can be heard from great distances (up to 200km for the blue whale \cite{vsirovic2007blue}), even during deep dives, while they can be visually detected from relatively short distances (depending on weather conditions) only when surfacing, which for some species is only a small proportion of their time \cite{watwood2006deep}. However, species had first to be classified visually before we could learn on their associated acoustic behavior, and photo identification is still to this day the only reliable way to recognize individuals. Moreover, the observation of group sizes, behavior, and body conditions still mostly rely on vision. The two approaches thus really are complementary.
 
+
 \subsection{Antenna types}
 
-\ac{PAM} starts by placing hydrophone(s) (underwater microphones) underwater to directly listen or record the acoustic environment. They can be fixed on the sea floor (bottom mounted), to a buoy (sonobuoy), to a cable towed by a boat (towed array), or directly to the hull of a boat or autonomous surface vehicle (ASV). When recording with multiple synchronized hydrophones, one can also triangulate (infer the position of) sound sources by measuring their \acp{TDOA}. The types of recording devices, their placement in the water column, and their layout between each other have crucial impacts on the yielded recordings, facilitating or not the following signal processing analysis.
+\ac{PAM} starts by placing hydrophone(s) (underwater microphones) to listen or record the acoustic environment. They can be fixed on the sea floor (bottom mounted), to a buoy (sonobuoy), to a cable towed by a boat (towed array), or directly to the hull of a boat or autonomous surface vehicle (ASV). When recording with multiple synchronized hydrophones, one can also triangulate (infer the position of) sound sources by measuring their \acp{TDOA}. The types of recording devices, their placement in the water column, and their layout between each other have crucial impacts on the yielded recordings, facilitating or not the following signal processing analysis.
 
 Thus, when implementing recording systems, one has to make compromises. Recorders are typically limited by their available battery power and data storage capacity. On the other hand, increasing the number of channels, the sampling frequency, and/or the byte depth of the recorded signals yields a more detailed view of the acoustic scene, but also consumes the available resources at a faster rate.
 
@@ -96,13 +109,14 @@ Thus, when implementing recording systems, one has to make compromises. Recorder
 %[optional]
 %TDOA estimation, triangulation, antenna range ...
 
+
 \subsection{PAM for biological studies}
 
 The first step of the analysis of acoustic signals typically comes down to the detection and classification of cetacean vocalizations. The amount of detection through time in long term surveys already provides significant information on the animals' lives. From these, one can infer population density \cite{thomas2012passive} and seasonal or dial presence patterns \cite{bombyx}. When combining several antennas, spatialisation of these statistics can also come into place. 
 
 The analysis of the detected signals can then bring further knowledge on the recorded animals, such as community membership, current behavior (hunting, socializing, courting), and individual characteristics (sexual maturity, body size for sperm whales \cite{bombyx}). These measures can themselves be put in a space-time perspective, potentially revealing patterns. In this way, \ac{PAM} becomes useful to cetacean behavioral biology and stock structure assessment.
 
-A second field \ac{PAM} provides to is the study of animal communication systems. Cetaceans indeed represent a significant part among the vocal learning species (along with birds, bats, seals, elephants, mice and primates). Identifying patterned sequences and associating them with species, communities and/or behaviors yields exemplary data on the development of song and language in the animal kingdom. Moreover, communication system studies revealing cultural differences have enabled learning on population dynamics \cite{owen2019migratory} and social structures \cite{gero2016individual}. There is therefore a great diversity of biological wonders that \ac{PAM} contributes to unveil.
+A second field \ac{PAM} provides to is the study of animal communication systems. Cetaceans indeed represent a significant part among the vocal learning species (along with birds, bats, seals, elephants, mice and primates). Identifying patterned sequences and associating them with species, communities and/or behaviors yields exemplary data on the development of song and language in the animal kingdom. Moreover, acoustic behavior studies revealing cultural differences has provided knowledge on population dynamics \cite{owen2019migratory} and social structures \cite{gero2016individual}. There is therefore a great diversity of biological wonders that \ac{PAM} contributes to unveil.
 %Again, \ac{PAM} has provided exemplary data on phenomenons such as cultural evolution and transmission, helping advance on these open research questions.
 
 \begin{figure}
@@ -114,22 +128,22 @@ A second field \ac{PAM} provides to is the study of animal communication systems
 
 \subsection{Cetacean conservation}
 
-Some might question the amount of effort put into cetacean biology studies, considering the knowledge of nature by itself as not a sufficient drive. To those, it is to be kept in mind that cetaceans occupy the top of the ocean's food web, and therefore are significant regulators of their ecosystem as a whole. Moreover, the oceanic ecosystem is not only an important provider of food to the human species, but also crucial for us to breathe (it is responsible for around 70\% of the atmosphere's oxygen production \cite{harris2012phytoplankton}). This field of study thus matters not only for the knowledge of planet earth's animal kingdom, but simply to our long term survival.
-
-%The following argumentation might provide answers in that sense, even if roughly summarised because it lies well beyond the scope of this thesis. The well being of humans heavily depends on planet Earth's climate, which itself is strongly determined by oceanic phenomenons, which themselves are significantly subject to biological activities, which themselves are regulated by species on top of the food web, namely, cetaceans. 
-
-As stated previously, human activities heavily impact cetacean species, putting some of them close to extinction \cite{kraus2016recent}. Therefore, it seems relevant that we learn how to mitigate this impact and work on cetacean conservation policies. Some regulation measures have already been put in place, e.g. the Marine Mammal Protection Act \cite{fisheries2013marine}, speed regulations \cite{fisheries2012environmental}, and the definition of marine mammal sanctuaries \cite{notarbartolo2008pelagos}. Monitoring the efficiency and/or need for regulations, as well as maximising their relevance (e.g. habitats and/or seasons of importance) can only be done via the knowledge of the animals, thus justifying their biological study.
+Some may question the amount of effort put into cetacean biology studies, considering that knowledge of nature is not in itself a sufficient driver. In that regard, it is to be kept in mind that cetaceans occupy the top of the ocean's food web, and therefore are significant regulators of their ecosystem as a whole. Moreover, the oceanic ecosystem is not only an important provider of food to humans, but also crucial to breathe (it is responsible for around 70\% of the atmosphere's oxygen production \cite{harris2012phytoplankton}). This field of study thus matters not only for the knowledge of planet earth's animal kingdom, but simply to our long term survival.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{fig/speed_canada.jpg}
+    \includegraphics[width=.8\linewidth]{fig/speed_canada.jpg}
     \caption{Example of conservation measure in the Gulf of St. Lawrence in Canada. Reduced speed zones are put in place all year round (red) and seasonally (green) to protect North Atlantic Right Whales.}
 \end{figure}
 
+As stated previously, human activities heavily impact cetacean species, putting some of them close to extinction \cite{kraus2016recent}. Therefore, it seems relevant that we learn how to mitigate this impact and work on cetacean conservation policies. Some regulation measures have already been put in place, e.g. the Marine Mammal Protection Act \cite{fisheries2013marine}, speed regulations \cite{fisheries2012environmental}, and the definition of marine mammal sanctuaries \cite{notarbartolo2008pelagos}. Monitoring the efficiency and/or need for regulations, as well as maximising their relevance (e.g. habitats and/or seasons of importance) can only be done via the knowledge of the animals, thus justifying their biological study.
+
+
 \section{Neural Networks and PAM}
+
 \subsection{Automated \ac{PAM} before Neural Networks}
 
-It was previously mentioned the interest in long term acoustical surveys, which rely on acoustic cetacean detection to yield biological insights. This detection process can be done by manually inspecting signals, especially their time / frequency representation (spectrograms). However, this is time consuming in human efforts, which motivated the development of automatic detection mechanisms. With such systems in hand, researchers can seamlessly process months of data to yield results such as spatio-temporal presence statistics.
+To carry out the aforementioned long term cetacean surveys, acoustic detections are needed. This process can be done by manually inspecting signals, especially their time / frequency representation (spectrograms). However, this is very costly in human efforts, which motivated the development of automatic detection mechanisms. With such systems in hand, researchers can seamlessly process months of data to yield results such as spatio-temporal presence statistics.
 
 The development of detection systems has long been done with handcrafted algorithms. They can be sufficient for some use cases, but often come quite limited, as the variety of sounds to detect and potential noises increase. Analysing long streams of data across recording devices and antenna locations demands highly robust detection systems, which handcrafted algorithms hardly provide.
 
@@ -138,7 +152,7 @@ As an analogy, let us consider our ability to recognize our kin by the sound of 
 
 \subsection{Artificial neural networks}
 
-Training \acp{ANN} is the approach that has been chosen to tackle \ac{PAM} problematics throughout this thesis. It is one of the most popular techniques of machine learning, a field of computer sciences that approaches problem solving without programming solutions explicitly. Specifically, in machine learning, the algorithm is designed to find (or learn) the optimum solution to a problem, often formulated as a mathematical framework. An analogy could be made that genes encode a brain structure for it to learn but genes do not encode knowledge directly. Similarly, in machine learning, a learning framework is programmed, but the task's solution is to be learnt.
+Training \acp{ANN} is the chosen approach to tackle \ac{PAM} problematics throughout this thesis. It is one of the most popular techniques of machine learning, a field of computer sciences that approaches problem solving without programming solutions explicitly. Specifically, in machine learning, the algorithm is designed to find (or learn) the optimum solution to a problem, often formulated as a mathematical framework. An analogy could be made that genes encode a brain structure for it to learn but genes do not encode knowledge directly. Similarly, in machine learning, a learning framework is programmed, but the task's solution is to be learnt.
 
 \acp{ANN} represent a major branch of today's machine learning, solving tasks in computer vision and speech recognition with performances and robustness highly superior to that of traditional handcrafted algorithms. This motivated this research to apply \acp{ANN} to the field of \ac{PAM}, as stated in the following problematic.
 

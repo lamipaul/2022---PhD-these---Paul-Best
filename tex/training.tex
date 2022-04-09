@@ -205,16 +205,41 @@ Table \ref{tab:stats_orcas} reports the statistically significant hyper-paramete
 
 \subsubsection{Search findings validation}
 
-To follow up on this hyper-parameter exploration and validate its findings, using each architecture's best scoring hyper-parameters, 5 trainings were run. Performances of the latter are displayed on Fig. \ref{fig:perf_best}.
+\begin{table}[ht]
+    \begin{tabular}{l|cccccc}
+     \textbf{Frontend} & logMel & logMel & logMel & \ac{PCEN} & \ac{PCEN} & \ac{PCEN} \\ 
+     \textbf{Architecture} & resnet & resnetPT & sparrow & resnet & resnetPT & sparrow \\ \hline
+     \textbf{Batchsize} & 8 & 8 & 128 & 64 & 128 & 32 \\
+     \textbf{Learning rate} & $8\text{e-}3$ & $7\text{e-}4$ & $2\text{e-}3$ & $2\text{e-}2$ & $1\text{e-}2$ & $4\text{e-}2$ \\
+     \textbf{Weight decay} & $4\text{e-}4$ & $9\text{e-}3$ & $8\text{e-}5$ & $1\text{e-}2$ & $1\text{e-}3$ & $2\text{e-}2$ \\
+     \textbf{Posweight} & 4 & 3 & 1 & 5 & 3 & 1 \\
+     \textbf{Brown noise} & False & False & True & True & False & True \\
+     \textbf{SpecAugment} & False & False & False & False & False & True \\
+     \textbf{MixUp} & False & False & True & False & True & True \\
+     \textbf{\# epochs} & 6 & 13 & 9 & 5 & 6 & 5 \\
+     \textbf{OrcaLab \ac{mAP}} & 0.98 & 0.97 & 0.98 & 0.99 & 0.99 & 0.99 \\
+     \textbf{CA \ac{mAP}} & 0.95 & 0.90 & 0.91 & 0.96 & 0.95 & 0.98 \\
+    \end{tabular}
+    \caption{Best scoring hyper-parameters resulting from the \ac{ASHA} search of 100 trials for each frontend / architecture combination.}
+    \label{tab:orca_bestHP}
+\end{table}
 
+To follow up on this hyper-parameter exploration and validate its findings, using each architecture's best scoring hyper-parameters (see Tab. \ref{tab:orca_bestHP}), 5 trainings were run. Performances of the latter are displayed on Fig. \ref{fig:perf_best}.
+%
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{fig/best_trains.pdf}
     \caption{Distribution of performances after 5 runs on the best scoring hyper-parameters of each architecture. Best scoring hyper-parameters were tuned systematically using the \ac{ASHA} algorithm for 100 trials on each architecture independently.}
     \label{fig:perf_best}
 \end{figure}
-
-TODO
+%
+These results demonstrate several insights :
+\begin{itemize} \setlength{\itemsep}{1pt}
+\item The sparrow architecture is less stable to different initialisations
+\item Resnet architectures with \ac{PCEN} range compression are highly stable to different initialisations
+\item \ac{PCEN} improves generalisation especially to the foreign domain
+\item Initialising resnet architectures with weights trained on ImageNet is counter productive for generalisation to the foreign domain 
+\end{itemize}
 
 
 \subsubsection{\ac{PCEN} beneficial behaviour}
@@ -224,7 +249,7 @@ The \ac{PCEN} range compression procedure appeared to be beneficial with some bu
 \begin{figure}
     \centering
     \includegraphics[width=.7\linewidth]{fig/pcenvslogmel.pdf}
-    \caption{Distribution of performances on the orca call detection task (result of systematic hyper-parameter exploration, section \ref{chap:orca_detec}).}
+    \caption{Distribution of performances on the orca call detection task depending on spectrogram range compression (resulting from the systematic hyper-parameter exploration, section \ref{chap:orca_detec}).}
     \label{fig:pcenvslogmel}
 \end{figure}
 

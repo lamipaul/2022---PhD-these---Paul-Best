@@ -4,28 +4,28 @@
 
 The following section introduces the main techniques involved in building and training \ac{CNN}s. Methods will be described in their most prevalent context in the literature (computer vision) before diving into \ac{PAM} use cases in the next chapter. 
 
-If computer vision techniques are used to tackle acoustic tasks, it is mainly because we can represent sound with images called spectrograms. They reveal time / frequency content such that, for instance, vocalizations appear as patterns with identifiable shapes\footnote{In a way, our hearing system itself processes sound via a frequency decomposition with the cochlea}. We will therefore first go through the state of the art in image pattern recognition before applying similar methods to our acoustic tasks. This is obviously no exhaustive review of deep neural networks, but rather an overview of the key elements to build detection and classification systems for images. %Subsequently, I will mention existing use cases of bioacoustics using \ac{ANN}s.
+If computer vision techniques are used to tackle acoustic tasks, it is mainly because we can represent sound with images called spectrograms. They reveal time / frequency content such that, for instance, vocalizations appear as patterns with identifiable shapes\footnote{In a way, our hearing system itself processes sound via a frequency decomposition with the cochlea}. We will therefore first go through the state of the art in image pattern recognition before applying similar methods to our acoustic tasks. This is obviously not an exhaustive review of deep neural networks, but rather an overview of the key elements to build detection and classification systems for images. %Subsequently, I will mention existing use cases of bioacoustics using \ac{ANN}s.
 
 
 \subsection{Introduction to Artificial Neural Networks}
 
-The idea of emulating brain neural systems computationally emerged in the mid 20th century \cite{fitch1944mcculloch}. It is however only recently that \ac{ANN}s have taken such an important part in applied mathematics and computer sciences, with the increased availability of data and computational power. The underlying approach to \acp{ANN} is to reproduce advanced processes emerging from the accumulation of simple operations, alike brains with neurons. Put mathematically, neurons would typically take the form of a simple linear transformation of inputs into an output signal (\(y = ax + b \)). With their combination into large networks emerges the capacity of modelling high level functions such as classifying cat and dog images. Building a handcrafted algorithm to tackle this task robustly would be nearly impossible, but \acp{ANN} easily find their own way through it.% Most relevant to this thesis are computer acoustics tasks, namely sound event detection and classification.
+The idea of emulating brain neural systems computationally emerged in the mid 20th century \cite{fitch1944mcculloch}. It is however only recently that \ac{ANN}s have taken such an important part in applied mathematics and computer sciences, with the increased availability of data and computational power. The underlying approach to \acp{ANN} is to reproduce advanced processes emerging from the accumulation of simple operations, alike brains with neurons. Put mathematically, neurons would typically take the form of a simple linear transformation of inputs into an output signal (\(y = ax + b \)). With their combination into large networks emerges the capacity of modelling high level functions such as classifying cat and dog images. Building a handcrafted algorithm to address this task robustly would be nearly impossible, but \acp{ANN} easily find their own way through it.% Most relevant to this thesis are computer acoustics tasks, namely sound event detection and classification.
 
 An \ac{ANN} is defined by a network architecture (interconnections of neurons) and its neurons' weights (what linear transformations are performed, namely \(a\) and \(b\)). %From this simple concept, the spectrum of functions they can model is immense. The most widespread are probably computer vision tasks, such as image classification (telling cats and dogs apart for instance). 
 We first design an architecture before learning the optimum weights for our task, typically with supervised learning. Supervised learning works by feeding the model examples with their associated labels. For our cats and dogs tasks, this would mean giving the model images of each class, asking it to predict the associated label, namely `cat' or `dog'. Feeding lots of example images to the network, and iteratively updating its neurons' weights to optimize the performance at the task (e.g. classification accuracy) will simply do the trick. 
 
-Under the hood, the network learns a projection of the input images (often called embedding) from the pixel space to a new abstract one. To put simply, the more neurons in a network, the more complex the resulting projection can be\footnote{Neurons are put in a stack of layers, thus the appellation `deep learning'}. Training thus becomes learning the optimum embedding space to solve a given task.
+Under the hood, the network learns a projection of the input images (often called embedding) from the pixel space to a new abstract one. Put simply, the more neurons in a network, the more complex the resulting projection can be\footnote{Neurons are put in a stack of layers, thus the appellation `deep learning'}. Training thus becomes learning the optimum embedding space to solve a given task.
 
 There are two main limitations here, the first being the necessary computational power. Training a large \ac{ANN} demands thousands of iterations, each of which consists in an update of millions of neurons. This is in part why we had to wait for the development of parallel computation with \acp{GPU} to see the democratisation of \acp{ANN}. The second limitation, this time a human effort cost, is the necessary training data. To learn a robust solution, training typically demands thousands of examples for each class, with their associated label (often manually annotated) for the computation of the accuracy that will be optimized.
 
-This leads us to the major challenge of training \ac{ANN}s : robustness, or generalization. It is faced by any modelling technique in every field, but \ac{ANN}s probably suffer from it the most. Indeed, optimizing a performance metric on a limited amount of examples might bring the curse of overfitting : when the model finds a solution that works for its given training data, but not the generic solution that we desire (see Fig.~\ref{fig:catsanddogs}). To give an example, coming back to the cats and dogs task, if all the cats we show the \ac{ANN} are white and all dogs are black, it might just discriminate on average pixel colors. This will lead to great performances on the training data, but will properly fail as soon as we try our \ac{ANN} on a black cat image. As we will see throughout this thesis, most of the struggle in training \ac{ANN}s comes down to enforcing generic solutions with limited training data.
-
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{fig/cats and dogs.pdf}
+    \includegraphics[width=.8\linewidth]{fig/cats and dogs.pdf}
     \caption{Illustration of the concepts of underfitting and overfitting, for the cats and dogs classification task. Lines denote discrimination boundaries, in a two-dimensional abstract embedding space.}
     \label{fig:catsanddogs}
 \end{figure}
+
+This leads us to the major challenge of training \ac{ANN}s : robustness, or generalization. It is faced by any modelling technique in every field, but \ac{ANN}s probably suffer from it the most. Indeed, optimizing a performance metric on a limited amount of examples might bring the curse of overfitting : when the model finds a solution that works for its given training data, but not the generic solution that we desire (see Fig.~\ref{fig:catsanddogs}). To give an example, coming back to the cats and dogs task, if all the cats we show the \ac{ANN} are white and all dogs are black, it might just discriminate on average pixel colors. This will lead to great performances on the training data, but will properly fail as soon as we try our \ac{ANN} on a black cat image. As we will see throughout this thesis, most of the struggle in training \ac{ANN}s comes down to enforcing generic solutions with limited training data.
 
 %\section{Convolutional Neural Networks}
 %In the following section, we will dive deeper into the category of \acp{ANN} that was used through this thesis : \acp{CNN}. I will start by describing its building blocks (layers of neurons), then going through the typical architectures they are put together in, and ending with how to iteratively optimize its neurons' weights while avoiding overfitting. I will use the original use case of \acp{CNN} for demonstration here (image classification), before joining in on this thesis' tasks in the next section.
@@ -45,39 +45,39 @@ Typically, in image processing, we will use this operator to slide a filter (or 
 
 Before that, pixels where given independently to input neurons. The input image size was thus fixed for a given network architecture, and a displacement of patterns within an image would mean a totally different response of the network. With \acp{CNN}, the network's neurons take the form of kernels (or filters), which are convolved onto input images. Like so, patterns are searched all over the image, independently of their placement.
 
-This behaviour is called spatial invariance, and is crucial for pattern recognition in images (looking for a cat within an image for instance, or looking for a vocalization within a spectrogram). This spatial invariance being key to image pattern recognition, \acp{CNN} have become unavoidable in the field\footnote{Let aside the recent rise of transformers for computer vision \cite{parmar2018image}.}, and thus have been chosen for this thesis.
+This behaviour is called spatial invariance, and is crucial for pattern recognition in images (looking for a cat within an picture or a vocalization within a spectrogram for instance, independently of their placement). This characteristic led \acp{CNN} to become unavoidable in the field\footnote{Let aside the recent rise of transformers for computer vision \cite{parmar2018image}.}.
 
 In terms of mathematical definitions, a traditional \ac{ANN} layer is described as $\mathbf{y = Ax + b}$ with $\mathbf{x}$ an input vector (output from the preceding layer), and y an output vector (input for the following layer). The weights $\mathbf{A}$ and $\mathbf{b}$ are thus matrices defined in $\mathbb{R}^{out\times in}$ and $\mathbb{R}^{out}$ respectively, with $in$ and $out$ being the number of neurons in the preceding and current layers respectively.
 
-As for \acp{CNN}, a layer is no longer composed of a stack of neurons, but rather a stack of kernels. The behavior of a kernel of width $wk$ and height $hk$ is given by \ref{eq:kernel}, given an input of width $w$ and height $h$.
+As for \acp{CNN}, a layer is no longer composed of a stack of neurons, but rather a stack of kernels. The behavior of a kernel of width $w_k$ and height $h_k$ is formulated by Eq. \ref{eq:kernel}, given an input of width $w$, height $h$, and depth $d$.
 
 \begin{equation}\label{eq:kernel}
-\mathbf{Y = A*X}+ b, \quad \mathbf{X} \in \mathbb{R}^{h \times w \times d}, \mathbf{A} \in \mathbb{R}^{hk \times wk \times d}, b \in \mathbb{R}
+\mathbf{Y = A*X}+ b, \quad \mathbf{X} \in \mathbb{R}^{h \times w \times d}, \mathbf{A} \in \mathbb{R}^{h_k \times w_k \times d}, b \in \mathbb{R}
 \end{equation}
 
-The convolution integral is done over the 3 dimensions, but the shift will occur on the $width$ and $height$ dimensions only, making that $y$ will have a shape $(height, width)$. The outputs of each kernel of the layer will eventually be stacked to form the $depth$ dimension for the input of the next layer\footnote{The color dimension of input images are also put as depth dimension} (see Fig.~\ref{fig:convolution}).
-
-A \ac{CNN} layer is thus defined by the number of input features it processes, its number of kernels, and their width and height. The number of trainable parameters in a layer is thus $depth_{input} \times width_{kernel} \times height_{kernel} \times depth_{output} + depth_{output}$.
+The convolution integral is done over the 3 dimensions, but the shift will occur on the width and height dimensions only, making $\mathbf{Y} \in \mathbb{R}^{h \times w}$. The outputs of each kernel of the layer will eventually be stacked to form the depth dimension for the input of the next layer\footnote{The color dimension of input images are also put as depth dimension} (see Fig.~\ref{fig:convolution}).
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{fig/conv_layer.pdf}
+    \includegraphics[width=.8\linewidth]{fig/conv_layer.pdf}
     \caption{Convolution layer. Blue denotes a slice of the image, a kernel, and the resulting point in the output image (the sum of the point-wise product between the two). The number of kernels will define the depth of the output cuboid.}
     \label{fig:convolution}
 \end{figure}
+
+A \ac{CNN} layer is thus defined by the number of input features it processes, its number of kernels, and their width and height. The number of trainable parameters in a layer is thus $d_{in} \times w_k \times h_k \times d_{out} + d_{out}$.
 
 
 \subsubsection{Depth-wise separable convolution}\label{chap:sota_dw}
 
 As presented in the previous section, convolution kernels are cuboids, with a depth that fits the depth of the input. The filters are thus designed to find patterns that are interconnected depth-wise. However, often, we might want patterns to be filtered independently through the input image depth, for a subsequent depth-wise combination. This is the idea introduced by depth-wise separable convolutions, first used in the context of a \ac{CNN} by \citet{chollet2017xception}.
 
-In this new type of convolution layer, we dissociate the spatial filtering and the depth-wise combination in two stages, as opposed to regular convolutions that process it all at once. A kernel remains cubic, but the convolutions are separated depth-wise, thus yielding a cuboid, when a regular convolution kernel yields a flat image. The combination of the features then happens with the point-wise stage, similar to a convolution with a kernel of $width$ and $height$ 1. This stage can be repeated to obtain an output depth (see Fig.~\ref{fig:depthwiseConv}).
+In this new type of convolution layer, we dissociate the spatial filtering and the depth-wise combination in two stages, as opposed to regular convolutions that process it all at once. A kernel remains cubic, but the convolutions are separated depth-wise, thus yielding a cuboid, when a regular convolution kernel yields a flat image. The combination of the features then happens with the point-wise stage, similar to a convolution with a kernel of width and height 1. This stage can be repeated to obtain an output depth (see Fig.~\ref{fig:depthwiseConv}).
 
-For comparison with the regular convolutions, the number of trainable parameters in a depth-wise separable convolution layer is $depth_{input} \times ( width_{kernel} \times height_{kernel} +  1 + 2\times depth_{output})$.% Furthermore, the number of multiplications needed to go through one layer becomes $ depth_{input} \times  n \times ( width_{kernel} \times height_{kernel} + depth_{output})$.
+For comparison with the regular convolutions, the number of trainable parameters in a depth-wise separable convolution layer is $d_{in} \times ( w_k \times h_k + 1 + 2\times d_{out})$.% Furthermore, the number of multiplications needed to go through one layer becomes $ depth_{input} \times  n \times ( width_{kernel} \times height_{kernel} + depth_{output})$.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{fig/dw_conv_these.pdf}
+    \includegraphics[width=.8\linewidth]{fig/dw_conv_these.pdf}
     \caption{Depth-wise separable convolution. In the depth-wise stage, each depth bin is convolved with its own kernel independently. For the point-wise stage, the depth dimension is combined point by point by various vector kernels, each of which will result in a depth bin in the output.}
     \label{fig:depthwiseConv}
 \end{figure}
@@ -119,8 +119,8 @@ As for the depth decrease, in network architecture design, we usually increase t
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{fig/vgg16.png}
-    \caption{VGG16 architecture \cite{simonyan2014very}. Dimensions at each layer are given in this order : $height \times width \times depth$. The image is taken from \cite{ferguson2017automatic}.}
+    \includegraphics[width=.7\linewidth]{fig/vgg16.png}
+    \caption{VGG16 architecture \cite{simonyan2014very}. Dimensions at each layer are given in this order : $height \times width \times depth$ (image taken from \citet{ferguson2017automatic}).}
     \label{fig:vgg}
 \end{figure}
 
@@ -133,7 +133,7 @@ Numerous standardised architectures are used by the deep learning community as, 
 
 \begin{itemize}
     \item The VGG architecture is presented in Fig.~\ref{fig:vgg}, and is a classic convolutional encoder tailed by fully connected layers. 
-    \item The ResNet architecture is composed of residual blocks, which introduce `skip-connections' (the output of a block is the sum of its processed input and the original input).
+    \item The ResNet18 and ResNet50 architectures are composed of residual blocks, which introduce `skip-connections' (the output of a block is the sum of its processed input and the original input). Their associated number denotes the number of layers that composes them.
 \end{itemize}
 
 These three architectures were chosen as they are (or have been) the baseline in image classification tasks, therefore considered standard \ac{CNN} architectures, even for bioacoustic tasks (see section \ref{chap:PAM_use_cases}).
@@ -187,6 +187,19 @@ The \ac{BCE} is simply a special case of the \ac{CE}, with $C=2$. However, we ca
     BCE(y, \hat{y}) = ylog(\hat{y}) + (1-y)log(1-\hat{y})
 \end{equation}
 
+\begin{figure}[!htb]
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=\linewidth]{fig/sigmoid.pdf}
+     \caption{Sigmoid function (Eq. \ref{eq:sigmoid}).}
+   \end{minipage}\hfill
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=\linewidth]{fig/BCE.pdf}
+     \caption{\ac{BCE} loss (Eq. \ref{eq:BCE}).}
+   \end{minipage}\hfill
+\end{figure}
+
 Through this thesis, the binary classification will be used as a proxy to solve detection tasks (one class being the target event to detect, and the other anything else). When running a classifier model post training, the predicted class of will be $argmax(z)$. For detectors, a detection is triggered when the scalar output is above a given threshold.
 
 
@@ -197,9 +210,9 @@ The losses previously mentioned are suited when a sufficient amount of labels ar
 \paragraph{Triplet loss and contrastive learning}\label{chap:triplet}
 Contrastive learning is a branch of \ac{SSL} algorithms, where we enforce the models' projection to ignore transformations applied to the input (transformations that do not imply a semantical change to the data). For that purpose, we will minimize the distance between the projection of a sample and that of its transformation w.r.t. the projection of other samples (see Fig. \ref{fig:contrastive}). The mathematical formulation of this objective is termed as triplet loss since it uses the projection of three samples : an anchor (the original sample), a positive (the transformation of the anchor), and a negative (another unrelated sample). Several metrics have been used in the literature to measure distances between embeddings :
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{1pt}
     \item The cosine similarity (SimCLR \cite{chen2020simple})
-    \item The cross-entropy (\ac{UDA} \cite{xie2019unsupervised}, fixMatch \cite{sohn2020fixmatch})
+    \item The cross-entropy (\acs{UDA} \cite{xie2019unsupervised}, fixMatch \cite{sohn2020fixmatch})
     \item The cross-correlation (Barlow \cite{zbontar2021barlow}) 
     \item The mutual information (\ac{IIC} \cite{ji2018invariant})
 \end{itemize}
@@ -277,19 +290,22 @@ Introducing variability to the input data is one of the most efficient ways of a
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{fig/randaugmt.pdf}
+    \includegraphics[width=.75\linewidth]{fig/randaugmt.pdf}
     \caption{Using data augmentation enables new samples to be derived from original ones, while conserving the label. Transformations are randomly sampled among several texture and position alterations.}\label{fig:randAugm}
 \end{figure}
 
 Another branch of data augmentation worth mentioning is MixUp \cite{zhang2017mixup}, which combines two input samples and their labels, thus creating `in-between' data points. The combination takes form as a simple weighted sum of inputs and labels, which we will feed our model with like a regular sample. This simple concept of giving mixtures of 2 instances as training samples has shown to improve generalization in most computer vision tasks with standard architectures \cite{zhang2017mixup}.
 
+
 \subsubsection{Within-network regularization}
+
 By introducing perturbations and variability within the network, we can mitigate its dependency to highly specific events, and thus presumably increase its robustness. Dropout \cite{srivastava2014dropout} follows that incentive by randomly deactivating neurons or kernels (putting their activation to 0). The probability of discard is defined by the dropout hyper-parameter $p$, commonly set to 0.25.
 
 A second common way to regularize the network while training is to enforce the model to rely on as few weights as possible. To do so, we introduce a new term in the loss : the $L_2$ norm of all parameters, weighted to control its impact. We call this method weight decay \cite{krogh1992simple}, and its weight introduces another hyper-parameter to the learning framework.
 
 
 \subsubsection{Leveraging unlabelled samples}\label{chap:fixMatch}
+
 As seen in section \ref{chap:triplet}, contrastive losses can be used to train encoders for resilience to data augmentation. Several algorithms have been published to incorporate this, often termed as consistency training. Tab. \ref{fig:perf_fixmatch} summarises their performances on \ac{SSL} datasets with varying proportions of labelled samples. The fixMatch algorithm \cite{sohn2020fixmatch} combines a supervised loss, pseudo labelling, and consistency training in one framework to achieve \ac{SOTA} performances for the tasks with the fewest labels.
 
 \begin{figure}

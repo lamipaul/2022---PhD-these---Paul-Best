@@ -4,7 +4,8 @@ In the following chapter, procedures and \acp{UI} suited for bioacoustic use cas
 
 \minitoc
 
-\section{Low precision but high recall algorithms}
+\section{Low precision algorithms}
+
 When going for machine learning to build detection systems, we must first gather annotations. For this purpose, we can start by running an algorithm that filters the data using our prior knowledge of the target signal(s). These handcrafted algorithms present limitations (as argued in section \ref{limitations}), but avoid having to go through the whole set of available recordings to find our first training examples.
 
 In detection algorithms, the user usually sets a threshold to binarise continuous prediction values. For instance with cetacean vocalization detection tasks, the threshold is typically on the energy level of the signal, or on the cross-correlation coefficient (template matching approaches). The lower we set this threshold, the lower the specificity (higher risk of false detections) but also the higher the sensitivity (lower risk of missed detections). At the contrary, by increasing this threshold, we increase the specificity but decrease the sensitivity.
@@ -28,7 +29,7 @@ The chosen approach to the preliminary detection of orca calls was inspired by \
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{fig/extract_boxes.png}
-    \caption{Example of spectrogram binarisation procedure}
+    \caption{Example of spectrogram binarisation and region grouping procedures.}
     \label{fig:fig_binarisation}
 \end{figure}
 
