@@ -2,7 +2,10 @@
 
 \minitoc
 
-This chapter proposes \ac{ANN} architectures and training procedures for the detection and classification of cetacean signals, given previously gathered annotations. The detection of sperm whale clicks and fin whale 20Hz pulses is first experimented with a constraint on computational cost. Then, heavier models are studied for Antarctic mysticetes and orca calls.
+
+\section{Context and objective}
+
+The gathered annotations previously mentioned represent an important step towards the objective of this thesis : building robust detection and classification mechanisms for several target signals. For that purpose this chapter discusses \ac{ANN} training in a supervised learning context. The detection of sperm whale clicks and fin whale 20Hz pulses is first experimented with a constraint on computational cost. For that matter, the effect of several complexity reduction approaches is studied. Then, heavier models are used to detect Antarctic mysticetes and orca calls. Experiments focus on the effect of network frontends, architectures and hyper-parameters on performances. Furthermore, given orca call detections, trials with deep metric learning and semi-supervised learning are reported for the call type classification task.
 
 
 \section{Light weight detectors for low-variability signals}
@@ -20,7 +23,7 @@ The base architecture for the following experiments is a 3 layer network of 1D c
     \item Fin whale 20Hz pulses : $f_s=200Hz$, $NFFT=256$, $hop=32$, $f_{min}=0Hz$, $f_{max}=100Hz$
 \end{itemize}
 
-The frequency bins are considered as input channels for the first 1D convolution. This choice was motivated by the fact that large spectral shifts are not to be expected for these target signals. Convolving frequency-wise is thus inappropriate. Using 1D convolution also significantly reduces training and inference time.
+The frequency bins are considered as input channels for the first 1D convolution. This choice was motivated by the fact that large spectral shifts are not expected for these target signals. Convolving frequency-wise is thus inappropriate. Using 1D convolution also significantly reduces training and inference time.
 
 
 \subsubsection{Depth-wise layers} \label{chap:low_archi}
@@ -30,7 +33,7 @@ As demonstrated in section \ref{chap:sota_dw}, using depth-wise separable convol
 \begin{figure}
     \centering
     \includegraphics[width=.8\linewidth]{fig/forward_time.pdf}
-    \caption{Number of multiplications needed against the number of features per layer, for two types of architecture (solid lines). The number of multiplications were estimated for a 3 1D convolutions architecture (64 channeled input and single channeled output), one stride, and a kernel of 4 pixels. Estimated inference time on the PIC32 micro-processor are also given (dashed lines).}
+    \caption{Number of multiplications needed against the number of features per layer, for two types of architecture (solid lines). The number of multiplications were estimated for a 3 1D convolutions architecture (64 channeled input and single channeled output), stride of 1, and a kernel of size 4. Estimated inference time on the PIC32 \ac{MCU} are also given (dashed lines).}
     \label{fig:forward_nmult}
 \end{figure}
 
@@ -53,9 +56,9 @@ For the model with 32 features per layer, pruning until 20\% included had a non-
 
 \subsubsection{Weight quantization}
 
-The type of variable in a multiplication has an important impact on the cost of the operation. For instance, on the target micro-processor of the GIAS project (see section \ref{chap:GIAS}), the PIC32 from Microchip, a multiplication of two floating point variables takes 736ns when multiplying two 8 bits integers takes 48ns \cite{pic32_bench} (a factor 16 of difference). Fig. \ref{fig:forward_nmult} compares inference times on the PIC32 for a depth-wise architecture of floating points against a regular convolutional architecture of 8 bits integers.
+The type of variable in a multiplication has an important impact on the cost of the operation. For instance, on the target \ac{MCU} of the GIAS project (see section \ref{chap:GIAS}), the PIC32 from Microchip, a multiplication of two floating point variables takes 736\,ns while multiplying two 8 bit integers takes 48\,ns \cite{pic32_bench} (a factor 16 of difference). Fig. \ref{fig:forward_nmult} compares inference times on the PIC32 for a depth-wise architecture of floating points against a regular convolutional architecture of 8 bit integers.
 
-Weights were thus quantized to 8 bits integer variables in an attempt to reduce computation time. This quantization approach was experimented on 3 layer architectures with regular convolution layers and varying numbers of features (see Fig. \ref{fig:quat_aucs}).
+Weights were thus quantized to 8 bit integer variables in an attempt to reduce computation time. This quantization approach was experimented on 3 layer architectures with regular convolution layers and varying number of features (see Fig. \ref{fig:quat_aucs}).
 
 \begin{figure}
     \centering
@@ -64,12 +67,12 @@ Weights were thus quantized to 8 bits integer variables in an attempt to reduce 
     \label{fig:quat_aucs}
 \end{figure}
 
-Quantization appeared to have a larger impact on smaller models, but still triggered important drops in test \ac{AUC} for models of 128 features per layer. Therefore, at least for the studied PIC32 micro-processor, depth-wise separable convolutions is a more efficient option to reduce the complexity of \ac{CNN} detection systems.
+Quantization appeared to have a larger impact on smaller models, but still triggered important drops in test \ac{AUC} for models of 128 features per layer. Therefore, at least for the studied PIC32 \ac{MCU}, depth-wise separable convolutions is a more efficient option to reduce the complexity of \ac{CNN} detection systems.
 
 
 \subsection{Hyper-parameter search}
 
-With the chosen 3 layer depth-wise architecture, experiments were conducted to select the optimal kernel sizes and number of features per layer. These small neural networks being quite fast to train (less than 5 seconds per epoch using the \ac{GPU}), a simple exhaustive search is possible. They are summarized in Fig. \ref{fig:bench_rorq} and Fig. \ref{fig:bench_cach}. Networks were trained with batch normalization dropout and leaky rectifier units after the two first convolution layers. Learning rate and weight decay were manually tuned before training with varying numbers of features and kernel sizes. Kernel size and number of feature per layer were chosen to study as they were found to have the largest impact on computation cost and performances.
+With the chosen 3 layer depth-wise architecture, experiments were conducted to select the optimal kernel sizes and number of features per layer. These small neural networks being quite fast to train (less than 5 seconds per epoch using the \ac{GPU}), a simple exhaustive search is possible. They are summarized in Fig. \ref{fig:bench_rorq} and Fig. \ref{fig:bench_cach}. Networks were trained with batch normalization, dropout ($p=0.25$) and leaky rectifier units after the two first convolution layers. Learning rate and weight decay were manually tuned before training with varying numbers of features and kernel sizes. Kernel size and number of feature per layer were chosen to study as they were found to have the largest impact on computation cost and performances.
 
 \begin{figure}
 \centering
@@ -189,14 +192,14 @@ To learn insights from this systematic search, correlations were measured betwee
      pcen - resnetPT&&&&False 0.10&& \\ \hline 
      pcen - sparrow&&&0.312&&& \\ \hline 
     \end{tabular}}
-    \caption{Statistical analysis of the impact of hyper-parameters on model performances (test \ac{mAP}). For numeric variables (posweight, batchsize, and lr), the Pearson correlation was computed, and the slope is reported for p-values < 0.05. For boolean variables (augm, mixup, brownnoise), the Kruskal-Wallis H-test was computed, and the beneficial value along with medians difference are reported for p-values < 0.05.}
+    \caption{Statistical analysis of the impact of hyper-parameters on model performances (test \ac{mAP}). For numeric variables (posweight, batchsize, and lr), the Pearson correlation was computed, and its coefficient is reported for p-values < 0.05. For boolean variables (augm, mixup, brownnoise), the Kruskal-Wallis H-test was computed, and the beneficial value along with medians difference are reported for p-values < 0.05. Empty slots denote p-values below 0.05. }
     \label{tab:stats_orcas}
 \end{table}
 
 Table \ref{tab:stats_orcas} reports the statistically significant hyper-parameters on the end model performances (p-value < 0.05). Hyper-parameters appeared to have identical impacts on the OrcaLab test set and the Custom antenna test set, and thus the analysis was conducted on the combination of the two. This representation yields several insights :
 \begin{itemize} \setlength{\itemsep}{1pt}
     \item Smaller batch sizes can improve generalisation. This is consistent with the study by \citet{kandel2020effect}. It is especially relevant for small datasets, where large batch sizes imply a reduced variability of batch compositions which can yield overfitting models.
-    \item As for the learning rates, several biases have to be taken into account. Small learning rate trainings are slower, and thus could be early stopped by the search algorithm before they would plateau to their top performance. Moreover, if selecting the learning rates above 0.001, the Pearson correlation's slope changes sign and becomes insignificant ($slope=-0.1$, $p_{value}=0.06$).
+    \item As for the learning rates, several biases have to be taken into account. Small learning rate trainings are slower, and thus could be early stopped by the search algorithm before they would plateau to their top performance. Moreover, if selecting the learning rates above 0.001, the Pearson correlation coefficient changes sign with a higher p-value ($r=-0.1$, $p_{value}=0.06$).
     \item SpecAugment surprisingly not only does not improve generalisation but reduces it, despite the joint optimization of augmentation strength. This is presumably related to the underfitting problem reported by the SpecAugment authors \cite{park2019specaugment}.
     \item Other hyper-parameters do not have a clear significant impact on end performances
     %\item Weighting positive samples, MixUp data augmentation, and the addition of brown noise sometimes help, but do not yield higher performances in a statistically significant manner in most cases.
@@ -357,7 +360,7 @@ Figure \ref{fig:recall_fphour} summarises the number of false positives per hour
 These results demonstrate how performance metrics need to be carefully chosen, accounting for datasets' class imbalance. However, recall at 20 false positives per hour should be selected as the last metric, for its stability facing class imbalance and its high interpretability for production use (other thresholds than 20 can be chosen, depending on project needs).
 
 
-\section{Summary of detector performances}
+\section{Resulting detectors performances}
 
 Best configurations were kept for each task to report performances. When multiple runs were operated (20Hz fin whale pulses and sperm whale clicks) the median values are reported. As for the 20Hz fin whale pulses, since 3 test folds were studied, the median gathers the 5 runs of the 3 folds.
 
@@ -381,7 +384,7 @@ This thesis' work in annotation and training binary classifiers thus resulted in
 
 \section{Vocalization classifiers}
 
-\subsection{Orca calls}
+\subsection{Orca calls}\label{chap:orca_classif}
 
 \subsubsection{Trials with deep representation learning algorithms}
 
@@ -427,5 +430,8 @@ The main difference with this thesis' implementation is the chosen data augmenta
 The resulting performances of semi-supervised and supervised training are compared in Tab. \ref{tab:orca_clf_perf}. Both were trained with a resnet-50, \ac{PCEN} normalized spectrograms, and cosine learning rate scheduling. The results demonstrate a counter productive effect of the unsupervised loss, even when reducing the number of annotations by half (approximately 200 samples per class in average).
 
 
-% \subsection{Humpback whale units}
-% TODO / optionnal
+\section{Conclusion}
+
+Given annotated databases, training \ac{ANN} allowed to solve the detection tasks for 12 target signals (5 from custom annotated databases, and 7 from the Antarctic mysticetes database). For signals with a limited variability such as sperm whale clicks and fin whale 20Hz pulses, relatively small (three depth-wise convolution) networks yield satisfactory performances, improved compared to previous handcraft algorithms. As for detecting the more variable orca calls, systematic searches and heavier models also yield satisfactory performances. Few insights arise from the exploration of network frontends, architectures and hyper-parameters, and they might be task specific. On the other hand, heavier models can also serve the detection of several target signals with a shared set of weights, as shown with Antarctic mysticete calls. In this context, performance metrics are discussed and an interpretable metric for \ac{PAM} uses is proposed. Eventually despite efforts in using unlabeled data for deep metric learning and semi-supervised learning, the regular supervised approach appeared to be the most efficient for the orca call type classification task.
+
+The satisfactory performances, especially on test sets that were designed to reflect generalisation capabilities, allow to consider using these trained models in production, as we will see in the next chapters.

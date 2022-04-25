@@ -1,18 +1,21 @@
 \chapter{Optimizing annotation processes}
 
-In the following chapter, procedures and \acp{UI} suited for bioacoustic use cases are proposed, with an objective of optimizing annotation quantity while minimizing human effort. For all tasks, the annotation procedure can be summarised in 5 steps : pre-detection, feature extraction, filtering, manual validation, and active learning. Each of these are task specific, depending on the type of signal to be annotated, and its  support over the recordings.
-
 \minitoc
 
-\section{Low precision algorithms}
+\section{Context and objective}
 
-When going for machine learning to build detection systems, we must first gather annotations. For this purpose, we can start by running an algorithm that filters the data using our prior knowledge of the target signal(s). These handcrafted algorithms present limitations (as argued in section \ref{limitations}), but avoid having to go through the whole set of available recordings to find our first training examples.
+Given the large amount of available recordings presented in the previous section, the objective of this thesis is to build robust detection and classification mechanisms for target signals. For this purpose and with the chosen approach of \acp{ANN}, annotated databases first need to be gathered. In the following chapter, procedures and \acp{UI} suited for bioacoustic use cases are proposed, with an objective of optimizing annotation quantity while minimizing human effort. For all tasks, the annotation procedure can be summarised in 5 steps (each covered by a section in this chapter) : pre-detection, feature extraction, filtering, manual validation, and active learning. Each of these are task specific, depending on the type of signal to be annotated, and its support over the recordings.
 
-In detection algorithms, the user usually sets a threshold to binarise continuous prediction values. For instance with cetacean vocalization detection tasks, the threshold is typically on the energy level of the signal, or on the cross-correlation coefficient (template matching approaches). The lower we set this threshold, the lower the specificity (higher risk of false detections) but also the higher the sensitivity (lower risk of missed detections). At the contrary, by increasing this threshold, we increase the specificity but decrease the sensitivity.
+
+\section{Pre-detection and filtering}
+
+When choosing machine learning to build detection systems, we must first gather annotations. For this purpose, we can start by running an algorithm that filters the data using our prior knowledge of the target signal(s). These handcrafted algorithms present limitations (as argued in section \ref{limitations}), but avoid having to go through the whole set of available recordings to find our first training examples.
+
+In detection algorithms, the user usually sets a threshold to binarise continuous prediction values. For instance with cetacean vocalization detection tasks, the threshold is typically on the energy level of the signal, or on the cross-correlation coefficient (template matching approaches). The lower we set this threshold, the lower the specificity (higher risk of false detections) but also the higher the sensitivity (lower risk of missed detections). On the contrary, by increasing this threshold, we increase the specificity but decrease the sensitivity.
 
 This trade-off is to be kept in mind when tuning handcrafted algorithms to build a first database : we want just enough sensitivity to yield some true positives (perhaps the ones with the highest \ac{SNR}), while keeping the number of detections low enough so that we can go through them in a reasonable amount of time. 
 
-In the following paragraphs are introduced two case studies of such approaches, one with stationary signals (orca calls) and one with transitory signals (sperm whale clicks).
+In the following paragraphs are introduced two case studies of such approaches, one with sustained slow changing signals (orca calls) and one with transitory ones (sperm whale clicks).
 
 \subsection{Spectrogram energy thresholding (orca calls)}
 \textit{This work was conducted in collaboration with Jan Schlüter and Marion Poupard, on the OrcaLab data (see section \ref{chap:data_Toulon}).} \\
@@ -29,11 +32,11 @@ The chosen approach to the preliminary detection of orca calls was inspired by \
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{fig/extract_boxes.png}
-    \caption{Example of spectrogram binarisation and region grouping procedures.}
+    \caption{Illustration of spectrogram binarisation and region grouping procedures.}TODO
     \label{fig:fig_binarisation}
 \end{figure}
 
-Positive pixels are later grouped by regions, from which we will extract features such as minimum and maximum frequencies, length, and mean and maximum decibels. We eventually use our prior knowledge of orca calls to filter these extracted regions by their features, and plot them for annotation via thumbnail sorting (see section \ref{chap:png_annot}).
+Connected positive pixels are later grouped by regions, from which we will extract features such as minimum and maximum frequencies, length, and mean and maximum decibels. We finally use our prior knowledge of orca calls to filter out impossible regions (out of range features), and plot them for annotation via thumbnail sorting (see section \ref{chap:png_annot}).
 
 
 \subsection{\acs{TDOA} tracking (sperm whale clicks)}\label{chap:bombyx_annot}
@@ -63,7 +66,7 @@ for p in peaks:
 \end{python}
 \fi
 
-The three main signals that will trigger such a detector are sperm whales, boats, and other odontoceti such as long-finned pilot whales (\textit{Globicephala melas}). To discriminate between these three for annotation, while browsing the large amount of recordings, the custom \ac{UI} shown in Figure \ref{fig:cacha_annot_UI} was built.
+In our data the three main signals that trigger such a detector are those produced by sperm whales, boats, and other odontoceti such as long-finned pilot whales (\textit{Globicephala melas}). To discriminate between these three for annotation, while browsing the large amount of recordings, the custom \ac{UI} shown in Figure \ref{fig:cacha_annot_UI} was built.
 
 \begin{figure}
     \centering
@@ -82,7 +85,10 @@ The key to clustering quality is the extraction of relevant features for similar
 
 \subsection{Clustering spectral features (humpback whale calls)}
 \textit{This work was conducted on the Carimam dataset (see section \ref{chap:data_Toulon}).}\\
-To isolate vocalizations from the rest of the data (void, reef activity, boats, self noise of the sound card), spectral features of recording chunks were extracted, following the steps shown in Listing \ref{hb_cluster}.
+To isolate vocalizations from the rest of the data (void, reef activity, boats, self noise of the sound card), spectral features of recording chunks (few seconds long) were extracted. They consist in temporally downsampled mel-spectrograms with sorted frequency bins to reflect their energy distribution. 
+TODO paragraph pour motiver le frequency bin sorting + examples clicks / vocalises
+
+The full procedure for this analysis is described in Listing \ref{hb_cluster}.
 
 \begin{python}[caption={Feature extraction and clustering for humpback whale vocalizations. Steps are operated over a batch of signals on \ac{GPU} for computation speed.}, label={hb_cluster}]
 from torchaudio.functional import resample
@@ -95,7 +101,6 @@ gpu = torch.device('cuda')
 sigs = ... 
 sigs = sigs.to(gpu)
 sigs = resample(sigs, source_fs, fmax * 2)
-
 # compute the magnitude spectrogram using the STFT
 specs = torch.stft(sigs, n_fft=1024, hop_length=512)
 specs = 20 * torch.log10(specs.norm(p=2, dim=-1))
@@ -108,10 +113,9 @@ specs = torch.nn.MaxPool1d((uds,))(specs)
 # rearange the tensor into a list of time chunks
 specs = specs.permute(1, 0, 2)
 specs = specs.reshape(specs.shape[0], -1, chunksize)
-specs = specs.permute(0, 1, 2)
-
+specs = specs.permute(1, 0, 2)
 # sort frequency bins and select quantiles
-features = torch.sort(specs, dim=1, descending=True)
+features = torch.sort(specs, dim=2, descending=True)[0]
 features = features[:,:,quantiles].numpy()
 # project and cluster each time chunk
 features = features.reshape((specs.shape[0], -1))
@@ -121,14 +125,14 @@ clusters = DBSCAN().fit_predict(embeddings)
 
 The variables \pythoninline{uds} and \pythoninline{fmax} need to be tuned to the type of signals we desire to isolate. As for the humpback whales, 14 and 8,000 were empirically chosen respectively. Furthermore, a chunk size and a set of quantiles also need to be chosen. Once annotations were gathered, experiments were carried out to measure which configuration would be the most efficient.
 
-I tried varying values for the size of chunks and the choice of quantiles, using the \ac{NMI} between clusters and annotations as a metric of configuration quality. The choice of configuration appeared to have a relatively small impact on the resulting \ac{NMI}, with values ranging between 0.15 and 0.18 (the random baseline being under 0.01). The highest scoring configuration was to cut chunks of size 10 with only the first column of the chunk being kept after sorting.
+Trials with varying values for the size of chunks and the choice of quantiles were conducted, using the \ac{NMI} between clusters and annotations as a metric of configuration quality. The choice of configuration appeared to have a relatively small impact on the resulting \ac{NMI}, with values ranging between 0.15 and 0.18 (the random baseline being under 0.01). The highest scoring configuration was to cut chunks of size 10 with only the first column of the chunk being kept after sorting.
 
-Once features have been extracted for a large amount of samples, we can reduce their dimensionality (using the UMAP algorithm \cite{mcinnes2018umap}), and cluster them (using the DBSCAN algorithm \cite{ester1996density}). A custom made interface then enables a seamless browse of this clustered projection (see Fig. \ref{fig:cluster_interface_HB}). 
+Once features have been extracted for a large amount of samples, we reduce their dimensionality (using the UMAP algorithm \cite{mcinnes2018umap}), and cluster them (using the DBSCAN algorithm \cite{ester1996density}). A custom made interface then enables a seamless browsing of this clustered projection (see Fig. \ref{fig:cluster_interface_HB}). 
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{fig/cluster_vocs_interface.png}
-    \caption{Interface for browsing clusters. The left panel displays clustered UMAP projections of audio chunks spectral features. Red dots signal the selected audio chunk when clicked on. The right panel displays the spectrogram of the selected audio as well as its meta data.}
+    \caption{Interface for browsing clusters. The left panel displays clustered UMAP projections of audio chunks spectral features. Red dots signal the selected audio chunk that have been clicked on. The right panel displays the spectrogram of the last selected audio as well as its meta data.}
     \label{fig:cluster_interface_HB}
 \end{figure}
 
@@ -175,11 +179,11 @@ The user can eventually filter data on the \ac{KDE} peaks height and width depen
 
 \fi
 
-\subsection{Clustering \ac{AE} embeddings (orca calls)}\label{chap:autoencoder}
+\subsection{Clustering AE embeddings (orca calls)} \label{chap:autoencoder}
 \textit{This work was conducted on the OrcaLab data (see section \ref{chap:data_Toulon}).}\\
-For this section, we are interested in the classification of pre-detected orca calls (dataset of 114k orca calls detected by a \ac{CNN} presented in section \ref{chap:orca_detec}). Call types, as defined by \citet{ford1987catalogue} for \acp{NRKW}, are determined by their temporal pitch patterns. First experiments thus conducted a pitch based feature extraction to cluster calls \cite{poupard2019large}. However, the estimation of the pitch appeared to be quite unreliable in low and medium \ac{SNR} conditions (see section \ref{chap:sota_pitch}). This led to a switch toward a larger scale extraction of shape (as opposed to local pitch estimates).
+For this section, we are interested in the classification of pre-detected orca calls (dataset of 114k orca calls detected by a \ac{CNN} presented in section \ref{chap:orca_detec}). Call types, as defined by \citet{ford1987catalogue} for \acp{NRKW}, are determined by their temporal pitch patterns. First experiments were thus conducted using a pitch based feature extraction to cluster calls \cite{poupard2019large}. However, the estimation of the pitch appeared to be quite unreliable in low and medium \ac{SNR} conditions (see section \ref{chap:sota_pitch}). This led to a switch towards a larger scale extraction of shape (as opposed to local pitch estimates).
 
-Auto-encoders (introduced in section \ref{chap:AE}) are trained to compress data in a lower dimensional embedding space while being able to reconstruct it. Moreover, the reconstruction relying on learning structure in the data, the noise in the input (random and unstructured) is omitted in the output. This motivates the use of \acp{AE} for the feature extraction of orca calls, expecting the bottleneck to contain the shape of the call in a low dimensional space.
+Auto-encoders (introduced in section \ref{chap:AE}) are trained to compress data in a lower dimensional embedding space while being able to reconstruct it. Moreover, since the reconstruction relies on learning structure in the data, the noise in the input (random and unstructured) is omitted in the output. This motivates the use of \acp{AE} for the feature extraction of orca calls, expecting the bottleneck to contain the shape of the call in a low dimensional space.
 
 \begin{figure}
     \centering
@@ -196,6 +200,8 @@ The training framework of the \ac{AE} was designed as follows (see Fig. \ref{fig
     \item Compute the VGG embedding of the input and the reconstructed images as the activations after the 6th convolutionnal layer
     \item Use the \ac{MSE} between the two VGG embeddings as the loss
 \end{itemize}
+
+The VGG mentioned, used for the perceptual loss \cite{johnson2016perceptual}, is a VGG16 pretrained on the ImageNet dataset \cite{deng2009imagenet}.
 
 \begin{figure}
     \centering
@@ -217,19 +223,23 @@ The bottleneck embeddings were later used as features for DBSCAN clustering (aft
 
 %TODO show some clusters
 
+\subsection{Humpback whale units}
+\textit{This work was conducted in collaboration with Stéphane Chavin on the Carimam data (see section \ref{chap:data_Toulon}}
+
+
 
 \section{Active learning}
 
-Active learning is the process of iteratively training and annotating to increase a database's size. It is relevant when one has a training database that is not large enough to ensure satisfactory performances. By correcting the model's predictions at each iteration, we emphasis on difficult examples and guide it towards robustness.
+Active learning is the process of iteratively training and annotating to improve a database (qualitatively and/or quantitatively). It is relevant when one has a training database that is not large enough to ensure satisfactory performances. By correcting the model's predictions at each iteration, we emphasis on difficult examples and guide it towards robustness.
 
 This active learning process was conducted via thumbnail sorting to gather annotations for fin whale pulses, dolphin whistles, humpback whale vocalizations, and orca calls. I thank Marion Poupard for often lending a helpful hand on this fastidious task.
 
 \subsection{Transfer learning (fin whale pulses, dolphin whistles)}
 
-Pre-training a model on a database before fine tuning on a different one is called transfer learning. Similar approaches were used to kick-start the active learning process on two detection tasks, as described in the following paragraphs.
+Pre-training a model on a database before fine tuning on a different one is called transfer learning. We have used similar approaches to kick-start the active learning process on two detection tasks, as described in the following paragraphs.
 
 \subsubsection{Fin whale pulses}\label{chap:fin_activelearning}
-To gather a database of fin whale 20Hz pulses from the recordings of Bombyx and Boussole (see section \ref{chap:data_Toulon}), several handcrafted algorithms were first experimented (looking for strong energy peaks in realistic time and frequency ranges). Without any exemplary signal to tune them, and with the wide variety of noises present on both banks of recordings, this approach failed to yield any fin whale signals.
+To gather a database of fin whale 20Hz pulses from the recordings of Bombyx and Boussole (see section \ref{chap:data_Toulon}), several handcrafted algorithms were first tested (looking for strong energy peaks in realistic time and frequency ranges). Without any exemplary signal to tune them, and with the wide variety of noises present on both banks of recordings, this approach failed to yield any fin whale signals.
 
 We were lucky to eventually get some help from M. Giani Pavan, who shared some of his recordings of Mediterranean fin whale songs containing 100 pulses \cite{pavan2004passive}. Despite the limited amount of samples, training a small neural network (see section \ref{chap:low_archi}) on this data allowed to find similar signals on the Bombyx and Boussole datasets (see section \ref{chap:data_Toulon}). This demonstrates the capacity of small neural networks to generalise to different recorders even with very few training samples.
 
@@ -238,14 +248,14 @@ Active learning with thumbnail sorting further helped increase the database to a
 
 \subsubsection{Dolphin whistles}
 \textit{This work has been conducted in collaboration with Marion Poupard.}\\
-For this task, alike for the fin whale pulses, we used other sources of data available at the lab as a starting point to the active learning process. This time though, the variability of the signals to be detected impeached the use of a low complexity architecture.
+For this task, as for the fin whale pulses, we used other sources of data available at the lab as a starting point to the active learning process. This time though, the variability of the signals to be detected prevented the use of a low complexity architecture.
 
 Thus, to enforce the generalisation of the model to other recording systems, the available data was augmented with negative samples from the target recording system (Carimam). By mixing annotated foreign inputs with negative samples from Carimam, we teach the model to be robust to common Carimam perturbations (self noise from the sound card, reef noise), while training on positive samples of the target signal. This `mixing' takes form as a simple summation of the waveforms after their standardisation.
 
 Active learning with thumbnail sorting further helped increase the database to a satisfactory size (see Tab. \ref{tab:recap_annot}).
 
 
-\subsection{Thumbnail sorting} \label{chap:png_annot}
+\subsection{Thumbnail selection} \label{chap:png_annot}
 
 Often during annotation procedures, we want to manually sort out true and false positives from a set of detections. It occurred numerous times during this thesis, after the aforementioned preliminary detection algorithms as well as after an active learning process (next section). Sorting spectrogram images from their thumbnails in file explorers appeared to be the most efficient way to do it (see Fig. \ref{fig:png_annot}).
 
@@ -258,50 +268,13 @@ Often during annotation procedures, we want to manually sort out true and false 
 
 Using the organisation of thumbnails in folders for annotation is not only efficient in time, but also very generic (it requires no specific software installation). This comes practical especially when needing annotation efforts from different people with different operating systems for example.
 
+
 \subsection{Avoiding the specialisation caveat}
 
 The main danger that comes along with this approach is the progressive specialisation of the model to detect only one type of signal, when variations should also be detected. This especially comes from the fact that we often only correct the positive predictions of the model, sorting out false positives. Indeed, negative predictions usually come in much larger numbers, making it fastidious to find false negatives. To mitigate this effect, one can browse recordings around detections and annotate full sequences, or look for false negatives in low confidence negative predictions.
 
-\section{Gathered annotations and train/test splits} \label{chap:splits}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{fig/annot_flowchart.pdf}
-    \caption{Flow chart of procedures employed in the annotation processes.}
-    \label{fig:flowchart}
-\end{figure}
-
-Fig. \ref{fig:flowchart} gives a summarised view of the steps generally employed for annotation. The specific steps employed for each of the target signals are in turn given in Tab. \ref{tab:steps}.
-
-\begin{table}[ht]
-    \centering\resizebox{\linewidth}{!}{    \begin{tabular}{|c|c|c|c|} \hline
-         \textbf{Target signal} & \textbf{Pre-detection} & \textbf{Feature extraction} & \textbf{Filtering} \\ \hline
-         sperm whale clicks & TK filter & \ac{TDOA} & custom \ac{UI} \\ \hline
-         humpback whale calls & NA & spectral features & custom \ac{UI} and clustering \\ \hline
-         20Hz fin whale pulses & \multicolumn{3}{c|}{transfer learning} \\ \hline
-         dolphin whistles & \multicolumn{3}{c|}{transfer learning} \\ \hline
-         orca call detection & spectrogram thresholding & region statistics & hand-crafted rules \\ \hline
-         orca call classification & \ac{CNN} & auto-encoder & clustering \\ \hline
-    \end{tabular}}
-    \caption{Summary of steps employed in the annotation process of each target signal.}
-    \label{tab:steps}
-\end{table}
-
-Eventually, these methods yielded enough annotations to train \ac{ANN} models on each detection / classification tasks, as Tab. \ref{tab:recap_annot} summarises.
-
-\begin{table}[ht]
-    \centering
-    \begin{tabular}{l|c|c|c}
-    \textbf{Target signal} & \textbf{Positives} & \textbf{Negatives} & \textbf{Total} \\ \hline
-    Sperm whale clicks &  42\% & 58\% & 5,554 \\
-    Fin whale 20Hz pulses & 14\% & 86\% & 5,790 \\
-    Orca calls & 78\% & 22\% & 6,004 \\
-    Humpback whale calls & 42\% & 58\% & 1,377 \\
-    Dolphin whistles & 12\% & 88\% & 1,595 \\
-    \end{tabular}
-    \caption{Summary of the annotations gathered on the data at hand through custom \acp{UI}, active learning and thumbnail sorting.}
-\label{tab:recap_annot}
-\end{table}
+\section{Resulting annotations and train/test splits} \label{chap:splits}
 
 The performance measurement methods employed need to reflect our end goal, namely training robust detections models. Robustness, can be defined as the capacity to ignore perturbations, some kind of resilience. In our case, perturbations are sound events and background noises, especially those not seen in training. To measure robustness, our test data must thus contain new acoustic content, somewhat different from training.
 
@@ -329,7 +302,7 @@ The gathered annotated database of fin whale 20Hz pulses offers three different 
 
 The annotated database of sperm whale clicks coming from only one source of data (Bombyx), The year 2017 was chosen for testing and the remaining for training (Table \ref{tab:recap_annot_sperm}). Each annotation comes from separate files (10min of recording).
 
-Experiments showed that the model would tend to lack sensitivity, with the exception of pilot whale samples who would trigger a low specificity. To tackle this issue, and accounting for the imbalance in the data, sperm whale and pilot whale samples were over-sampled during training, by a factor 3 and 10 respectively.
+Experiments showed that the model would tend to lack sensitivity, with the exception of pilot whale samples which would trigger a low specificity. To tackle this issue, and accounting for the imbalance in the data, sperm whale and pilot whale samples were over-sampled during training, by a factor 3 and 10 respectively.
 
 \begin{table}[ht]
     \centering
@@ -340,7 +313,7 @@ Experiments showed that the model would tend to lack sensitivity, with the excep
     2017 & 32\% & 67\% & 1\% & 1,363 \\
     2018 & 28\% & 68\% & 4\% & 2,552 \\
     \end{tabular}
-    \caption{Distribution of annotations of sperm whale clicks. The year 2017 was chosen as test set.}
+    \caption{Distribution of annotations for the sperm whale click detection task. The year 2017 was chosen as test set.}
 \label{tab:recap_annot_sperm}
 \end{table}
 
@@ -456,3 +429,45 @@ Kerguelen 2 & 2015 & AAD-MAR &  8\% &  8\% &  9\% &  8\% &  4\% &  9\% &  5\% & 
     \end{tabular}
     \caption{Distribution of annotations published by \citet{miller2021open}. The Kerguelen 2005 was chosen as test set.}\label{tab:recap_soos}
 \end{sidewaystable}
+
+
+\section{Conclusion}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{fig/annot_flowchart.pdf}
+    \caption{Flow chart of procedures employed in the annotation processes.}
+    \label{fig:flowchart}
+\end{figure}
+
+Fig. \ref{fig:flowchart} gives a summarised view of the steps generally employed for annotation. The specific steps employed for each of the target signals are in turn given in Tab. \ref{tab:steps}.
+
+\begin{table}[ht]
+    \centering\resizebox{\linewidth}{!}{    \begin{tabular}{|c|c|c|c|} \hline
+         \textbf{Target signal} & \textbf{Pre-detection} & \textbf{Feature extraction} & \textbf{Filtering} \\ \hline
+         sperm whale clicks & TK filter & \ac{TDOA} & custom \ac{UI} \\ \hline
+         humpback whale calls & NA & spectral features & custom \ac{UI} and clustering \\ \hline
+         20Hz fin whale pulses & \multicolumn{3}{c|}{transfer learning} \\ \hline
+         dolphin whistles & \multicolumn{3}{c|}{transfer learning} \\ \hline
+         orca call detection & spectrogram thresholding & region statistics & hand-crafted rules \\ \hline
+         orca call classification & \ac{CNN} & auto-encoder & clustering \\ \hline
+    \end{tabular}}
+    \caption{Summary of steps employed in the annotation process of each target signal.}
+    \label{tab:steps}
+\end{table}
+
+The methods proposed in this section yielded enough annotations to train \ac{ANN} models on each detection / classification tasks, as Tab. \ref{tab:recap_annot} summarises. Each makes use of characteristics of their target signals for relevant pre-detection, feature extraction, filtering and visualisation. However most approaches are generic enough to be employed on other databases for other target signals.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{l|c|c|c}
+    \textbf{Target signal} & \textbf{Positives} & \textbf{Negatives} & \textbf{Total} \\ \hline
+    Sperm whale clicks &  42\% & 58\% & 5,554 \\
+    Fin whale 20Hz pulses & 14\% & 86\% & 5,790 \\
+    Orca calls & 78\% & 22\% & 6,004 \\
+    Humpback whale calls & 42\% & 58\% & 1,377 \\
+    Dolphin whistles & 12\% & 88\% & 1,595 \\
+    \end{tabular}
+    \caption{Summary of the annotations gathered for detection tasks, on the data at hand, through custom \acp{UI}, active learning and thumbnail sorting.}
+\label{tab:recap_annot}
+\end{table}

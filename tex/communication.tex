@@ -1,0 +1,258 @@
+\chapter{Application to communication modelling}
+
+\minitoc
+
+\section{Context and objective}
+
+The previous chapter demonstrated how robust detection systems can be used for species conservation purposes. A second axis of use can also be the study of animal communication systems. In the past, \ac{PAM} has put forward several examples of song and social communication systems in cetaceans. This allows comparative studies to reflect on the natural evolution of music and language \cite{fitch2006biology}. For that same purpose, robust detection and classification mechanisms are able to analyse large datasets and yield new insights. This is demonstrated in the following chapter with the long term evolution of the Mediterranean fin whale song and communication patterns of the \ac{NRKW}.
+
+
+\section{Fin whale song structure and temporal trends}
+
+\subsection{Context and objective}
+
+In parallel to the sperm whale study with the Bombyx dataset, a similar one was conducted on fin whales of the Ligurian sea, again making use of the detection system designed for the GIAS buoy. The trained \ac{CNN} described in section \ref{chap:lightweight} was run over three available datasets : Boussole, Bombyx, and KM3Net (see section \ref{chap:data_Toulon}). This time, instead of presence monitoring, the study focused on fin whale song patterns, yet poorly documented in the Mediterranean sea. It is also subject to a journal publication \cite{finsong}, which results are reported here.
+
+As other cetacean species, fin whales show geographical acoustic differentiation \cite{helble2020fin, morano2012seasonal, castellote2012fin}, hypothesised to be cultural in some cases \cite{weirathmueller2017spatial}. The divergence of mysticetes songs in different populations is presumably a result of drifts emerging from the conformity and creativity constraints of song production \cite{payne2000progressively}. Moreover, the character displacement theory with songs serving as a discrimination marker for allopatric populations has been hypothised for fin whales of the Northern Atlantic \cite{delarue2009geographic}. As for the Mediterranean population, it has been shown to be resident and genetically dissociated from the North Atlantic population \cite{berube1998population}, and their songs (especially the \ac{IPI}) were shown to allow for their identification \cite{castellote2012fin, pereira2020fin}. The Mediterranean fin whales do not follow strict migration patterns or reproduction periods unlike their oceanic conspecifics \cite{Notarbartolo}, so their song can be heard all year round.
+
+The base unit of the songs, the 20\,Hz pulse, is shared by all fin whales. These pulses occur in sequences that typically last several hours \cite{Watkins_Tyack_Moore_Bird_1987}, with highly regular pulse intervals between 10 and 40 seconds. The main differentiation of songs lies in the \ac{IPI} and pulse spectra \cite{Thompson, hatch2004acoustic}. Alike fin whales of the Pacific \cite{weirathmueller2017spatial, helble2020fin}, Mediterranean 20\,Hz pulses fall into 2 distinct types, one with a slightly higher frequency content than the other \cite{ClarkBorsani2002, sciacca2015annual} (see Fig. \ref{fig:spectro}). These two categories are sometimes labelled 20\,Hz pulse and back-beat, they will be referred to as type A and B for short, with A being the higher pitched pulse. Fin whales of the Pacific and Atlantic often exhibit sequences that alternate between A and B pulses. These are called doublet patterns, as opposed to singlets where only one of the pulse types occur. In doublets there is a strong relationship between \ac{IPI} and pulse type: two different \acp{IPI} are found, one from A to B, and another one from B to A \cite{Oleson, constaratas2021fin, Furumaki_Tsujii_Mitani_2021, morano2012seasonal, helble2020fin}. On the other hand, singlets also follow their own stereotypical \ac{IPI}.
+
+Mediterranean fin whale songs present more diversity in the consecution of pulse types than simple singlets and doublets (Fig. \ref{fig:spectro}). Nonetheless, two studies present stereotypical \acp{IPI}. Based on recordings from 1999, \citet{ClarkBorsani2002} observe a link between pulse type and \ac{IPI} in the Mediterranean sea for two bouts (about 100 pulses). About ten years later, \citet{castellote2012fin} observe a common \ac{IPI} around 14.9\,sec for that same population, but do not mention its relationship with pulse types.
+
+Besides geographical variations, fin whale song structures also exhibit temporal variations, such as seasonal \ac{IPI} increases \cite{Oleson, morano2012seasonal}, and inter-annual variations of \ac{IPI} and peak frequency \cite{weirathmueller2017spatial}. \ac{PAM} stations combined with automated analysis (template matching approach) have played a key role in revealing these long-term trends.
+
+Until now, no large scale analysis has been conducted on Mediterranean fin whale songs that could reveal the long-term evolution of their vocal behaviour, which motivates the following study.
+
+
+\subsection{Method}
+
+\subsubsection{Model inference}
+
+While the model was trained to detect pulse presence in 5-second segments, the convolutional stack is designed to maintain the temporal resolution of the predictions throughout the network. Discarding the max pooling layer at the end of the CNN, pulse times were retained as the highest predictions above a given threshold within sliding 4 second windows. These timings are approximate up to the size of the receptive field of the network (0.8 seconds).
+
+Thresholds were set at the balance point of the \ac{ROC} curves (equal sensitivity and specificity). This setting lead to sensitivities and specificities of 0.96 and 0.97 for the Bombyx and Boussole data respectively. For the KM3Net data, since the \ac{ROC} curve is unknown (no annotation are available), a threshold of 0.12 was chosen so that there is approximately the same proportion of detections as in Bombyx and Boussole ($\approx$ 0.5\%) .
+
+Tab. \ref{tab:rorqual_recap} summarises the resulting detections, along with a calendar Fig. \ref{fig:calendar}. Following \citet{Watkins_Tyack_Moore_Bird_1987}, pulses at a distance of less than 45 seconds were considered as being part of the same sequence, and sequences less than 2 hours apart were considered as being part of the same bout.
+
+\begin{table}[ht]
+\centering\resizebox{\linewidth}{!}{
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+ \textbf{Data source} & \textbf{Boussole} \cite{parsuivi} & \textbf{Bombyx} \cite{vamos2017} & \textbf{KM3Net} \cite{aiello2021km3net} & \textbf{Total} \\ \hline
+\textbf{Location} & South of Sanremo & Port-Cros Island & Cap Sicié & \\ \hline
+\textbf{Recording year} & 2008-2009 & 2015-2018 & 2020-2021 & \\ \hline
+\textbf{Recorded time (hours)} & 1,860 & 3,291 & 1,124 & 6,275 \\ \hline
+\textbf{Detection threshold} &  0.15 & 0.68 & 0.12 & \\ \hline
+\textbf{Pre-filtering detections} & 52,863 & 83,583 & 9,684 & 146,130 \\ \hline
+\textbf{Detected pulses} & 1,647 & 2,827 & 657 & 5,131 \\ \hline
+\textbf{Detected A pulses} & 1,411 & 2,554 & 322 & 4,287 \\ \hline
+\textbf{Detected B pulses} & 236 & 273 & 335 & 844 \\ \hline
+\textbf{Detected sequences} & 246 & 615 & 58 & 919 \\ \hline
+\textbf{Detected bouts} & 51 & 214 & 11 & 276 \\ \hline
+\end{tabular}}
+\caption{\label{tab:rorqual_recap}Summary of recording characteristics and automatic detections for each source of data.}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.75\linewidth]{fig/rorqual_calendar.pdf}
+    \caption{Number of detected sequences for each day with recordings, normalized by the amount of recorded hours. Grey cells denote days with recordings but no detection.}
+    \label{fig:calendar}
+\end{figure}
+
+
+\subsubsection{Spectro-temporal pulse analysis}
+
+Following the detection process, a signal processing analysis was conducted to precisely describe each pulse (exact time position, center frequency, bandwidth and \ac{SNR}). This yields the necessary data to search for song patterns, as shown in Figure \ref{fig:spectro}.
+
+\begin{figure}[ht]
+ \centering
+ \includegraphics[width=1\linewidth]{fig/spectrogram.pdf}
+ \caption{Spectrogram of a fin whale pulse sequence recorded by the Bombyx buoy in October 2018 ($f_s=250$, $NFFT=1024$, $hop=8$, $padding=75\%$). Dots show the center frequencies of the detected pulses, with white dashed lines showing \acp{IPI}. The grey dashed line denotes the discrimination threshold between type A and B pulses, at 19.88\,Hz.}\label{fig:spectro}
+\end{figure}
+
+For this analysis, an 8\,sec window surrounding the prediction peak is selected (\(T=[0,8]\)), band-pass filtered (Butterworth of order 3 between 10\,Hz and 30\,Hz), and resampled at 250\,Hz. The \ac{STFT} is then applied to the resulting signal (Hann window of 1024 including 75\% of zero padding and 97\% overlap) resulting in spectral and temporal resolutions of 0.24\,Hz and 0.03\,sec respectively.
+
+From this spectrogram, the precise time position of the pulse \(\hat{t}\) is first estimated by selecting the column of the maximum value in the 18-22\,Hz frequency band (Eq. \ref{eq:time}). This value will be kept for \ac{IPI} measurements. 
+
+\begin{equation}
+\hat{t} = \argmax_{t \in T}\left( \max_{f \in [18,22]}\left( \mathbf{S}(f, t)\right)\right)
+\label{eq:time}
+\end{equation}
+
+To measure the spectral envelope of the pulse, a 1.2\,sec window around $\hat{t}$ is max-pooled time wise. Background components are withdrawn (to focus on the pulse spectra only) by subtracting an estimate of the background spectrum: the median of each frequency bin within the window $T$ (Eq. \ref{eq:spec}). Doing so, effects such as the impact of \ac{SNR} on peak frequency and bandwidth (observed by \citet{helble2020fin}) are mitigated.
+
+\begin{equation}
+E(f) = \max_{t \in [\hat{t}-0.6, \hat{t}+0.6]} \left(\mathbf{S}(f, t)\ \right) - \   \underset{t \in T}{\mathrm{median}}\ \left( \mathbf{S}(f, t)\right)
+\label{eq:spec}
+\end{equation}
+
+The resulting pulse envelope is used to compute the left and right boundaries of the pulse spectrum, with $\frac{\max E(f)}{4}$ as a threshold (equivalent to -6\,dB). Left and right intersection frequencies are linearly interpolated to increase the precision of the estimate. This process yields the 6\,dB bandwidth (width between the boundaries), and the center frequency (mid-point between the boundaries) of the analysed pulse.
+
+\begin{figure}[ht]
+     \centering
+     \includegraphics[width=.75\linewidth]{fig/centroid.pdf}
+     \caption{Histogram of the center frequencies of the detected pulses. Black lines denote the fitted \ac{GMM}.}\label{fig:centroid}
+\end{figure}
+ 
+
+For later filtering by pulse quality, the \ac{SNR} is also computed following Eq. \ref{eq:bckgnd} (pulse energy as the maximum of its envelope and background energy as the median of the spectrogram surrounding the pulse).
+
+\begin{equation}
+\begin{split}
+E_{Background} & = \underset{T \setminus [\hat{t}-1,\hat{t}+3]}{\underset{\ f \in [15, 25]}{\mathrm{median}}}\ \mathbf{S}(f, t) \\
+E_{Pulse} & = \max_{f}E(f) \\
+SNR & = 10\log_{10}\left(\frac{E_{Pulse}}{E_{Background}}\right)
+\label{eq:bckgnd}
+\end{split}
+\end{equation}
+
+The pulse spectral characteristics of mysticetes are often described using the frequency of maximum energy (peak frequency) or the spectrum weighted mean (centroid frequency) \cite{weirathmueller2017spatial, malige2020inter}. Here, the center frequency was chosen, as it appeared to be better suited for the discrimination between the two pulse types. In fact, when modeling the distribution of peak frequencies using a Gaussian mixture model, the two components (emerging from the two types of pulses) overlap more than when using center frequencies (the Kullback-Leibler divergence between the Gaussian components in center frequency is significantly higher than that of peak frequencies, with 113 nats and 30 nats respectively).
+
+
+\subsubsection{Pre-analysis filtering}
+
+To filter out false positives, only pulses with a bandwidth below 10Hz and a center frequency within \([18.5,22.5]\) were retained. Besides, only sequences with a mean \ac{SNR} of at least 8\,dB, and with at least 3 pulses were kept for the following analysis. Sequences containing \acp{IPI} below 10sec or above 45sec were discarded as well. The resulting number of registered pulses and sequences are shown in a calendar Fig. \ref{fig:calendar} and in Tab. \ref{tab:rorqual_recap}.
+
+To classify between A and B types, a two component \ac{GMM} was fitted on the center frequency data (Fig. \ref{fig:centroid}) using the \ac{EM} algorithm. This lead to a threshold of 19.88 Hz to discriminate between the two types. Even though the center frequency is found to evolve over time, the change is sufficiently small to not interfere with the categorisation (see Fig. \ref{fig:centScat}).
+
+
+\subsection{Results}\label{chap:rorq_results}
+
+\subsubsection{Stereotypical \ac{IPI}}
+
+The time between a pair of consecutive pulses in a sequence (the \ac{IPI}) appears to be strongly determined by their type (see Fig. \ref{fig:histIPI}). The typical interval for an `AB' bi-gram is 2sec longer than that of `AA' or `BA'. On the other hand, the 'BB' pairs (less frequent but still commonly found) are 11sec longer on average, but present larger variability than the others.
+
+\begin{figure}[ht]
+     \centering
+     \includegraphics[width=.75\linewidth]{fig/IPI_hist.pdf}
+     \caption{Histogram of the \ac{IPI} for each type sequence (bi-gram).}\label{fig:histIPI}
+\end{figure}
+
+Figure \ref{fig:scattIPI} shows how these intervals have changed over the course of two decades, following an approach similar to \citet{weirathmueller2017spatial}. For each month and pulse type pair, points denote the most frequent \ac{IPI} (quantized with a resolution of 0.1sec). For months containing more than 100 bi-gram occurrences, the most frequent \ac{IPI} was retained only if representing at least 5\% of it. Points measured in previous studies of the same population were also added : in 1999 by \citet{ClarkBorsani2002} (the only study to our knowledge that references \ac{IPI} depending on type sequence in the Mediterranean sea), and in 2008 by \citet{castellote2012fin} (assuming it describes the most common pair `AA', as it was not specified). The `BB' sequence did not provide enough occurrences for the statistical tests to be relevant. 
+
+\begin{figure}[ht]
+     \centering
+     \includegraphics[width=.75\linewidth]{fig/IPI_scatter.pdf}
+     \caption{Scatter plot of the most frequent \ac{IPI} per month for each type sequence. Fitted linear models are shown as grey dashed lines. Points extracted from \citet{ClarkBorsani2002} and \citet{castellote2012fin} appear as crosses.}\label{fig:scattIPI}
+\end{figure}
+
+For sequences `AA', `AB', and `BA', fitted linear models are plotted (their coefficients of determination are 0.83, 0.89, and 0.91 respectively). The p-values for the null-hypothesis that the slopes are not significantly different from 0 are all inferior to 0.01. The estimated slopes for the `AA', `AB', and `BA' bi-grams are 84, 83, and 88 respectively (in milliseconds/year). 
+ 
+ 
+\subsubsection{Center frequency}\label{seq:freq}
+
+In a similar fashion, temporal trends of pulses' spectral characteristics were analysed. This revealed an intra-annual decrease in pulse center frequency between the months of August and May (Fig. \ref{fig:centScat}). On the other hand, no inter-annual shift was observed (Pearson analysis yields a correlation coefficient of -0.06 between pulse absolute dates and their center frequency).
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.75\linewidth]{fig/centroid_hist2d.pdf}
+     \caption{Bi-histogram of the center frequencies against months of the year. The horizontal line shows the separation between type A and type B pulses. The fitted linear model is shown as a black dashed line.}\label{fig:centScat}
+\end{figure}
+
+For this statistical analysis, center frequencies were quantized to a resolution of 0.1Hz and grouped by months. Center frequencies with the most occurrences were kept, if among groups (months) of at least 50 pulses. Fitting a linear model on the retained points yields a coefficient of determination of 0.73, with an estimated slope of -0.08 Hz/month) (for the null-hypothesis that the slope is not significantly different from 0, the p-value is below 0.01).
+
+For comparison with other previous studies, the same analysis was ran using peak and centroid frequencies. The slope of the observed intra-annual trends are similar for all metrics (-0.09Hz/month, -0.08Hz/month, and -0.11Hz/month for peak, center, and centroid frequencies respectively) and p-values for the null-hypothesis that the slope is not different from 0 are all below 0.01.
+
+
+\subsubsection{Correlation between center frequency and \ac{IPI}}
+
+With the observation of synchronous inter-annual shifts of both \ac{IPI} and center frequencies in Pacific fin whales, the hypothesis of a link between the two arose. \citet{weirathmueller2017spatial} states that the augmentation of the \ac{IPI} through the years could be explained by the simultaneous decrease in pulse peak frequencies (lower frequency pulses presumably requiring a bigger effort to produce, a bigger gap between them could be needed). The observed stereotypical \acp{IPI} of Mediterranean fin whales also support this idea (sequences towards A pulses show lower \acp{IPI}). This hypothesis was thus further tested by analysing the correlation between \ac{IPI} and center frequency (for pulses with \acp{IPI} between 14 and 20 seconds).
+
+To dissociate this analysis from the link between pulse types and \ac{IPI}, 3 component Gaussian mixture model was fitted on the bi-dimensional representation of pulses (center frequency versus time until the next pulse). This enabled to group the different pulse bi-grams (`AA', `AB', and `BA'), and conduct a correlation analysis on each group independently. Figure \ref{fig:centroidIPI} shows the scatter plot of the pulses with their assignation to each mixture component. For each of the latter, the Pearson correlation coefficient was computed, yielding -0.37, -0.22, and -0.35 for `BA', `AB', and `AA' respectively (all p-values are below 0.01).
+
+\begin{figure}[ht]
+    \centering
+     \includegraphics[width=.75\linewidth]{fig/centroid_vs_IPI.pdf}
+     \caption{Scatter plot of pulses center frequency against the time until the next pulse (\ac{IPI}). Colors denote the \ac{GMM} assignations, whose means are marked with crosses.}\label{fig:centroidIPI}
+\end{figure}
+
+
+\subsection{Discussion}
+
+\subsubsection{Mediterranean sea stereotypical \acp{IPI}}
+
+The present study led to the confirmation of the local stereotypical \acp{IPI} being determined by pulse bi-grams. These results were previously shown on relatively a small corpora of around 100 pulses \cite{ClarkBorsani2002}, they are hereby confirmed with a corpus larger by an order of magnitude, and over a span of 10 years.
+
+Moreover, two temporal trends were observed. They are put in relation to other fin whale song studies in Tab. \ref{tab:summTrends} and discussed in the following sections.
+
+\begin{table}[ht]
+\centering\resizebox{\linewidth}{!}{
+    \begin{tabular}{lc|cc|cc}
+    & & \multicolumn{2}{c|}{\textbf{Inter-annual}} & \multicolumn{2}{c}{\textbf{Intra-annual}}  \\
+     \textbf{Study} & \textbf{Location} & \textbf{Frequency} & \textbf{IPI} & \textbf{Frequency} & \textbf{IPI} \\ \hline
+    \citet{weirathmueller2017spatial} & N.E. Pacific & -0.17\,Hz/yr& 0.5-0.9\,sec/yr & - & - \\
+    \citet{Oleson} & N. Pacific & - & - & - & +7.5\,sec \\
+    \citet{leroy2018long} & Indian & -0.21\,Hz/yr & - & $\sim$ -0.1\,Hz/mth & - \\
+    \citet{helble2020fin} & N. Pacific & - & 0.6-1.3\,sec/yr & - & - \\ 
+    \citet{morano2012seasonal} & N.W. Atlantic & - & * 0.5\,sec/yr & - & +5.5\,sec \\
+    \citet{Watkins_Tyack_Moore_Bird_1987} & N.W. Atlantic & - & - & - & +6\,sec \\
+    \citet{vsirovic2017fin} & Gulf of California & - & $\sim$ 1\,sec/yr & - & $\sim$ +8\,sec  \\
+    \citet{furumaki2021fin} & Chukchi sea & - & $\sim$ 0.5\,sec/yr & - & $\sim$ +1\,sec \\
+    \citet{wood2022characterization} & W. Antarctic & -0.2\,Hz/yr & 0.1\,sec/yr & - & - \\ \hline
+    \textbf{self} & W. Mediterranean & - & 0.1\,sec/yr & -0.1\,Hz/mth & - \\
+    \end{tabular}}
+    \caption{Summary of song pattern trend studies. For intra-annual \ac{IPI} shifts, since trends are not linear, we report the difference between low \ac{IPI} season and high \ac{IPI} season (summer vs winter). The inter-annual \ac{IPI} shift for \citet{morano2012seasonal} (see `*') is reported between two consecutive years only.}
+    \label{tab:summTrends}
+\end{table}
+
+
+\subsubsection{\ac{IPI} trends} % IPI inter year
+
+Mediterranean fin whale stereotypical \acp{IPI} are shown to evolve over the years, following a linear growth of approximately 0.1 sec/year over the past 20 years. Such trends had already been observed in the songs of North-East Pacific \cite{weirathmueller2017spatial} and Central-North Pacific \cite{helble2020fin} fin whales.
+
+Inter-annual shifts in \ac{IPI} are rather recent and poorly documented. \citet{weirathmueller2017spatial} state that the increasing \ac{IPI} might be linked to the downward frequency shift, lower frequency pulses potentially being more demanding in energy. As for the present data, a low correlation coefficient was measured between the two variables, and no evidence of any inter-annual center frequency decrease was found. These observations thus go against this hypothesis, but more data is required to draw firm conclusions.
+
+As for the \ac{IPI} shift slopes, it seems plausible that the differences between Pacific and Mediterranean populations arise culturally. Whether they are originally caused by the same factors or not, the singing patterns drift independently, with song conformity only taking place within a given population. If environmental or physiological factors alone were responsible for such patterns, they would have to be present both in the Pacific and in the Mediterranean sea, but operating at different rates. The hypothesis of the post-whaling population recovery (increasing density and animal sizes) explaining those trends suits the latter conditions, as recovery rates could differ between Mediterranean and Pacific waters. On the other hand, cultural features such as contact rate between individuals could explain slope differences as well, regardless of the root cause of the shift.
+
+% IPI intra year
+On the other hand, studies of Atlantic and Pacific fin whales \cite{morano2012seasonal,Watkins_Tyack_Moore_Bird_1987, Oleson, weirathmueller2017spatial} point to \ac{IPI} increases during winter, before dropping back to autumn values. These trends are hypothesised to be directly linked to the reproductive season \cite{Oleson} (due to hormonal activity or progressive dilution of the competition for instance). No such trend was observed in the present data, but the irregular data sampling through seasons might create an observational bias in that sense.
+
+
+\subsubsection{Pulse frequency trends} % inter annual
+
+Inter-annual shifts in vocalization frequencies were already documented in blue whales \cite{mcdonald2009worldwide, malige2020inter, rice2022update}, and bowhead whales \cite{thode2017decadal}. Fin whales also showed similar trends in the Pacific \cite{weirathmueller2017spatial} (for 20\,Hz pulses, -0.17\,Hz/year) and in the Indian Ocean \cite{leroy2018long} (for 99Hz pulses, -0.21 Hz/year). Numerous hypotheses have been formulated for the cause of this phenomenon, such as the increase in population density or body sizes (following the cessation of commercial whaling), the increase in calling depth \cite{gavrilov2012steady}, the augmentation of noise from melting icebergs \cite{leroy2018long}, or the acidification of the oceans affecting sound propagation \cite{hester2008unanticipated} (among others).
+
+% centroid intra year
+No inter-annual frequency shift was found in the analysed data. Mediterranean fin whales could thus be an exception to this widespread trend. Nonetheless, an intra-annual decrease in center frequencies was observed (-0.08 Hz/month). Such phenomenon was previously observed in large mysticetes of the Indian Ocean including fin whales \cite{leroy2018long}. The latter study hypothesised pulse frequencies to follow seasonal ambient noise level variations (notably due to melting ice). Such phenomenon does not apply to the Mediterranean sea.
+
+
+\section{Orca call sequences}
+\subsection{Context and objective}
+
+As previously mentioned, part of mysticete communication systems have been characterised as songs for being associated with courtship. No such phenomenon has been observed in odontocetes. Nonetheless, toothed whale communication has been studied extensively, especially with bottlenose dolphins and orcas. Their vocal displays (whistles and pulsed calls) have been suggested to serve social signaling / bonding \cite{janik2014cetacean}. Bottlenose dolphins use individual specific signature whistles \cite{tyack2012review}, orcas use clan / pod specific pulsed calls \cite{ford1987catalogue}.
+
+Given the available 5 years of consecutive recordings from the OrcaLab observatory, the following study will focus on the \ac{NRKW} population of British Columbia. First, by running it on the summers from 2015 to 2020 (season of presence of the \ac{NRKW}), more than 300 thousands calls were automatically detected by the \ac{ANN} presented in section \ref{chap:orca_detec}. The \ac{ANN} presented in section \ref{chap:orca_classif} then allowed to recognise 7 predominant call types, and to tell when unknown calls are encountered.
+
+The observation of stereotyped calls in relation to behavioral states has suggested no strict relationship between the two, but rather a group identification function. \citet{ford1989acoustic} has manually analysed 20 thousands calls from 43 days of boat observation from 1978 to 1983, and reported call type bi-gram distributions (Fig. \ref{fig:transition_fordvself}). Some call type distributions significantly differed across activities, especially when involving multiple pods. \citet{filatova2013dependence} have manually analysed 32 hours of recordings for calls to be assigned among 4 categories. Activity did not affect proportions of occurrence, but multi-pod interactions did.
+
+The intent of this study is to look for patterns in the sequences of types, trying to make the most out of the large but blind corpus at hand (no information activity is available).
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{fig/transitions_.pdf}
+    \caption{Comparison between the transition matrix from \citet{ford1989acoustic} (left) and the present study (right).}
+    \label{fig:transition_fordvself}
+\end{figure}
+
+
+
+\iffalse
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} \hline
+ & N1 & N2 & N23 & N3 & N4 & N5 & N9 & other & Total \\ \hline 
+ N1 &0.21 & 0.03 & 0.06 & 0.01 & 0.24 & 0.1 & 0.12 & 0.09 & 15,551 \\ \hline 
+ N2 &0.07 & 0.15 & 0.06 & 0.01 & 0.23 & 0.1 & 0.11 & 0.1 & 6,446 \\ \hline 
+ N23 &0.07 & 0.03 & 0.23 & 0.01 & 0.23 & 0.05 & 0.1 & 0.1 & 15,752 \\ \hline 
+ N3 &0.04 & 0.02 & 0.04 & 0.39 & 0.17 & 0.05 & 0.09 & 0.05 & 5,187 \\ \hline 
+ N4 &0.05 & 0.02 & 0.04 & 0.01 & 0.54 & 0.06 & 0.11 & 0.06 & 82,625 \\ \hline 
+ N5 &0.07 & 0.03 & 0.04 & 0.01 & 0.27 & 0.22 & 0.14 & 0.08 & 17,722 \\ \hline 
+ N9 &0.06 & 0.02 & 0.05 & 0.01 & 0.31 & 0.08 & 0.27 & 0.06 & 29,808 \\ \hline 
+ other &0.05 & 0.02 & 0.05 & 0.01 & 0.18 & 0.05 & 0.07 & 0.1 & 27,081 \\ \hline
+    \end{tabular}
+    \caption{Caption}
+    \label{tab:my_label}
+\end{table}
+\fi
