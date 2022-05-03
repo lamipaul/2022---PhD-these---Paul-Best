@@ -28,7 +28,7 @@ Given previously trained detection and classification systems, this section desc
 As part of the GIAS project aiming at reducing navigation risks in the Mediterranean sea, the Bombyx 2 buoy was designed, in a collaboration between Toulon University and OSEAN SAS. This buoy is equipped with 5 hydrophones, a floatability variation system, and embedded algorithms for the detection of sperm whale clicks and 20\,Hz fin whale pulses. To mitigate surface noise and exposure to strong weather conditions, the buoy parks at 25 meters depth to record and acoustically detect its target species (sperm whales and fin whales). In the event of a detection, the buoy reaches the surface to transmit the alert with supporting data via the mobile network. The alerts then allow ferries of the zone to make decisions to mitigate their risk of collision with nearby whales (reducing speed or changing route for instance).
 
 
-\subsection{\ac{CNN} deployment to an embedded MCU}
+\subsection{CNN deployment to an embedded MCU}
 
 Section \ref{chap:lightweight} introduced low complexity \acp{CNN}, especially designed to answer the needs of this alert system. These models, after being trained on \acp{GPU} using the Pytorch package \cite{NEURIPS2019_9015}, were implemented on the embedded system, namely the Microchip PIC32 \ac{MCU} (integrated on the High-Blue sound card \cite{barchasz2020novel}).
 
@@ -82,7 +82,7 @@ The prediction sequences can serve a quick discrimination between false positive
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{fig/falsedetec_vs_passage.pdf}
-    \caption{Comparison of the distribution of model predictions for a day with a sperm whale and a day with false detections.}
+    \caption{Comparison of the distribution of model predictions for a day with a sperm whale (July 7th 2015) and a day with false detections (September 8th 2017).}
     \label{fig:compare_cacha}
 \end{figure}
 

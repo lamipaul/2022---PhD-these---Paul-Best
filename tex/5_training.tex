@@ -5,13 +5,19 @@
 
 \section{Context and objective}
 
-The gathered annotations previously mentioned represent an important step towards the objective of this thesis : building robust detection and classification mechanisms for several target signals. For that purpose this chapter discusses \ac{ANN} training in a supervised learning context. The detection of sperm whale clicks and fin whale 20Hz pulses is first experimented with a constraint on computational cost. For that matter, the effect of several complexity reduction approaches is studied. Then, heavier models are used to detect Antarctic mysticetes and orca calls. Experiments focus on the effect of network frontends, architectures and hyper-parameters on performances. Furthermore, given orca call detections, trials with deep metric learning and semi-supervised learning are reported for the call type classification task.
+The gathered annotations previously mentioned represent an important step towards the objective of this thesis : building robust detection and classification mechanisms for several target signals. For that purpose this chapter discusses \ac{ANN} training in a supervised learning context. The detection of sperm whale clicks and fin whale 20Hz pulses is first experimented with a constraint on computational cost (in order to be embedded in a sono-buoy, see section \ref{chap:GIAS}) . For that matter, the effect of several complexity reduction approaches is studied. Then, heavier models are used to detect Antarctic mysticetes and orca calls. Experiments focus on the effect of network frontends, architectures and hyper-parameters on performances. Furthermore, given orca call detections, trials with deep metric learning and semi-supervised learning are reported for the call type classification task.
 
 
 \section{Light weight detectors for low-variability signals}
 \label{chap:lightweight}
 
-Motivated by the objective of deploying detection mechanisms into embedded systems with low computing capacity (see section \ref{chap:GIAS}), several complexity reduction approaches have been experimented with. Two target signals are concerned by this constraint : sperm whale clicks and fin whale 20Hz pulses.
+The initial funding of this PhD was oriented towards the implementation of a real time alert system for the presence of large cetaceans in the Ligurian (Mediterranean) sea (GIAS Project). This system took form as a battery powered sono-buoy with acoustic and processing capacities.
+
+Motivated by the objective of deploying detection mechanisms into this embedded systems with low computing capacity, several complexity reduction approaches have been experimented with.
+
+Two large cetacean species evolve in the Ligurian sea, and therefore are to be detected by the system: sperm whales and fin whales. Two target signals are thus concerned by the following experiments on low computational detection: sperm whale clicks and fin whale 20Hz pulses.
+
+This section first reports on experiments with three complexity reduction approaches (depth-wise convolution, weight pruning and weight quantisation), comparing their computational needs and performance. Then, with the chosen approach of depth-wise convolution, we investigate on optimal number of features per layer and kernel sizes via a grid search. Finally, the two selected detection mechanisms are compared with baseline algorithms of the literature.
 
 
 \subsection{Complexity reduction}
@@ -23,7 +29,9 @@ The base architecture for the following experiments is a 3 layer network of 1D c
     \item Fin whale 20Hz pulses : $f_s=200Hz$, $NFFT=256$, $hop=32$, $f_{min}=0Hz$, $f_{max}=100Hz$
 \end{itemize}
 
-The frequency bins are considered as input channels for the first 1D convolution. This choice was motivated by the fact that large spectral shifts are not expected for these target signals. Convolving frequency-wise is thus inappropriate. Using 1D convolution also significantly reduces training and inference time.
+Following \citet{schluter2017deep}, the spectrograms are compressed with $\log(1 + \mathbf{S} \times 10^a)$ with $a$ a trainable parameter.
+
+The frequency bins (spectrogram rows) are considered as input channels for the first 1D convolution. This choice was motivated by the fact that large spectral shifts are not expected for these target signals. Convolving frequency-wise is thus inappropriate. Using 1D convolution also significantly reduces training and inference time.
 
 
 \subsubsection{Depth-wise layers} \label{chap:low_archi}
@@ -42,7 +50,7 @@ Showing a significant complexity reduction until a very low number of features p
 
 \subsubsection{Weight pruning}
 
-In \acp{ANN}, weight pruning consists in putting to 0 a proportion of weights after training (the ones with the smallest L1 norm). The idea is to avoid computing multiplications for weights that are of low impact for the end prediction. Experiments were conducted to measure the effect of pruning as compared to reducing the number of features per layer before training (see Fig. \ref{fig:pruning}).
+In \acp{ANN}, weight pruning consists in putting to 0 a proportion of weights after training \cite{lecun1989optimal} (e.g. the ones with the smallest L1 norm). The idea is to avoid computing multiplications for weights that are of low impact for the end prediction. Experiments were conducted to measure the effect of pruning as compared to reducing the number of features per layer before training (see Fig. \ref{fig:pruning}).
 
 \begin{figure}
     \centering
@@ -56,9 +64,9 @@ For the model with 32 features per layer, pruning until 20\% included had a non-
 
 \subsubsection{Weight quantization}
 
-The type of variable in a multiplication has an important impact on the cost of the operation. For instance, on the target \ac{MCU} of the GIAS project (see section \ref{chap:GIAS}), the PIC32 from Microchip, a multiplication of two floating point variables takes 736\,ns while multiplying two 8 bit integers takes 48\,ns \cite{pic32_bench} (a factor 16 of difference). Fig. \ref{fig:forward_nmult} compares inference times on the PIC32 for a depth-wise architecture of floating points against a regular convolutional architecture of 8 bit integers.
+The type of variable in a multiplication has an important impact on the cost of the operation. For instance, on the target \ac{MCU} of the GIAS project (see section \ref{chap:GIAS}), the PIC32 from Microchip, a multiplication of two floating point variables takes 736\,ns while multiplying two 8 bit integers takes 48\,ns \cite{pic32_bench} (a factor 16 of difference). Fig.~\ref{fig:forward_nmult} compares inference times on the PIC32 for a depth-wise architecture of floating points against a regular convolutional architecture of 8 bit integers.
 
-Weights were thus quantized to 8 bit integer variables in an attempt to reduce computation time. This quantization approach was experimented on 3 layer architectures with regular convolution layers and varying number of features (see Fig. \ref{fig:quat_aucs}).
+Weights were thus quantized to 8 bit integer variables in an attempt to reduce computation time. This quantization approach was experimented on 3 layer architectures with regular convolution layers and varying number of features (Fig.~\ref{fig:quat_aucs}).
 
 \begin{figure}
     \centering
@@ -138,7 +146,7 @@ To challenge this thesis' choice of architecture, handcrafted algorithms, a diff
 
 The remaining target signals treated in this thesis present more variability than sperm whale clicks and 20Hz fin whale pulses. Larger architectures than simple 3 depth-wise convolutions were thus experimented.
 
-Note that when using resnet architectures, the last layers consist of a average pooling of the spacial dimensions, followed by a fully connected layer, with the number of output channels set to the number of target classes. To yield a sequence of predictions through time, rather than one prediction regardless of the size of the given spectrogram, one can change these last steps by a convolutional layer of 1 pixel kernel and the number of output channels set to the number of target classes. During training, the sequence of predictions can be max-pooled before the loss computation.
+Note that when using resnet architectures, the last layers consist of a average pooling of the spatial dimensions, followed by a fully connected layer, with the number of output channels set to the number of target classes. To yield a sequence of predictions through time, rather than one prediction regardless of the size of the given spectrogram, one can change these last steps by a convolutional layer of 1 pixel kernel and the number of output channels set to the number of target classes. During training, the sequence of predictions can be max-pooled before the loss computation.
 
 
 \subsection{Hyper-parameter search for orca call detection}\label{chap:orca_detec}
@@ -161,7 +169,7 @@ Contrary to the smaller architectures aforementioned, heavier models need around
     \end{itemize}
 \end{itemize}
 
-Several architectures are studied : sparrow \cite{grill2017two} (simple VGG like model) and resnet 18 models (one randomly initialized and one pretrained on ImageNet noted `resnetPT'). For each of the 3 possible architectures, logarithmic and \ac{PCEN} spectrogram range compression were experimented, yielding 6 independent hyper-parameter searches.
+Several architectures are studied : sparrow \cite{grill2017two} (simple \ac{VGG} like model) and resnet 18 models (one randomly initialized and one pretrained on ImageNet noted `resnetPT'). For each of the 3 possible architectures, logarithmic and \ac{PCEN} spectrogram range compression were experimented, yielding 6 independent hyper-parameter searches.
 
 The \ac{mAP} over the whole test set (OrcaLab 2019 and Custom 2019) was used as performance metric for early stopping (both low performing and plateauing trainings), and making halving decisions. However, for the following analysis, scores of the two sets are reported separately, to emphasis on the generalisation gap between a close and a foreign test set.
 
@@ -196,12 +204,12 @@ To learn insights from this systematic search, correlations were measured betwee
     \label{tab:stats_orcas}
 \end{table}
 
-Table \ref{tab:stats_orcas} reports the statistically significant hyper-parameters on the end model performances (p-value < 0.05). Hyper-parameters appeared to have identical impacts on the OrcaLab test set and the Custom antenna test set, and thus the analysis was conducted on the combination of the two. This representation yields several insights :
+Table \ref{tab:stats_orcas} reports the statistically significant hyper-parameters on the end model performances (p-value < 0.05). Hyper-parameters appeared to have identical impacts on the same antenna and different antenna test sets, and thus the analysis was conducted on the combination of the two. This representation yields several insights :
 \begin{itemize} \setlength{\itemsep}{1pt}
     \item Smaller batch sizes can improve generalisation. This is consistent with the study by \citet{kandel2020effect}. It is especially relevant for small datasets, where large batch sizes imply a reduced variability of batch compositions which can yield overfitting models.
     \item As for the learning rates, several biases have to be taken into account. Small learning rate trainings are slower, and thus could be early stopped by the search algorithm before they would plateau to their top performance. Moreover, if selecting the learning rates above 0.001, the Pearson correlation coefficient changes sign with a higher p-value ($r=-0.1$, $p_{value}=0.06$).
     \item SpecAugment surprisingly not only does not improve generalisation but reduces it, despite the joint optimization of augmentation strength. This is presumably related to the underfitting problem reported by the SpecAugment authors \cite{park2019specaugment}.
-    \item Other hyper-parameters do not have a clear significant impact on end performances
+    \item Other hyper-parameters do not have a clear significant impact on end performances.
     %\item Weighting positive samples, MixUp data augmentation, and the addition of brown noise sometimes help, but do not yield higher performances in a statistically significant manner in most cases.
 \end{itemize}
 
@@ -238,16 +246,16 @@ To follow up on this hyper-parameter exploration and validate its findings, usin
 %
 These results demonstrate several insights :
 \begin{itemize} \setlength{\itemsep}{1pt}
-\item The sparrow architecture is less stable to different initialisations
-\item Resnet architectures with \ac{PCEN} range compression are highly stable to different initialisations
-\item \ac{PCEN} improves generalisation especially to the foreign domain
-\item Initialising resnet architectures with weights trained on ImageNet is counter productive for generalisation to the foreign domain 
+\item The sparrow architecture is less stable to different initialisations,
+\item Resnet architectures with \ac{PCEN} range compression are highly stable to different initialisations,
+\item \ac{PCEN} improves generalisation especially to the foreign domain,
+\item Initialising resnet architectures with weights trained on ImageNet is counter productive for generalisation to the foreign domain.
 \end{itemize}
 
 
 \subsubsection{\ac{PCEN} beneficial behaviour}
 
-The \ac{PCEN} range compression procedure appeared to be beneficial with some but not all datasets. For the orca call detection task, it yielded significant improvements, as seen Fig. \ref{fig:pcenvslogmel} (Kruskal-Wallis H test, p-value < 0.01) especially for the test set from a different recorder (median gain of 0.03 and 0.015 of \ac{mAP} for the OrcaLab and custom antenna test sets respectively).
+The \ac{PCEN} range compression procedure appeared to be beneficial with some but not all datasets. For the orca call detection task, it yielded significant improvements, as seen Fig. \ref{fig:pcenvslogmel} (Kruskal-Wallis H test, p-value < 0.01) especially for the test set from a different recorder (median gain of 0.03 and 0.015 of \ac{mAP} for the same antenna and the different antenna test sets respectively).
 
 \begin{figure}
     \centering
@@ -260,6 +268,8 @@ The trainable parameters ($s$, $\delta$, $\alpha$ and $r$) remained stable aroun
 
 
 \subsection{Performance metrics for an imbalanced dataset}
+
+This work has been subject to a workshop intervention \cite{bestdclde}.
 
 \subsubsection{Architecture exploration}
 
@@ -281,16 +291,16 @@ The trainable parameters ($s$, $\delta$, $\alpha$ and $r$) remained stable aroun
 For the Antarctic mysticete dataset (see section \ref{chap:acTrend}), several architectures were first experimented, with trials on different spectrogram range compression and data augmentation. They are summarized in Tab. \ref{tab:mysti_bench}, and demonstrate several insights :
 
 \begin{itemize} \setlength{\itemsep}{1pt}
-    \item Non residual architectures such as sparrow don't have the capacity to learn even the training set
-    \item The larger architecture (resnet 50) generalises better to the test set
-    \item \ac{PCEN} normalization, whether with trainable or fixed parameters, decreases generalisation
-    \item Spectral data augmentation produces underfitting
+    \item Non residual architectures such as sparrow don't have the capacity to learn even the training set,
+    \item The larger architecture (resnet 50) generalises better to the test set,
+    \item \ac{PCEN} normalization, whether with trainable or fixed parameters, decreases generalisation,
+    \item Spectral data augmentation produces underfitting.
 \end{itemize}
 
 
 \subsubsection{\ac{PCEN} unfavorable behaviour}\label{chap:pcen2}
 
-A reasonable hypothesis of why \ac{PCEN} appears counter productive is that it filters the long stationary signals of the blue whale. The $s$ parameter describes the coefficient of the \ac{IIR} filter that yields the smoothed version of the spectrogram, and thus should yield an update that is longer than the longest call to be detected. The intuitions here was that the trainable $s$ would converge to such value, and that fixing $s$ to 0.01 (update of 12.8 seconds) would smooth the spectrogram slowly enough not to diminish stationary calls. Fig. \ref{fig:trained_compression} compares the resulting compression with the log compression.
+A reasonable hypothesis of why \ac{PCEN} appears counter productive is that it filters the long stationary signals of the blue whale (around 10 seconds long). The $s$ parameter describes the coefficient of the \ac{IIR} filter that yields the smoothed version of the spectrogram, and thus should yield an update that is longer than the longest call to be detected. The intuitions here was that the trainable $s$ would converge to such value, and that fixing $s$ to 0.01 (update of 12.8 seconds) would smooth the spectrogram slowly enough not to diminish stationary calls. Fig. \ref{fig:trained_compression} compares the resulting compression with the log compression.
 
 \begin{figure}
     \centering
@@ -299,10 +309,10 @@ A reasonable hypothesis of why \ac{PCEN} appears counter productive is that it f
     \label{fig:trained_compression}
 \end{figure}
 
-Unexpectedly, the trainable \ac{PCEN} $s$ parameter converged towards 0.9, an almost instantaneous smoothing coefficient, high enough too take into account blue whale calls and subtract them. The other trainable parameters $\alpha$, $\delta$, and $r$ converged around 0.94, 1, and 0.94 respectively. Considering these parameters (the smoothed spectrogram $M$ being approximately equal to $E$ with an $s$ close to 1, and with $r\approx1$), the \ac{PCEN} equation can be rewritten as Eq. \ref{eq:pcen2}.
+Unexpectedly, the trainable \ac{PCEN} $s$ parameter converged towards 0.9, an almost instantaneous smoothing coefficient, high enough too take into account blue whale calls in the smoothed spectrogram $\mathbf{M}$ and subtract them from $\mathbf{S}$. The other trainable parameters $\alpha$, $\delta$, and $r$ converged around 0.94, 1, and 0.94 respectively. Considering these parameters (the smoothed spectrogram $\mathbf{M}$ being approximately equal to $\mathbf{S}$ with $s\approx1$), the \ac{PCEN} equation can be rewritten as Eq. \ref{eq:pcen2}.
 
 \begin{equation}\label{eq:pcen2}
-    PCEN(t, f) = \left(\frac{E(t,f)}{(\epsilon+M(t,f))^\alpha} + \delta \right)^r - \delta^r \approx E(t,f)^{0.06}
+    PCEN_{t, f} = \left(\frac{\mathbf{S}_{t,f}}{(\epsilon+\mathbf{M}_{t,f})^\alpha} + \delta \right)^r - \delta^r \approx \mathbf{S}_{t,f}^{0.06}
 \end{equation}
 
 As for the fixed version, the smoothing parameter was set to 0.01, corresponding to a 12sec update ($T = \frac{1}{s}\times \frac{hop}{f_s}$) with $hop=32$ and $f_s=250$. Despite this long filter update period, the Bm-A call seems dampened (Fig. \ref{fig:trained_compression}), presumably due to the presence of other noises in that same frequency bin. These experiments demonstrate that \ac{PCEN} does not always yield performance gains : it depends on the signals to detect and the noises surrounding them. Experiments should thus be conducted on each task before choosing this spectrogram range compression method.
@@ -353,14 +363,14 @@ Figure \ref{fig:recall_fphour} summarises the number of false positives per hour
         Kerguelen 2 2015 &  0.99 &  0.97 &  0.98 &  1.00 &  1.00 &  1.00 &  0.92  \\ \hline 
         \textbf{All} & 0.98 &  0.97 &  0.98 &  0.99 &  1.00 &  1.00 &  1.00  \\ \hline    
     \end{tabular}}
-    \caption{Recall at 20 FP/hr for each class and data source.}
+    \caption{Recall at 20 FP/hr for each class and data source. Cells with less than 20 samples are not reported.}
     \label{tab:recall_20fphr}
 \end{table}
 
 These results demonstrate how performance metrics need to be carefully chosen, accounting for datasets' class imbalance. However, recall at 20 false positives per hour should be selected as the last metric, for its stability facing class imbalance and its high interpretability for production use (other thresholds than 20 can be chosen, depending on project needs).
 
 
-\section{Resulting detectors performances}
+\section{Resulting detectors performance}
 
 Best configurations were kept for each task to report performances. When multiple runs were operated (20Hz fin whale pulses and sperm whale clicks) the median values are reported. As for the 20Hz fin whale pulses, since 3 test folds were studied, the median gathers the 5 runs of the 3 folds.
 
@@ -382,11 +392,9 @@ Best configurations were kept for each task to report performances. When multipl
 This thesis' work in annotation and training binary classifiers thus resulted in successful detection systems for 13 different target signals (the Antarctic mysticetes model gathering 7 different signals).
 
 
-\section{Vocalization classifiers}
+\section{Contrastive learning for orca call classification} \label{chap:orca_classif}
 
-\subsection{Orca calls}\label{chap:orca_classif}
-
-\subsubsection{Trials with deep representation learning algorithms}
+\subsection{Trials with deep representation learning algorithms}
 
 Given the large amount of detections of orca calls (section \ref{chap:orca_detec}) with only a small labelled proportion (section \ref{chap:autoencoder}), contrastive learning approaches have been experimented with. Indeed, this orca call classification task comes down to classifying similar shapes together (spectrogram's pitch patterns). Learning a representation that ignores small distortions of shapes (time and frequency shifts and dilations) thus seems highly appropriate. Supervised learning using the available labels can then be operated either in parallel or subsequently to optimize discrimination boundaries (fine tuning).
 
@@ -402,7 +410,7 @@ As previously mentioned, numerous algorithms have been proposed in the literatur
 In a way reflecting the caveat of modern days deep learning research, a plethora of implementations were made with limited understanding of the underlying behaviours. Indeed, in addition to their proposed main algorithm, each paper comes with a handful of training tricks which are also responsible for the reported performances. Despite the invested efforts, none of the implementations showed a relevant gain in performance after fine tuning for the classification task (as compared to a random initialisation of weights). However, selected for its good loss convergence, reasonable performances, and very few training tricks needed, fixMatch was retained for further comparison with the regular supervised approach.
 
 
-\subsubsection{FixMatch versus supervised learning}
+\subsection{FixMatch versus supervised learning}
 
 Fig. \ref{fig:fixMatch} shows how data augmentation and pseudo-labelling were combined for the orca call classification task, following the fixMatch approach. $H(p,q)$ denotes the cross-entropy between the pseudo label and the prediction after strong augmentation. It represents the unsupervised loss that will be added to the regular supervised cross-entropy loss before the backward propagation.
 
@@ -435,3 +443,7 @@ The resulting performances of semi-supervised and supervised training are compar
 Given annotated databases, training \ac{ANN} allowed to solve the detection tasks for 12 target signals (5 from custom annotated databases, and 7 from the Antarctic mysticetes database). For signals with a limited variability such as sperm whale clicks and fin whale 20Hz pulses, relatively small (three depth-wise convolution) networks yield satisfactory performances, improved compared to previous handcraft algorithms. As for detecting the more variable orca calls, systematic searches and heavier models also yield satisfactory performances. Few insights arise from the exploration of network frontends, architectures and hyper-parameters, and they might be task specific. On the other hand, heavier models can also serve the detection of several target signals with a shared set of weights, as shown with Antarctic mysticete calls. In this context, performance metrics are discussed and an interpretable metric for \ac{PAM} uses is proposed. Eventually despite efforts in using unlabeled data for deep metric learning and semi-supervised learning, the regular supervised approach appeared to be the most efficient for the orca call type classification task.
 
 The satisfactory performances, especially on test sets that were designed to reflect generalisation capabilities, allow to consider using these trained models in production, as we will see in the next chapters.
+
+\subsection{PCEN TODO}
+
+peut être que PCEN marche pas bien quand multi classe.

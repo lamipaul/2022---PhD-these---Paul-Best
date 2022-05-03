@@ -1,0 +1,26 @@
+\newpage
+\section{Conclusion}
+
+Before diving into this thesis' contributions, let us take a step back and get an overview of the challenges and opportunities that come along the research problematic.
+
+
+\subsection{Challenges}
+
+\acp{ANN}, despite having already some implementation in industrial systems, is still an open research topic. This is even more true when it comes to its application to \ac{PAM}. Indeed, \ac{PAM} brings specific problems uncommon to other domains of application of \acp{ANN}, the main ones probably being the lack of annotations and the scarcity of events to detect. As mentioned previously, training \acp{ANN} demands large quantities of labels, which are costly to produce in terms of human effort. When implementing image classification or speech recognition systems, one can make use of large databases already available for these quite popular tasks. High quality databases of cetacean vocalizations (large amount of annotations with precise timestamps) are more rare. To cope with this, I will show in this thesis how annotation processes can be optimized to reduce human effort.
+
+Another challenge comes from the underwater conditions that highly impact acoustic properties of signals. Since few researchers apply \acp{ANN} underwater, they have to find their own way to cope with these conditions yet relatively unexplored in the literature. Moreover, detection systems are most useful when reusable across acoustic stations. This demands highly robust models, taking into account the variability in potential noise exposition (e.g. depending on depth, boat traffic, bathymetry).
+
+Also, we will later discuss the need for \ac{PAM} systems to be embedded into field stations (section \ref{chap:GIAS}). This demands efforts in reducing the computational needs, as well as building trustworthy algorithms, which can be challenging when having relatively low control on \acp{ANN}' behavior (\acp{ANN} are often described as `black boxes' since their functioning is hardly interpretable).
+
+Another important challenge faced during this thesis was to sort out relevant methods to explore among the wide variety of propositions. Indeed, \acp{ANN} being a highly popular topic, dozens of different approaches are still being explored, with few consensuses on universally reliable techniques.
+
+Eventually, despite occurrences of trained \acp{ANN} for marine bioacoustics in the literature, to my knowledge, none was found to be put in production yet (using the prediction to yield biological analysis for instance). It is thus an ambitious objective to finally bridge that gap between training experiments and production use of deep learning models.
+
+
+\subsection{Opportunities}
+
+Even with few annotations available, large amounts of data can still be useful when training \acp{ANN}, as section \ref{chap:orca_classif} discusses with unsupervised approaches. The democratisation in \acp{ARU} has already yielded Terabytes of data which, even when containing only few signals of interest, can come handy to train \acp{ANN} because of the data diversity they provide. Indeed, these long recordings often demonstrate a wide variety of noises (e.g. from boat engines, sonars, reef activity, waves, currents, or earthquakes). Moreover, data variability can also arise from differences in recorders' frequency responses, and/or placements regarding the bathymetry. 
+
+This is a major challenge when building handcrafted algorithms, having to compensate for each potential acoustic disturbance independently. However, \acp{ANN} represent a great opportunity in that sense since they have the potential of learning robust representations that can be resilient to the most diverse perturbations. Section \ref{chap:splits} discusses how one can make use of the variations in the available data to rigorously measure a model's generalisation performances, and/or use it to train projections of sound that are most stable against such noise diversity.
+
+Eventually, \ac{PAM} strongly benefits from such robust systems, since they help reduce the minimum \ac{SNR} for detection as well as the amount of false alarms, thus yielding reliable statistics for large scale analysis that would not have been feasible otherwise.

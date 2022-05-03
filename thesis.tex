@@ -26,7 +26,11 @@
 % Default fixed font does not support bold face
 \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
 \DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
-\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\median}{median}
+\DeclareMathOperator*{\std}{std}
+\DeclareMathOperator*{\VGG}{VGG}
 
 % Custom colors
 \usepackage{color}
@@ -182,7 +186,7 @@ showstringspaces=false
 % The level that gets a number:
 \setcounter{secnumdepth}{2}
 % The level that shows up in the ToC:
-\setcounter{tocdepth}{1}
+\setcounter{tocdepth}{2}
 
 
 
@@ -264,17 +268,17 @@ showstringspaces=false
 %%%%% CHAPTERS
 % Add or remove any chapters you'd like here, by file name (excluding '.tex'):
 \flushbottom
-\input{tex/introduction}
-\input{tex/SOTA_NN}
-\input{tex/SOTA_PAM}
-\input{tex/challenge_opportunities}
-\input{tex/material}
-\input{tex/annotation}
-\input{tex/training}
-\input{tex/conservation}
-\input{tex/communication}
-\input{tex/perspectives}
-% \input{tex/conclusion}
+\input{tex/1_introduction}
+\input{tex/2-1_SOTA_NN}
+\input{tex/2-2_SOTA_PAM}
+\input{tex/2-3_challenge_opportunities}
+\input{tex/3_material}
+\input{tex/4_annotation}
+\input{tex/5_training}
+\input{tex/6_conservation}
+\input{tex/7_communication}
+\input{tex/8_conclusion}
+\input{tex/9_perspectives}
 
 % Starts lettered appendices, adds a heading in table of contents, and adds a
 %    page that just says "Appendices" to signal the end of your main text.

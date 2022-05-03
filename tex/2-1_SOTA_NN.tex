@@ -1,0 +1,341 @@
+\chapter{State of the art}\label{chap:sota}
+\minitoc
+
+The following chapter introduces the main technical aspects relevant to the subsequent work, lying between pedagogic and bibliographic objectives. It starts with the main techniques involved in building and training \ac{ANN}s, in their most prevalent context in the literature (computer vision). Then, \ac{PAM} of cetaceans (in general and using \acp{ANN}) are reviewed. Finally, the last section of this chapter intends to put past work into perspective with this thesis.
+
+
+\section{Neural networks for computer vision}
+
+If computer vision techniques can be used to tackle acoustic tasks, it is because in part sound can be represented as time-frequency images (spectrograms for instance). They describe content such that vocalisations appear as patterns with identifiable shapes for instance\footnote{In a way, our hearing system itself processes sound via a frequency decomposition with the cochlea}. We will therefore first go through the state of the art in image pattern recognition before applying similar methods to our acoustic tasks. This is obviously not an exhaustive review of deep neural networks, but rather an overview of the key elements used in this thesis to build detection and classification systems.
+
+
+\subsection{Introduction to Artificial Neural Networks}
+
+The idea of emulating brain neural systems computationally emerged in the mid 20th century \cite{fitch1944mcculloch}. It is however only recently that \ac{ANN}s have taken such an important part in applied mathematics and computer sciences, with the increased availability of data and computational power. The underlying approach to \acp{ANN} is to reproduce advanced processes emerging from the accumulation of simple operations, alike brains with neurons. Put mathematically, neurons would typically take the form of a simple linear transformation of an input $x$ into an output $y$ (\(y = wx + b \)). With their combination into large networks emerges the capacity of modelling high level functions such as classifying cat and dog images. 
+
+An \ac{ANN} is defined by a network architecture (interconnection of neurons) and its neurons' weights (the linear transformations' coefficients, namely \(w\) and \(b\)). Like so, we can formulate the model $g$ as a composition of linear layers $l_i$, and the concatenation of all their weights $\boldsymbol{\theta}$ (Eq.~\ref{eq:net}).
+
+\begin{equation}\label{eq:net}
+    g_{\boldsymbol{\theta}}(x) = l_1 \circ l_2 \circ l_3 \circ ... l_n (x)
+\end{equation}
+
+We first design an architecture $g$ before optimising its weights $\boldsymbol{\theta}$ for our task, typically with supervised learning. This paradigm consists in feeding the model examples with their associated labels. For instance with our cats and dogs task, this means giving the model images of each class and asking it to predict the associated label, namely `cat' or `dog'. An error $\mathcal{L}$ is then computed between the expected and the predicted labels. Like so, the training objective can be formulated as Eq.~\ref{eq:optim} to find the optimum weights $\mathbf{\hat{\theta}}$.
+
+\begin{equation}\label{eq:optim}
+    \mathbf{\hat{\theta}} = \underset{\theta}{\argmin}\ \mathcal{L}(y, g_{\theta}(x))
+\end{equation}
+
+Under the hood, the network learns a projection of the input images (often called embedding) from the pixel space to a new abstract one. Put simply, the more neurons in a network, the more complex the resulting projection can be\footnote{Neurons are put in a stack of layers, thus the appellation `deep learning'}. Training thus becomes trying to learn the optimum embedding space to solve a given task.
+
+There are two main limitations here, the first being the necessary computational power. Training a large \ac{ANN} typically demands thousands of iterations, each of which consists in an update of millions of neurons. This is in part why we had to wait for the development of parallel computation with \acp{GPU} to see the democratisation of \acp{ANN}. The second limitation, this time a human effort cost, is the necessary training data. To learn a robust solution, training typically demands thousands of examples for each class, with their associated label (often manually annotated) for the computation of the performance metric that will be optimised.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.8\linewidth]{fig/cats and dogs.pdf}
+    \caption{Illustration of the concepts of underfitting and overfitting, for the cats and dogs classification task. Lines denote discrimination boundaries, in a two-dimensional abstract embedding space.}
+    \label{fig:catsanddogs}
+\end{figure}
+
+This leads us to the major challenge of training \ac{ANN}s and modelling in general: robustness, or generalisation. Indeed, optimising a performance metric on a limited amount of examples might bring the curse of overfitting: when the model finds a solution that works for its given training data, but not the generalised solution that we desire (see Fig.~\ref{fig:catsanddogs}). To give an example, coming back to the cats and dogs task, if all the cats we show the \ac{ANN} are white and all dogs are black, it might just discriminate based on average pixel colors. This will lead to great performances on the training data, but will fail as soon as we try our \ac{ANN} on a black cat image. As we will see throughout this thesis, most of the struggle in training \ac{ANN}s comes down to enforcing generic solutions with limited training data.
+
+%\section{Convolutional Neural Networks}
+%In the following section, we will dive deeper into the category of \acp{ANN} that was used through this thesis: \acp{CNN}. I will start by describing its building blocks (layers of neurons), then going through the typical architectures they are put together in, and ending with how to iteratively optimise its neurons' weights while avoiding overfitting. I will use the original use case of \acp{CNN} for demonstration here (image classification), before joining in on this thesis' tasks in the next section.
+
+
+
+\subsection{Performance optimisation}
+
+As previously mentioned, training \ac{ANN} comes down to trying to find the optimum weights for a task. This optimisation takes form as the minimisation of some error function, or loss (Eq.~\ref{eq:optim}). This section describes the methods involved in optimising this loss, especially with \ac{SGD}. Then, the different loss functions that will be needed in this thesis will be introduced. Finally, we will go through the `second level' of performance estimation and optimisation, employed to account for architecture and training quality after the weights have converged.
+
+
+\subsubsection{Optimising the loss}
+
+Depending on our task and label availability, let's consider a differentiable loss $L$ to be minimised. A straightforward way of finding some function's minima is to follow the slope downwards iteratively (``gradient descent''). Furthermore, having multiple data points to account for in the computation of the loss, a stochastic estimate of the gradient can be used. This is the approached followed by the \ac{SGD} algorithm \cite{robbins1951stochastic}, as expressed in Eq.~\ref{eq:sgd}. The amplitude of the update is defined by the learning rate $\alpha$, which takes values between 0 and 1.
+
+\begin{equation}\label{eq:sgd}
+    \boldsymbol{\theta}^{(i+1)} = \boldsymbol{\theta}^{(i)} - \alpha \times \mathbb{E}	_{x,y}[\nabla_{\theta} \mathcal{L}(y, g_{\theta}(x)].
+\end{equation}
+
+The choice of learning rate is critical to achieve convergence of the model's parameters. Indeed, a too small learning rate might result in getting stuck in a local minima, whereas with a too large one the actual minima might be skipped and the procedure may diverge. No generic learning rate is good for every task, so it will be one of the hyper-parameters to be tuned (see section~\ref{chap:HP_tuning}). 
+Moreover, the data used to compute the loss and update weights at each step (Eq.~\ref{eq:sgd}) needs to be defined: it is called a batch. Using the whole dataset at each step would be too costly in memory and computation, and using only one sample would hardly converge (the gradient would oscillate in different directions). Mini-batch \ac{SGD} thus consists in using only a sub-sample of the available data at each $\boldsymbol{\theta}$ update. In a compromise between computation cost and each batch being representative of a global direction to follow, a ``batch size'' (number of data points) needs to be defined. It is part of the hyper-parameters to be tuned (see section~\ref{chap:HP_tuning}).
+
+To enhance convergence quality and speed, the community is now opting for learning rates that evolve through the course of the optimisation. This evolution (termed learning rate scheduling) can be a simple exponential decay, a decay when the loss plateaus, or more advanced periodic schedules with warm restarts \cite{loshchilov2016sgdr}. No definite agreement has yet been made on the right schedule, and the answer might again be task specific.
+
+Methods like \ac{SGD} to iteratively update the model's parameters depending on the loss gradient are called optimisers. Several variations of \ac{SGD} have been proposed since its original formulation, especially with gradient smoothing. The nesterov momentum \cite{sutskever2013importance} as well as the gradients' moments \cite{kingma2014adam} serve that purpose.% Other techniques such as batch normalization also indirectly work towards gradient smoothing to ease the optimiser's work \cite{santurkar2018does}.
+
+
+\subsubsection{Classification and detection losses}
+
+Because it will be needed for \ac{SGD}, the chosen loss to optimise needs to be convex and differentiable. For our classification tasks, the accuracy is therefore not suitable since it relies on the $argmax$ of the output vector. We will rather choose the \ac{CE} instead, and will keep the accuracy for model evaluation, selection and validation (section~\ref{chap:valid}).
+
+The definition of the \ac{CE} classification loss $H$ is given in Eq.~\ref{eq:CE}, with $\mathbf{y}$ the one-hot encoded label, $\mathbf{\hat{y}}$ the vector of predicted probabilities for each class, and $C$ the set of possible classes.
+
+\begin{equation}\label{eq:CE}
+    H(\mathbf{y}, \mathbf{\hat{y}}) = -\sum_{c\in C}\mathbf{y}_c log(\mathbf{\hat{y}}_c).
+\end{equation}
+
+To get normalised predictions of the model homogeneous to a probability distribution, we use the SoftMax function described in Eq.~\ref{eq:softmax}, given the unnormalised model output $\mathbf{z}$ (also called logits).
+
+\begin{equation}\label{eq:softmax}
+    \mathbf{\hat{y}}_c = p_{g,\boldsymbol{\theta}}(x|c) = SoftMax(\mathbf{z})_c = \frac{e^{\mathbf{z}_c}}{\sum_{k}e^{\mathbf{z}_k}} \in [0, 1],
+    \sum_{c} p_{g,\boldsymbol{\theta}}(x|c) = 1.
+\end{equation} 
+
+This is appropriate for the multi-class classification tasks, when a higher confidence for an class implies lower probabilities for others. When solving multi-label classification tasks however, a sample can be assigned multiple classes, making the SoftMax assumption not appropriate. The Sigmoid function is then rather used to normalise logits to probability distributions (Eq.~\ref{eq:sigmoid}), and the sum of the independent \acp{BCE} as a loss.
+
+\begin{equation}\label{eq:sigmoid}
+    Sigmoid(\mathbf{z}_i) = \frac{1}{1+e^{-\mathbf{z}_i}}.
+\end{equation}
+
+The \ac{BCE} is simply a special case of the \ac{CE}, with $C=2$. However, we can use single valued labels $y$ and prediction $\hat{y}$ for its computation (Eq.~\ref{eq:BCE}).
+
+\begin{equation}\label{eq:BCE}
+    BCE(y, \hat{y}) = ylog(\hat{y}) + (1-y)log(1-\hat{y}).
+\end{equation}
+
+\begin{figure}[!htb]
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=\linewidth]{fig/sigmoid.pdf}
+     \caption{Sigmoid function (Eq.~\ref{eq:sigmoid}).}
+   \end{minipage}\hfill
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=\linewidth]{fig/BCE.pdf}
+     \caption{\ac{BCE} loss (Eq.~\ref{eq:BCE}).}
+   \end{minipage}\hfill
+\end{figure}
+
+Through this thesis, the binary classification will be used as a proxy to solve detection tasks (one class being the target event to detect, and the other anything else). When running a classifier model post training, the predicted class will be $\argmax(\mathbf{z})$. For binary classifiers however, the output becomes a single value denoting the confidence in the presence of one class, equivalent to a detection confidence. A threshold is then set to binarise this continuous value (yielding a presence/absence decision).
+
+
+\subsubsection{Representation learning losses}\label{chap:ssl}
+
+The losses previously mentioned are suited when a sufficient amount of labels are available for supervised learning. When few or no labels are available, the literature proposes frameworks to learn semantically relevant embedding spaces, used subsequently by clustering algorithms or in supervised fine tuning. We call this process deep representation learning. Since this learning paradigm does not rely on labels for optimisation, it is referred to as \ac{SSL}.
+
+\paragraph{Triplet loss and contrastive learning}\label{chap:triplet}
+Contrastive learning is a branch of \ac{SSL} algorithms, where we enforce the models' output projection to ignore transformations applied to the input (transformations that do not imply a semantic change to the data). For that purpose, we will minimise the distance between the projection of a sample and that of its transformation w.r.t. the projection of other samples (see Fig.~\ref{fig:contrastive}). In this way, rather than directly learning an embedding space for discrimination, the model is trained to learn an embedding space that reflects a desired notion of similarity and difference (the contrast). The mathematical formulation of this objective is termed as triplet loss since it uses the projection of three samples: an anchor (the original sample), a positive (the transformation of the anchor), and a negative (another unrelated sample). Several metrics have been used in the literature to measure distances between embeddings :
+
+\begin{itemize}\setlength{\itemsep}{1pt}
+    \item The cosine similarity (SimCLR \cite{chen2020simple})
+    \item The cross-entropy (\acs{UDA} \cite{xie2019unsupervised}, fixMatch \cite{sohn2020fixmatch})
+    \item The cross-correlation (Barlow \cite{zbontar2021barlow}) 
+    \item The mutual information (\ac{IIC} \cite{ji2018invariant})
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.9\linewidth]{fig/contrastive learning.pdf}
+    \caption{Illustration of the contrastive learning approach. The anchor and the negative are randomly sampled from the database, whereas the positive is a hand crafted transformation of the anchor. The distance metric to be minimised/maximised varies among implementations.}
+    \label{fig:contrastive}
+\end{figure}
+
+These contrastive losses can also be combined with a regular classification loss in a semi-supervised paradigm, as seen in fixMatch \cite{sohn2020fixmatch} and \acs{UDA} for instance. They can then be considered as a form of training regularisation (see section~\ref{chap:regularization}).
+
+\paragraph{Triplet loss and Siamese neural networks}
+In a similar fashion than with contrastive learning, the triplet loss can be used in a supervised context. In this case, the positive of the triplet is a sample drawn from the same class as the anchor, and the negative is a sample from another class. We call this approach Siamese networks \cite{bromley1993signature, koch2015siamese}. Despite its use of labelled samples alike regular supervised classification training, this method focuses on learning an embedding space to measure samples' similarity, rather than an embedding space to discriminate among classes.
+
+\paragraph{Reconstruction loss}\label{chap:reconstruction}
+In other \ac{SSL} frameworks such as \acp{AE} (see section~\ref{chap:AE}), we will use a reconstruction loss, that reflects the fidelity of the reconstructed sample w.r.t. the original input. This can simply take the form of a \ac{MSE} between the input and the reconstructed image (pixel loss). There are also more advanced approaches such as the perceptual loss which uses the \ac{MSE} in the latent space of an independently trained encoder to have comparison at a higher level than pixel wise \cite{johnson2016perceptual}.
+
+
+
+\subsubsection{Model validation}\label{chap:valid}
+
+Once our model has optimised the loss function until convergence, we usually want to measure its performance with interpretable metrics, and with new data.
+
+\paragraph{Performance validation metrics}
+For detection tasks, which are the most common in this thesis, these metrics reflect the proportion of target signals that we won't miss (recall) and the proportion of detections that will be the signal we look for (precision). This is typically described via the areas under the \ac{ROC} and \ac{PR} curves. For varying thresholds, they give average values of recall/fall-out and precision/recall respectively. Note that the area under the \ac{ROC} and \ac{PR} curves will be referred to as \ac{AUC} and \ac{mAP} respectively. Equations~\ref{eq:AUC} and~\ref{eq:mAP} formulate their computation with $rec$, $prec$, and $fal$ denoting recall, precision and fall-out respectively. $TP$, $P$, $PP$, $FP$, and $N$ denote numbers of true positives, positive ground truths, positive predictions, false positives, and negative ground truths respectively. Some are a function of a threshold noted $\lambda$, used to binarise continuous prediction values.
+
+\begin{equation}
+    rec(\lambda) = \frac{TP(\lambda)}{P}, \quad prec(\lambda) = \frac{TP(\lambda)}{PP(\lambda)}, \quad fal(\lambda) = \frac{FP(\lambda)}{N},
+\end{equation}
+\begin{equation}\label{eq:AUC}
+    AUC = \int_{0}^{1} rec(\lambda) \; dfal(\lambda),
+\end{equation}
+\begin{equation}\label{eq:mAP}
+    mAP = \int_{0}^{1} rec(\lambda) \; dprec(\lambda).
+\end{equation}
+
+These two last metrics are similar, but differ on the measurement of false alarm rate: the \ac{mAP} normalises on the number positive predictions whereas the \ac{AUC} normalises on the number of negative samples. This difference has a significant impact especially with imbalanced datasets.
+
+For multi-label classification tasks (each sample can be assigned to multiple classes), we will average the independent detection performance of each class. As for multi-class classification (each sample is assigned to a single class), we will rather compute the accuracy as the rate of correct predictions. Averaging methods for the performance metric should be chosen to account for class imbalance or not (i.e. averaging the performance per class before averaging between classes or averaging performances per samples directly).
+
+
+\paragraph{Validating with new data}
+To reduce human effort, we usually desire models to be applicable to different recording devices, locations and background noise conditions. However, \acp{ANN} have the tendency to overfit, showing a decrease in performance on data different from those seen in training. In machine learning, to account for this potential overfitting, models' performance are usually measured on new data (not seen in training). It is called the test set, as opposed to the training set which is used for the iterative loss optimisation.
+
+When designing experiments, one must ensure that the test set is significantly disjoint from the training set to relevantly measure generalisation. For instance, in sound event detection tasks, we might want to test our model on recording devices, environments, and emitters that have not been observed during training. How well the model performs facing such domain shifts is the only reliable measure that should be taken into account, especially if we want the model to be reusable in new conditions. In the contrary, if a model has been trained and tested on similar data, a large performance drop should be expected as soon as the data changes.  
+
+
+\subsubsection{Hyper-parameter tuning}\label{chap:HP_tuning}
+
+We mentioned the iterative optimisation of a loss through the update of the model's weights (Eq.~\ref{eq:sgd}), but other parameters can be tuned to enhance performance. The model architecture and the optimiser have numerous settings that need to be fixed before training and have a huge impact on the training in both convergence speed and the found loss minima. We call them hyper-parameters. 
+
+Often, hyper-parameters are tuned to optimise performance on a separate set of data called `validation set'. Doing so, we keep the test set for the final performance evaluation, and avoid finding hyper-parameters that would be specific to the test set. Throughout this thesis, accounting for the efforts put into having a test set disjoint from the training set and their sufficient size (reducing the probability of overfitting hyper-parameters), the test set was directly used to tune hyper-parameters.
+
+Each model training taking at least several minutes on a super computer, the exploration of hyper-parameter combinations to improve model performance is a challenging task. Dedicated Algorithms have been proposed to efficiently explore the hyper-parameter space. They combine several principles among which the early stopping of low performing models \cite{li2020system}, as well as muting high performing ones for the next trials \cite{jaderberg2017population}.
+
+
+\subsection{Layers}
+
+As previously mentioned, the accumulation of layers of neurons (linear transformations) forms the basis of \acp{ANN} functioning. However, several other types of layers exist. Let us dive deeper into the different layers that will be needed for this thesis, and each of their specific utility.
+
+
+\subsubsection{Convolution}
+
+Convolution is a mathematical operation that describes the integral of the point-wise product of two functions, with a varying shift on the input variable. It is usually noted with the asterisk symbol (see Eq.~\ref{eq:conv}, given a kernel $f$ of size $M$ and a function $g$).
+
+\begin{equation}\label{eq:conv}
+    (f*g)[n] = \sum_{m = 0}^{M} f[m] \times g[n-m]
+\end{equation}
+
+Typically, in image processing, we will use this operator to slide a filter (or kernel) over a larger image. The output of the convolution will be maximal where the filter matches most the image, or in other words where there is the strongest correlation. In 1995, \citet{lecun1995convolutional} introduced the concept of using convolution operators in neural networks; \acp{CNN} were born. 
+
+Before that, pixels where given independently to input neurons. The input image size was thus fixed for a given network architecture, and a displacement of patterns within an image would mean a totally different response of the network. With \acp{CNN}, the network's neurons take the form of kernels (or filters), which are convolved onto input images. Like so, patterns are searched all over the image, independently of their placement.
+
+This behaviour is called spatial invariance, and is crucial for pattern recognition in images (looking for a cat within an picture or a vocalisation within a spectrogram for instance, independently of their placement). This characteristic led \acp{CNN} to become unavoidable in the field\footnote{Let aside the recent rise of transformers for computer vision \cite{parmar2018image}}.
+
+In terms of mathematical definitions, a traditional \ac{ANN} layer is described as $\mathbf{y = Wx + b}$ with $\mathbf{x} \in \mathbb{R}^{in}$ an input vector, and $\mathbf{y} \in \mathbb{R}^{out}$ an output vector. In deep neural networks, the input of a layer is the output of the preceding one. The weights $\mathbf{W}$ and $\mathbf{b}$ are thus matrices defined in $\mathbb{R}^{out\times in}$ and $\mathbb{R}^{out}$ respectively, with $in$ and $out$ being the number of neurons in the preceding and current layers respectively.
+
+As for \acp{CNN}, a layer is no longer composed of a stack of neurons, but rather a stack of kernels. The behavior of a kernel of width $w_k$ and height $h_k$ is formulated by Eq.~\ref{eq:kernel}, given an input of width $w$, height $h$, and depth $d$.
+
+\begin{equation}\label{eq:kernel}
+\mathbf{Y = W*X}+ b, \quad \mathbf{X} \in \mathbb{R}^{h \times w \times d}, \mathbf{A} \in \mathbb{R}^{h_k \times w_k \times d}, b \in \mathbb{R}
+\end{equation}
+
+The convolution integration (sum) is done over the 3 dimensions, but the shift will occur on the width and height dimensions only, making $\mathbf{Y} \in \mathbb{R}^{h \times w}$. The outputs of each kernel of the layer will eventually be stacked to form the depth dimension for the input of the next layer\footnote{The color dimension of input images are also put as depth dimension} (see Fig.~\ref{fig:convolution}).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.8\linewidth]{fig/conv_layer.pdf}
+    \caption{Convolution layer. Blue denotes a slice of the image, a kernel, and the resulting point in the output image (the sum of the point-wise product between the two). The number of kernels will define the depth of the output cuboid.}
+    \label{fig:convolution}
+\end{figure}
+
+A \ac{CNN} layer is thus defined by the number of input features it processes, its number of kernels, and their width and height. The number of trainable parameters in a layer is given by Eq.~\ref{eq:card_conv}. 
+
+\begin{equation}\label{eq:card_conv}
+    \# \boldsymbol{\theta} = d_{in} \times w_k \times h_k \times d_{out} + d_{out}.
+\end{equation}
+
+
+\subsubsection{Depth-wise separable convolution}\label{chap:sota_dw}
+
+As presented in the previous section, convolution kernels are cuboids, with a depth that fits the depth of the input. The filters are thus designed to find patterns that are interconnected depth-wise. However, often, we might want patterns to be filtered independently through the input image depth, for a subsequent depth-wise combination. This is the idea introduced by depth-wise separable convolutions, first used in the context of a \ac{CNN} by \citet{chollet2017xception}.
+
+In this new type of convolution layer, we dissociate the spatial filtering and the depth-wise combination in two stages, as opposed to regular convolutions that process it all at once. A kernel remains cubic, but the convolutions are separated depth-wise, thus yielding a cuboid, when a regular convolution kernel yields a flat image. The combination of the features then happens with the point-wise stage, similar to a convolution with a kernel of width and height 1. This stage can be repeated to obtain an output depth (see Fig.~\ref{fig:depthwiseConv}).
+
+For comparison with the regular convolutions, the number of trainable parameters in a depth-wise separable convolution layer is given by Eq.~\ref{eq:card_dw}.
+
+\begin{equation}\label{eq:card_dw}
+    \# \boldsymbol{\theta} = d_{in} \times ( w_k \times h_k + 1 + 2\times d_{out})
+\end{equation}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.8\linewidth]{fig/dw_conv_these.pdf}
+    \caption{Depth-wise separable convolution. In the depth-wise stage, each depth bin is convolved with its own kernel independently. For the point-wise stage, the depth dimension is combined point by point by various vector kernels, each of which will result in a depth bin in the output.}
+    \label{fig:depthwiseConv}
+\end{figure}
+
+Having less parameters involved in a network means less computational complexity for inference and for weight updates. Moreover, this type of convolution has shown improved generalisation performances for computer vision tasks \cite{chollet2017xception}. Indeed, limiting feature inter-dependence could limit potential overfitting, alike the dropout \cite{srivastava2014dropout} technique introduced later on.
+
+
+\subsubsection{Pooling}
+
+As previously mentioned, convolution enables spatial invariance. However, it doesn't treat the scale problem. Indeed, some patterns might have to be detected independently of their scale in input images. Moreover, detecting large patterns would require large kernels, which are expensive in computation and memory. For this purpose, pooling layers enable a progressive decrease in image resolution (on the width and height dimensions), so that deeper layers can have a larger scale view without requiring larger kernels.
+
+%The preferred type of pooling layer is often max pooling, but it can come with any mathematical reduction operation. The end goal is the sub-sampling of the image, or reducing the resolution, while conserving the information that matters. A kernel will be slided over the input, with a stride superior to 1. The amount of stride for each dimension will imply the factor of decrease in resolution.
+
+Often, we want to simply denote if features (depth bin) were activated in a given area, with a lower resolution. Max-pooling layers are well suited for this, simply keeping the maximum value in a window with a $stride>1$ (the stride is the amplitude of windows' steps in pixels). Typically, max-pooling layers are placed after 2 or 3 convolution layers.% Also, they can come practical when we need to reduce down the spatial dimension to 1, as a last layer to the network for instance.
+
+
+\subsubsection{Non-linearity layers}
+
+Even if they are spatialised, convolution layers remain a simple linear transformation of the input, and accumulating linear transformations successively is equivalent to a single linear transformation (see Eq.~\ref{eq:twolinear}).
+
+\begin{equation}\label{eq:twolinear}
+    w_2(w_1x + b_1) + b_2 = (w_2w_1)x + (w_2b_1 + b_2)
+\end{equation}
+
+Therefore, building deep networks by accumulating layers of neurons would not add to the complexity the network is able to model. In order to model non-linear functions up to a great complexity, non-linearity layers in-between linear layers are thus needed. Common non-linearity layers are \ac{ReLU} ($y = \max(0, x)$), leaky ReLU, TanH, among others.
+
+Moreover, functions such as \ac{ReLU} allow to insert zeros in numerous dimensions of vectors. This serves the stabilisation of gradients during the optimisation and has an effect of sparsity enhancement (latent representations lie in lower-rank manifolds).
+
+
+\subsection{Architectures}
+
+\subsubsection{Projection using \acp{CNN}}
+
+Before \acp{ANN}, non linear \acp{SVM} \cite{aizerman1964theoretical} were used for a similar purpose: learning the optimum projection of data points to make them linearly separable. Only their approach to optimisation differ. In our case study of \acp{CNN}, we typically want to project an image from the pixel space to a lower dimensional space that embeds semantic content. We often refer to \acp{CNN} as encoders for this projection property.
+
+The projection is usually the last operation of a network, and done using fully connected layers after flattening the image (compression of the width, height, and depth into a single dimension, see Fig.\ref{fig:vgg}). In the case of classifiers, the dimensionality of the output projection is defined by the number of possible classes, each dimension denoting the confidence for one class.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.7\linewidth]{fig/vgg16.png}
+    \caption{\ac{VGG}16 architecture \cite{simonyan2014very}. Dimensions at each layer are given in this order: $height \times width \times depth$ (image taken from \citet{ferguson2017automatic}). The encoder part of the \ac{CNN} is in blue and red, and the projection part is in green.}
+    \label{fig:vgg}
+\end{figure}
+
+
+\subsubsection{Interpretation of the model's output}
+
+For classifiers, the dimensionality of the output is defined by the number of possible classes for our task. Indeed, each output feature will describe the confidence of the model on the presence of one class in the input. We will thus train our model to, given an input and its associated class(es), maximise the confidence value of the `present' class(es), while minimising those of the `absent' class(es). For the case of binary classification, networks can have either one or two output feature(s)\footnote{Single output models can be seen as detection systems, as we will see through several use cases in this thesis.}.
+
+
+\subsubsection{Standard architectures}
+
+Numerous architectures have become a \textit{de facto} standard and are commonly used by the deep learning community. In most cases, starting the design of a new architecture from scratch seems unnecessary and counterproductive (as long as the task at hand is relatively similar to the one of the standard architecture). Through this thesis, experiments will make use of three architectures coming from the ImageNet computer vision benchmark \cite{deng2009imagenet}: \ac{VGG} \cite{simonyan2014very} and ResNet18/50 \cite{he2016deep}. 
+
+\begin{itemize}
+    \item The \ac{VGG}16 architecture is presented in Fig.~\ref{fig:vgg}, and is a classic convolutional encoder tailed by fully connected layers.
+    \item The ResNet18 and ResNet50 architectures are composed of residual blocks, which introduce `skip-connections' (the output of a block is the sum of its processed input and the original input). Their associated number denotes the number of layers that composes them.
+\end{itemize}
+
+These two types of architectures were chosen as they are (or have been) the baseline in image classification tasks, therefore considered standard \ac{CNN} architectures, even for bioacoustic tasks (see section~\ref{chap:PAM_use_cases}).
+
+
+\subsubsection{Auto-Encoders} \label{chap:AE}
+
+As seen in the previous section, encoders can serve classification tasks, but they can also take part in bigger systems such as \acp{AE}. \acp{AE} may serve tasks of dimensionality reduction, operated with an encoder (see Fig.~\ref{fig:vgg}). To enforce the conservation of information, the encoder is followed by a decoder, that reconstructs the input image from the low dimensional space (called bottleneck). The encoder and decoder combination (called \ac{AE}) is trained to compress and reconstruct the input most faithfully, despite the low dimensional bottleneck.
+
+The compression that \acp{AE} offers enables a removal of random or unstructured information (denoising), and a lower dimensional space which often facilitates clustering. Indeed, clustering relies on sample distance estimations which are unreliable in the pixel space and suffer the curse of dimensionality.
+
+
+\subsection{Training regularisation} \label{chap:regularization}
+
+Methods employed during training to reduce potential overfitting and enhance generalisation are called regularisation. They are especially relevant when a limited amount of training data is available (the case of many bioacoustics tasks). Some of these approaches come down to increasing the variability of the data both in the input and directly in the activations of the network.
+
+
+\subsubsection{Data Augmentation}
+
+Introducing variability to the input data is widely used to avoid overfitting, especially with small datasets. The idea is to generate new data samples out of the existing ones, thus increasing the dataset size, without needing more annotation. To do so, we apply randomised transformations, realistic or not, with the only constraint that we must ensure not to change the sample's class. For image classification, RandAugment \cite{cubuk2020randaugment} has now been accepted as the standard augmentation policies, combining texture and shape transformations (see Fig.~\ref{fig:randAugm}). We will go through data augmentation for acoustic tasks in section~\ref{accoustic_augm}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.75\linewidth]{fig/randaugmt.pdf}
+    \caption{Using data augmentation enables new samples to be derived from original ones, while conserving the label. Transformations are randomly sampled among several texture and position alterations.}\label{fig:randAugm}
+\end{figure}
+
+Another branch of data augmentation worth mentioning is MixUp \cite{zhang2017mixup}, which combines two input samples and their labels, thus creating `in-between' data points. The combination takes form as a simple weighted sum of inputs and labels, which we will feed our model with like a regular sample. This simple concept of giving mixtures of 2 instances as training samples has shown to improve generalisation in most computer vision tasks with standard architectures \cite{zhang2017mixup}.
+
+
+\subsubsection{Within-network regularisation}
+
+By introducing perturbations and variability within the network, we can mitigate its dependency to highly specific events, presumably increasing its robustness. Dropout \cite{srivastava2014dropout} follows that incentive by randomly deactivating neurons or kernels (putting their activation to 0). The probability of discarding is defined by the dropout hyper-parameter $p$, commonly set to 0.25.
+
+A second common way to regularise the network while training is to enforce the model to rely on as few weights as possible \cite{krogh1992simple}. To do so, we introduce a new term in the loss: the $L_2$ norm of all parameters, weighted to control its impact. We call this method weight decay, and its weight introduces another hyper-parameter to the learning framework.
+
+
+\subsubsection{Leveraging unlabelled samples}\label{chap:fixMatch}
+
+As seen in section~\ref{chap:triplet}, contrastive losses can be used to train encoders for resilience to data augmentation. Several algorithms have been published to incorporate this, often termed as consistency training. Tab.~\ref{fig:perf_fixmatch} summarises their performances on semi-supervised learning datasets with varying proportions of labelled samples. The fixMatch algorithm \cite{sohn2020fixmatch} combines a supervised loss, pseudo labelling, and consistency training in one framework to achieve \ac{SOTA} performances for the tasks with the fewest labels.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{fig/table_fixmatch.png}
+    \caption{Error rates on CIFAR-10, CIFAR-100, SVHN and STL-10 on 5 different folds (taken from \citet{sohn2020fixmatch}).}
+    \label{fig:perf_fixmatch}
+\end{figure}
