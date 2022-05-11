@@ -135,25 +135,25 @@ Table~\ref{tab:recap_data} summarises some of the data yielded by the partnershi
 \textbf{ON/OFF protocol (min)} & 5/10 & 1/5 - 5/15 & Continuous & 1/5 & Continuous \\ \hline
 %Bombyx 1/5 until Oct. 17, then 5/15
 \textbf{Channels} & 1 & 2 & 5 & 15 & 3 \\ \hline
-\textbf{Recorded time (hours)} & 1,752 & 3,533 &  & 5,677 & 514 \\ \hline
+\textbf{Recorded time (hours)} & 1,752 & 3,533 & $\approx$ 40,000 & 5,677 & 514 \\ \hline
 \end{tabular}
 \caption{\label{tab:recap_data}Summary of the recording characteristics for each data source available at Toulon University.}
 \end{sidewaystable}
 
-
-\subsubsection{Boussole}
-
 \begin{figure}[!htb]
-   \begin{minipage}{0.7\textwidth}
+   \begin{minipage}{0.6\textwidth}
      \centering
      \includegraphics[width=\linewidth]{fig/bombyx.png}
    \end{minipage}\hfill
-   \begin{minipage}{0.25\textwidth}
+   \begin{minipage}{0.4\textwidth}
      \centering
-     \includegraphics[width=\linewidth]{fig/boussole.png}
+     \includegraphics[width=.6\linewidth]{fig/boussole.png}
    \end{minipage}\hfill
    \caption{(left) Installation of the Bombyx stereophonic antenna \cite{vamos2017}. (right) Structure of the Boussole antenna \cite{parsuivi}}\label{fig:antennas}
 \end{figure}
+
+
+\subsubsection{Boussole}
 
 This project consisted in a partnership between GIS3M, Pelagos marine mammal sanctuary, and Port-Cros National Park. In order to study marine mammals acoustic activity, a monophonic recording system was placed on the Boussole buoy. Originally dedicated to marine optics, this buoy designed to be transparent to swell was moored on the 2,440 meters deep sea floor, off the coast of Nice (France). During 4 phases between October 2008 and September 2009, the system recorded at 32\,kHz, enabling the detection of vocalisations from sperm whales, fin whales, and delphinids of the area (\textit{Stenella coeruleoalba, Globicephala melas, Grampus griseus, Tursiops truncatus and Delphinus delphis}).
 
@@ -179,11 +179,11 @@ The Bombyx antenna was set up by a partnership between Toulon University, Port-C
 \end{figure}
 
 
-\subsubsection{OrcaLab}
+\subsubsection{OrcaLab} \label{chap:OL}
 
 Paul Spong founded OrcaLab in the 1970s \cite{orcalab}, an in-situ observatory in the Johnstone Strait (British Columbia, Fig.~\ref{fig:ol_map}). It serves the visual and acoustic monitoring of orcas, especially the population that feeds on the local salmon every summer, the \ac{NRKW}. From 2015 to 2020, the 5 hydrophones' signals have been recorded continuously  (at 22,050\,Hz until march 2018, then at 44,100\,Hz).
 
-The fact that the orcas regularly come to this relatively confined space represents an unique opportunity to observe and listen to them 24/7 from the shore. Most importantly, it guarantees no behavioral disturbance and continuous power and data storage supply, the main constraints of most \ac{PAM} approaches.
+The fact that the orcas regularly come to this relatively confined space represents an unique opportunity to observe and listen to them 24/7 from the shore. Most importantly, it guarantees no behavioural disturbance and continuous power and data storage supply, the main constraints of most \ac{PAM} approaches.
 
 \begin{figure}
     \centering
@@ -228,17 +228,23 @@ Continue to develop and mature a long term acoustic research program to understa
     \item development of novel and efficient methods for standardised analysis of acoustic data collected in the Antarctic and sub-Antarctic
 \end{enumerate}}
 
-It is regarding this third axis of work that the Acoustic Trends dataset was built and published, especially to share performance metrics for detection systems. It gathers annotations from a group of experts, on data yielded by several recorders at different locations from 2005 to 2017 (see Fig.~\ref{fig:soos_map} and Tab.~\ref{tab:soos_data}). Target signals are of 7 classes, 4 vocalisation types from blue whales (\textit{Balaenoptera Musculus}) and 3 vocalisation types from fin whales (\textit{Balaenoptera Physalus}).
-
-Since this data has not been subject to custom annotations, I won't expand on the target signals which are described in the dataset publication \cite{miller2021open}.
-
 \begin{figure}
     \centering
-    \includegraphics[width=.7\linewidth]{fig/soos_ATW_map.png}
+    \includegraphics[width=.6\linewidth]{fig/soos_ATW_map.png}
     \caption{Map of the recording stations used in the Acoustic Trends dataset. The map was published by \citet{miller2021open}.}
     \label{fig:soos_map}
 \end{figure}
 
+It is regarding this third axis of work that the Acoustic Trends dataset was built and published, especially to share performance metrics for detection systems. It gathers annotations from a group of experts, on data yielded by several recorders at different locations from 2005 to 2017 (see Fig.~\ref{fig:soos_map} and Tab.~\ref{tab:soos_data}).
+
+Target signals are of 7 classes, 4 vocalisation types from blue whales (\textit{\ac{Bm}}) and 3 vocalisation types from fin whales (\textit{\ac{Bp}}). They all lie in low frequencies (between 20\,Hz and 100\,Hz) lasting from 1 to 15 seconds (Fig.~\ref{fig:misti_calls}). Since this data has not been subject to custom annotations, I won't expand on the target signals which are described in the dataset publication \cite{miller2021open}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.9\linewidth]{fig/calls_misti.png}
+    \caption{Distributions of lengths and frequencies for each of the 7 call types of the Acoustic Trends dataset. (left) \textit{\acl{Bm}}, (right) \textit{\acl{Bp}}. The figure was taken from \cite{miller2021open}.}
+    \label{fig:misti_calls}
+\end{figure}
 
 \begin{table}[ht]
 \centering

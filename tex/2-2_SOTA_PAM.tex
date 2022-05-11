@@ -52,15 +52,15 @@ Tuning templates and/or thresholds to cope with all possible perturbations can b
 
 A widespread preliminary feature extraction of acoustic signals is its frequency decomposition, this section describes how waveforms can be compiled into images (spectrograms).
 
-Let us start with an acoustic recording. It is described digitally by a sequence of samples \(\mathbf{x}=\{\mathbf{x}_i\}_{1..n}\) that denotes the evolution of pressure through time. The number of samples recorded per second is given by the sampling frequency, noted $f_s$.
+Let us start with an acoustic recording. It is described digitally by a sequence of samples \(\mathbf{x}=\{x[i]\}_{1..n}\) that denotes the evolution of pressure through time. The number of samples recorded per second is given by the sampling frequency, noted $f_s$.
 
 
 \subsubsection{Fourier}
 
-The Fourier transform is a major tool in signal processing. It allows to describe any signal as a sum of sinuses, each characterised by an amplitude and a phase. This representation is called the spectrum. Given our acoustic signal \(\mathbf{x}\), the \ac{DFT} will yield a spectrum \(\mathbf{X}_f\) that gives complex numbers as a function of frequencies. These complex numbers describe each frequency component of the signal, with the amplitude as the modulus and phase as the angle. The behavior of the \ac{DFT} \(\mathcal{F}\) of a signal of size $N$ is described by Eq.~\ref{eq:fourier}.
+The Fourier transform is a major tool in signal processing. It allows to describe any signal as a sum of sinuses, each characterised by an amplitude and a phase. This representation is called the spectrum. Given our acoustic signal \(\mathbf{x}\), the \ac{DFT} will yield a spectrum \(\mathcal{X}_f\) that gives complex numbers as a function of frequencies. These complex numbers describe each frequency component of the signal, with the amplitude as the modulus and phase as the angle. The behaviour of the \ac{DFT} \(\mathcal{F}\) of a signal of size $N$ is described by Eq.~\ref{eq:fourier}.
 
 \begin{equation}\label{eq:fourier}
-     \mathbf{X}_f = \mathcal{F}(\mathbf{x}) = \sum_{n = 0}^{N} x[n] e^{-i\frac{2\pi }{N} fn}.
+     \mathcal{X}_f = \mathcal{F}(\mathbf{x})_f = \sum_{n = 0}^{N} x[n] e^{-i\frac{2\pi }{N} fn}.
 \end{equation}
 
 \ac{FFT} implementations of the \ac{DFT} are available, enabling a reduction of the complexity from $O(n^2)$ to $O(nlog(n))$.
@@ -71,21 +71,20 @@ The Fourier transform is a major tool in signal processing. It allows to describ
 Numerous signal processing techniques, especially those presented in this thesis, rely on spectrograms. A spectrogram is a matrix representation of a signal, with values denoting magnitudes (square modulus of Fourier values) for each frequency and time bin (rows and columns respectively). It results from the juxtaposition of successive \acp{DFT}, computed by sliding a window over the signal.
 
 \begin{equation}
-     \mathbf{S}_{f,t} = \lvert \sum_{n = 0}^{NFFT} \mathbf{x}[t \times hop + n] e^{-i\frac{2\pi }{NFFT} fn} \rvert ^2. 
+     \mathbf{S}_{f,t} = \Bigl|\sum_{n = 0}^{NFFT} \mathbf{x}[t \times hop + n] e^{-i\frac{2\pi }{NFFT} fn}\Bigr| ^2. 
 \end{equation}\label{eq:stft}
 
 Throughout this thesis, spectrogram rows and columns will be referred to as frequency bins and time bins respectively.
 
-Several parameters are to be set prior to the \ac{STFT} computation, that define the sliding window's behavior: the window size $NFFT$ and the hop size \(hop\). Along with the sampling frequency \(f_s\), these will define the range and resolution of our resulting spectrogram :
-
+Several parameters are to be set prior to the \ac{STFT} computation, that define the sliding window's behaviour: the window size $NFFT$ and the hop size \(hop\). Along with the sampling frequency \(f_s\), these will define the range and resolution of our resulting spectrogram :
 \begin{itemize}
     \item The sampling frequency will affect the maximum frequency represented by our spectrogram: \(f \leq \frac{1}{2} f_s \) (Nyquist theorem). \\ We sometimes downsample the signal during preprocessing to withdraw high frequency contents when non relevant. Downsampling also drastically reduces the downstream computation complexity.
     
-    \item The window size will define the number of frequency bins of the spectrogram: \(\Delta f =\frac{f_s}{NFFT}\). \\ A bigger window will thus yield a more detailed representation of the signal, but also might blur short transitory events (the yielded spectrum is an average of the frequency contents in the window). Also note that a bigger \(NFFT\) implies more computation per \ac{DFT}.
+    \item The window size defines the length of the signal to be decomposed. \\A bigger window will yield a more detailed representation frequency wise. However, it will also blur short transitory events (the yielded spectrum is an average of the frequency contents in the window). 
     
+    \item $NFFT$ is the number of points used in each \ac{DFT}. It will define the number of frequency bins of the resulting spectrogram: \(\Delta f =\frac{f_s}{NFFT}\). The \ac{DFT} size can be larger than the window size, in which case borders are filled with zeros (zero padding). Like so, short transitory events are preserved as compared to using a larger window. Note that a larger $NFFT$ also implies more computation per \ac{DFT}.
+
     \item The hop size defines the temporal sampling rate of the spectrogram: \\ \(\Delta t = \frac{hop}{f_s}\). \\ A smaller hop size will yield a more detailed spectrogram, but also implies more computation (each step demands a \ac{DFT}).
-    
-    \item Zero padding allows to increase the sampling rate of the \ac{DFT} while preserving short events in the window from being blurred. It works by adding zeros at the border of the \ac{DFT} window.
 
 \end{itemize}
 
@@ -100,11 +99,14 @@ These parameters have a crucial impact on the spectrogram, and thus on how well 
 
 
 \paragraph{Alternative to the Fourier transform}
-Sometimes, both temporal and frequency high resolutions are needed, and a satisfying window size does not exist. This motivates the use of other bases than sinuses for spectral transforms such as wavelets (Gaussian enveloped sinuses for instance). 
+Sometimes, both temporal and frequency high resolutions are needed, and a satisfying Fourier window size does not exist. While Fourier uses the same window size for all frequencies, algorithms such as the wavelet transform propose a non uniform sampling of the time-frequency space, allowing for a better compromise in terms of temporal and frequency resolution.
 
-Moreover, the Fourier transform is based on the correlation of the input signal with sinus waves at different frequencies (Eq.~\ref{eq:fourier}). This is well suited to measure frequency components that resemble sinuses (stationary signals), but not adapted to deal with transitory signals (e.g. cetacean clicks). On the other hand, wavelets have a transitory nature that makes them more relevant to correlate with click like signals.
+Only a wavelet transform allows for a satisfactory representation of both low frequency and high frequency events, which can be useful in \ac{PAM} applications.
+%Moreover, the Fourier transform is based on the correlation of the input signal with sinus waves at different frequencies (Eq.~\ref{eq:fourier}). This is well suited to measure frequency components that resemble sinuses (stationary signals), but not adapted to deal with transitory signals (e.g. cetacean clicks). On the other hand, wavelets have a transitory nature that makes them more relevant to correlate with click like signals.
 
-Researchers have thus studied the use of wavelet transforms as frontends, for instance with cetacean click detection \cite{lopatka2005attractive}. Further studies have also experimented on combining Fourier and wavelet transforms into multi-channel spectrograms, as a frontend for speech recognition \cite{arias2021multi} or bird classification \cite{zhang2021bird}. Nonetheless, the Fourier transform remains the choice in a wide majority of applications, because of its convenience of use and its efficient \ac{FFT} implementation.
+Researchers have thus studied the use of wavelet transforms as frontends, for instance with cetacean click detection \cite{lopatka2005attractive}. Further studies have also experimented on combining Fourier and wavelet transforms into multi-channel spectrograms, as a frontend for speech recognition \cite{arias2021multi} or bird classification \cite{zhang2021bird}. Also, \citet{stowell2012framewise} have used chirplet transforms to analyse bird songs.
+
+Nonetheless, the Fourier transform remains the choice in a wide majority of applications, because of its convenience of use and its efficient \ac{FFT} implementation. Throughout this thesis, the large majority of experiments are based on the Fourier transform, to focus more on the effects of other components of the analysis such as downstream processing.
 
 
 \paragraph{Beyond the empirical choice of \ac{STFT} parameters}
@@ -115,12 +117,12 @@ Indeed, when there is a wide variety of target signals, the empirical choice of 
 
 \subsubsection{Mel-spectrograms}
 
-Humans have a logarithmic sensibility to frequencies: we perceive a constant tonal shift when frequencies are multiplied by a constant. Besides, harmonic structures of acoustic signals also often show logarithmic behaviors. To have a spectrogram representation that reflects this phenomenon, the Mel transform changes the linear layout of a frequency domain into a logarithmic one: the Mel scale. The Mel scale describes a frequency layout that follows human perception of tones in terms of hearing range, but also such that a constant shift in Mel bin will be perceived as a constant shift in tone. However, we can extend this scale to a wider range of frequencies, thus extrapolating the human perception into frequencies suited for the hearing range of cetaceans for example.
+Humans have a logarithmic sensibility to frequencies: we perceive a constant tonal shift when frequencies are multiplied by a constant. Besides, harmonic structures of acoustic signals also often show logarithmic behaviours. To have a spectrogram representation that reflects this phenomenon, the Mel transform changes the linear layout of a frequency domain into a logarithmic one: the Mel scale. The Mel scale describes a frequency layout that follows human perception of tones in terms of hearing range, but also such that a constant shift in Mel bin will be perceived as a constant shift in tone. However, we can extend this scale to a wider range of frequencies, thus extrapolating the human perception into frequencies suited for the hearing range of cetaceans for example.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{fig/mel_filterbank.pdf}
-    \caption{Example of Mel filterbank (set of triangular filters). Each color represents a filter, which will ponderate the input spectrum to yield a Mel frequency bin.}
+    \caption{Example of Mel filterbank (set of triangular filters). Each colour represents a filter, which will ponderate the input spectrum to yield a Mel frequency bin.}
     \label{fig:mel}
 \end{figure}
 
@@ -133,7 +135,7 @@ To build a Mel-spectrogram, a dot product is computed between a matrix of logari
 
 \subsubsection{Range compression}
 
-In acoustics, the energy is usually measured in decibels (dB), a logarithmic transformation of measured magnitudes such that \(E = 20log_{10}(\mathbf{S}\). Typically, for spectrograms, this will shift the values from a logarithmic distribution to a Gaussian distribution. The strength of the shift can be modulated by applying a factor $10^a$ to the magnitudes before computing the logarithm ($log(1 + x \times 10^a)$, see Fig.~\ref{fig:compression}). The optimisation of the exponent $a$ can also be part of the learning framework, as proposed by \citet{schluter2017deep}.
+In acoustics, the energy is usually measured in decibels (dB), a logarithmic transformation of measured magnitudes such that \(\mathbf{E} = 10 \log_{10}(\mathbf{S})\). Typically, for spectrograms, this will shift the values from a logarithmic distribution to a Gaussian distribution. The strength of the shift can be modulated by applying a factor $10^a$ to the magnitudes before computing the logarithm ($log(1 + x \times 10^a)$, see Fig.~\ref{fig:compression}). The optimisation of the exponent $a$ can also be part of the learning framework, as proposed by \citet{schluter2017deep}.
 
 \begin{figure}
     \centering
@@ -142,14 +144,13 @@ In acoustics, the energy is usually measured in decibels (dB), a logarithmic tra
     \label{fig:compression}
 \end{figure}
 
-On the other hand, presumably more robust methods have emerged, especially with the \ac{PCEN} \cite{wang2017trainable}. This method introduces a dynamic gain control to adapt the compression range depending on local loudness and reduce stationary noise (estimated via an \ac{IIR} filter for each frequency bin, see Fig.~\ref{fig:compression}). The formula for \ac{PCEN} is given by Eq.~\ref{eq:pcen}, given an input spectrogram $E(t,f)$, and parameters $\epsilon$, $\alpha$, $\delta$ and $r$. $M$ denotes the \ac{IIR} filtered version of the spectrogram, as given by Eq.~\ref{eq:filter}, depending on the smoothing coefficient $s$ that impacts the filter's latency. This method requires 5 hyper-parameters to be set for initialisation and potentially to be optimised end-to-end with the downstream model.
+On the other hand, presumably more robust methods have emerged, especially with the \ac{PCEN} \cite{wang2017trainable}. This method introduces a dynamic gain control to adapt the compression range depending on local loudness and reduce stationary noise (estimated via an \ac{IIR} filter for each frequency bin, see Fig.~\ref{fig:compression}). The formula for \ac{PCEN} is given by Eq.~\ref{eq:pcen}, given an input spectrogram $\mathbf{E}$, and parameters $\epsilon$, $\alpha$, $\delta$ and $r$. $\mathbf{M}$ denotes the \ac{IIR} filtered version of the spectrogram, as given by Eq.~\ref{eq:filter}, depending on the smoothing coefficient $s$ that impacts the filter's latency. This method requires 5 hyper-parameters to be set for initialisation and potentially to be optimised end-to-end with the downstream model.
 
 \begin{equation}\label{eq:filter}
-    \mathbf{M}_{f,t} = (1-s)\mathbf{M}_{f,t-1} + s\mathbf{S}_{f,t},
+    \mathrm{M}_{f,t} = (1-s)\mathrm{M}_{f,t-1} + s\mathrm{S}_{f,t},
 \end{equation}
-
 \begin{equation}\label{eq:pcen}
-    \mathbf{PCEN}_{f,t} = \left(\frac{\mathbf{S}_{f,t}}{(\epsilon+\mathbf{M}_{f,t})^\alpha} + \delta \right)^r - \delta^r.
+    \mathrm{PCEN}_{f,t} = \left(\frac{\mathrm{S}_{f,t}}{(\epsilon+\mathrm{M}_{f,t})^\alpha} + \delta \right)^r - \delta^r.
 \end{equation}
 
 
@@ -261,6 +262,6 @@ Since the introduction of \acp{CNN} in bioacoustics a few years back, numerous e
 
 Other architectures than regular \acp{CNN} are encountered, such as a \ac{RNN}+\ac{CNN} that integrates the prior of call rates into the detection process \cite{madhusudhana2021improve}, an LSTM on spectrogram for click detection \cite{duan2022detection}, an \ac{ANN} that classifies odontocetes' clicks without convolution \cite{roch2021using}, Siamese networks for classifying blue whale calls \cite{zhong2021detecting}, transformers for bird recognition \cite{pugetstft}, or a context adaptive \ac{CNN} that makes use of soundscape features to gain robustness \cite{lostanlen2019robust}.
 
-\citet{stowell2021computational} proposes a review gathering 159 articles on bioacoustics using deep learning, 30 of which concern marine mammals. One important insight of this review is a report on chosen \ac{CNN} architectures. The most popular mentioned are Resnet (23 papers), and \ac{VGG} or VGGish (17 papers). Other tendencies are described, but besides perhaps the use of spectrograms as inputs for \acp{CNN}, no clear advantage emerges for a specific architecture or set of hyper-parameters. %This paradoxically shows that there is a wide agreement on a consequent part of the task (convolutional architectures with spectrogram as inputs) and how a large degree of freedom still remains (which architecture to use with which hyper-parameters).
+\citet{stowell2021computational} proposes a review gathering 159 articles on bioacoustics using deep learning, 30 of which concern marine mammals. One important insight of this review is a report on chosen \ac{CNN} architectures. The most popular mentioned are Resnet (23 papers), and \ac{VGG} or VGGish (17 papers). Other tendencies are described, but besides perhaps the use of spectrograms as inputs for \acp{CNN}, no clear advantage emerges for a specific architecture or set of hyper-parameters.
 
-The standardisation of bioacoustic \ac{CNN} classifiers is still in progress\footnote{Whether it will ever be achieved is highly debatable, knowing that computer vision systems have not yet converged.}. \citet{brown2021automatic} are working on it by exploring a wide range of settings, evaluated on multiple bird recognition tasks. To cope with the large search spaces they made use of search algorithms such as genetic algorithms or surrogate models (training a small \ac{ANN} to predict performances from set of hyper-parameters).
+Such reviews demonstrate how the automatic analysis of bioacoustic recordings is still an open research subject. In this context, \citet{brown2021automatic} explored a wide range of settings evaluated on multiple bird recognition tasks. They show how there is not one generic workflow that is well adapted to every task. In a similar paradigm, this thesis explores several methods trying to extract reusable knowledge on their potential efficiency.

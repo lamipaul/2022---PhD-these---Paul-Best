@@ -5,7 +5,7 @@
 
 \section{Context and objective}
 
-Given previously trained detection and classification systems, this section describes how they can be put to production and serve species conservation purposes. Focusing on the sperm whales and fin whales of the Mediterranean sea, a first axis of conservation is the reduction of ship strikes, a significant cause of death for these species evolving in the Pelagos marine mammal sanctuary \cite{panigada2006mediterranean}. Then, the detection mechanisms is run upon the Bombyx long term survey. This yields insights on sperm whale behavior in relation to anthropic pressure, helping to implement relevant conservation measures in the long term.
+Given previously trained detection and classification systems, this section describes how they can be put to production and serve species conservation purposes. Focusing on the sperm whales and fin whales of the Mediterranean sea, a first axis of conservation is the reduction of ship strikes, a significant cause of death for these species evolving in the Pelagos marine mammal sanctuary \cite{panigada2006mediterranean}. Then, the detection mechanisms is run upon the Bombyx long term survey. This yields insights on sperm whale behaviour in relation to anthropic pressure, helping to implement relevant conservation measures in the long term.
 
 
 \section{Alert system for collision risk mitigation}
@@ -25,27 +25,28 @@ Given previously trained detection and classification systems, this section desc
    \caption{Technical plans of the Bombyx 2 system, taken from OSEAN SAS manufacturing report. (left) Mooring system. (right) Pentaphonic acoustic recorder and floatability variation system (total height of 3 meters).}
 \end{figure}
 
-As part of the GIAS project aiming at reducing navigation risks in the Mediterranean sea, the Bombyx 2 buoy was designed, in a collaboration between Toulon University and OSEAN SAS. This buoy is equipped with 5 hydrophones, a floatability variation system, and embedded algorithms for the detection of sperm whale clicks and 20\,Hz fin whale pulses. To mitigate surface noise and exposure to strong weather conditions, the buoy parks at 25 meters depth to record and acoustically detect its target species (sperm whales and fin whales). In the event of a detection, the buoy reaches the surface to transmit the alert with supporting data via the mobile network. The alerts then allow ferries of the zone to make decisions to mitigate their risk of collision with nearby whales (reducing speed or changing route for instance).
+As part of the GIAS project aiming at reducing navigation risks in the Mediterranean sea, the Bombyx 2 buoy was designed, in a collaboration between DYNI and OSEAN SAS. Preliminary work on this project was subject to a conference publication \cite{best2020stereo}
+
+This buoy is equipped with 5 hydrophones, a floatability variation system, and embedded algorithms for the detection of sperm whale clicks and 20\,Hz fin whale pulses. To mitigate surface noise and exposure to strong weather conditions, the buoy parks at 25 meters depth to record and acoustically detect its target species (sperm whales and fin whales). In the event of a detection, the buoy reaches the surface to transmit the alert with supporting data via the mobile network. The alerts then allow ferries of the zone to make decisions to mitigate their risk of collision with nearby whales (reducing speed or changing route for instance).
 
 
 \subsection{CNN deployment to an embedded MCU}
 
 Section \ref{chap:lightweight} introduced low complexity \acp{CNN}, especially designed to answer the needs of this alert system. These models, after being trained on \acp{GPU} using the Pytorch package \cite{NEURIPS2019_9015}, were implemented on the embedded system, namely the Microchip PIC32 \ac{MCU} (integrated on the High-Blue sound card \cite{barchasz2020novel}).
 
-This demanded to build a custom interface to export and load architectures and weights via text files. The exports are done in Python, and imported in C (required programming language for the \ac{MCU}). Design choices were made for the C implementation, for a compromise between flexibility and reduced development effort :
-%
+This demanded to build a custom interface to export and load architectures and weights via text files. The exports are done in Python, and imported in C (required programming language for the \ac{MCU}). Design choices were made for the C implementation, for a compromise between flexibility and reduced development effort:
 \begin{itemize} \setlength{\itemsep}{1pt}
-    \item The model input consists in a Mel-spectrogram
-    \item Signal length, sampling frequency, window length, hop size, number of Mel bands, and Mel frequency boundaries are parametric
-    \item The architecture consists of successive depth-wise separable convolution layers intertwined with batch normalization and leaky \ac{ReLU}
-    \item The number of layers, and the number of features, kernel sizes and strides for each layer are parametric
-    \item The last layer is pooled by maximum to yield a global prediction of the signal
+    \item The model input consists in a Mel-spectrogram,
+    \item Signal length, sampling frequency, window length, hop size, number of Mel-bands, and Mel-frequency boundaries are parametric,
+    \item The architecture consists of successive depth-wise separable convolution layers intertwined with batch normalisation and leaky \ac{ReLU},
+    \item The number of layers, and the number of features, kernel sizes and strides for each layer are parametric,
+    \item The last layer is pooled by maximum to yield a global prediction of the signal.
 \end{itemize}
 
 
 \subsection{Computation times}
 
-Specifications of the input parameters and processing time for the two target signals are given in Tab. \ref{tab:pic_implem}.
+Specifications of the input parameters and processing time for the two target signals are given in Tab.~\ref{tab:pic_implem}.
 %
 \begin{table}[ht]
     \centering
@@ -77,7 +78,7 @@ The longest step is by far the spectrogram computation compared to \ac{CNN} infe
 
 In the event of detections triggered by the \acp{CNN}, the buoy is ordered to lift towards the surface to transmit a report supporting the alert. It includes multi-channel chunks of signals (cut surrounding detection peaks), prediction sequences for the two species, and buoy orientation (compass, and magnetometer). These extracts of signals allow experts to confirm the veracity of the alert and to take decisions accordingly. Moreover, the reported extracts being multi-channel (5 hydrophones), triangulation via cross-correlation is possible, increasing the spatial precision of the alert.
 
-The prediction sequences can serve a quick discrimination between false positives, by examining distribution among successive files (Fig. \ref{fig:compare_cacha}).
+The prediction sequences can serve a quick discrimination between false positives, by examining distribution among successive files (Fig.~\ref{fig:compare_cacha}).
 
 \begin{figure}
     \centering
@@ -96,16 +97,16 @@ The prediction sequences can serve a quick discrimination between false positive
 
 \section{Long term presence monitoring}
 
-In addition to its production use in the context of ship collision mitigation, the sperm whale click detection \ac{CNN} has been forwarded on the whole Bombyx dataset (3,532 recorded hours from May 2015 to December 2018) for a long term study of sperm whale presence. This work was conducted as a collaboration with Maxence Ferrari and Marion Poupard, and resulted in a journal publication \cite{bombyx}. Some of the results are reported here.
+In addition to its production use in the context of ship collision mitigation, the sperm whale click detection \ac{CNN} has been forwarded on the whole Bombyx dataset (3,532 recorded hours from May 2015 to December 2018) for a long term study of sperm whale presence. This work resulted in a journal publication \cite{bombyx}, from which some of the results are reported here.
 
 
-\subsection{Sperm whale acoustic presence}
+\subsection{Sperm whale acoustic presence} \label{chap:cacha_presence}
 
 A first analysis focused solely on reporting the presence of sperm whales through the recorder years. Files (1min long) with more than 40 \ac{CNN} predictions above 0.95 were manually verified using the interface described in section \ref{chap:bombyx_annot}. Like so, automatic detections were validated and number of individuals were estimated (inferred from simultaneous click trains and \ac{TDOA} tracks). This process yielded 57 new sperm whales passages (missed during the annotation procedure described in section \ref{chap:bombyx_annot}), and 25 false positives (including 15 triggered by sound card malfunctions). The notion of passage was used to account for sperm whale presence, considering that clicks belong to the same passage if separated by less than 1h.
 
-In total, 226 sperm whale passages have been recovered, with a total of 347 individuals. Fig. \ref{fig:res_nbr_indiv_calendar} presents the number of detected individuals each day during the 4 years of recording. Sperm whales were found all year round, with no statistically significant seasonal pattern. The number of animals per passage varied from 1 to 9 individuals, with a mean duration of 4 hours.
+In total, 226 sperm whale passages have been recovered, with a total of 347 individuals. Fig.~\ref{fig:res_nbr_indiv_calendar} presents the number of detected individuals each day during the 4 years of recording. Sperm whales were found all year round, with no statistically significant seasonal pattern. The number of animals per passage varied from 1 to 9 individuals, with a mean duration of 4 hours.
 
-To evaluate dial patterns, the probability of presence was computed for each hour of the day. Grouping probabilities into four periods (Night, Morning, Afternoon, and Evening) demonstrates a statistically significant differences among periods of the day : sperm whales are more present during morning or afternoons than in the evening (see Fig. \ref{fig:res_nbr_indiv_calendar}, Kruskal-Wallis test : p-value < 0.01).
+To evaluate dial patterns, the probability of presence was computed for each hour of the day. Grouping probabilities into four periods (Night, Morning, Afternoon, and Evening) demonstrates a statistically significant differences among periods of the day : sperm whales are more present during morning or afternoons than in the evening (Fig.~\ref{fig:res_nbr_indiv_calendar}, Kruskal-Wallis test : p-value < 0.01).
 
 \begin{figure}[ht]
 \centering
@@ -117,7 +118,7 @@ To evaluate dial patterns, the probability of presence was computed for each hou
 
 \subsection{Presence in relation to anthropogenic noise pressure}
 
-To assess the performance of the detection system as well as to measure the impact of noise on the presence of sperm whales, the amplitudes of different octave bands were computed and analyzed. The distribution of the background noise (octave 800\,Hz) through the day is shown in Fig. \ref{fig:db_cach}. All octaves' dial distributions have the same shape as the 12,800\,Hz octave, with the energy peaking around 4am and 9pm.
+To assess the performance of the detection system as well as to measure the impact of noise on the presence of sperm whales, the amplitudes of different octave bands were computed and analysed. The distribution of the background noise (octave 800\,Hz) through the day is shown in Fig.~\ref{fig:db_cach}. All octaves' dial distributions have the same shape as the 12,800\,Hz octave, with the energy peaking around 4am and 9pm.
 
 \begin{figure}[ht]
     \centering
@@ -128,7 +129,7 @@ To assess the performance of the detection system as well as to measure the impa
 
 Ferries cross the study area daily, connecting Toulon or Marseille to Corsica, with scheduled times between 3am - 6am and from 8pm - 9pm. The closest ferry route is approximately 3km away from the antenna. For all octaves, dB amplitudes are significantly higher during ferry schedules (Mann–Whitney test, \textit{p-value} $<$ 0.05), with an average gain of approximately 3\,dB.
 
-Moreover, as Fig. \ref{fig:db_cach} illustrates, the data shows a significantly lower noise during the sperm whales' presence (Mann-Whitney U=14.44, sample size=300, \textit{p-value} < 0.01) for all octaves except 6,400\,Hz and 12,800\,Hz. This is further demonstrated in Fig. \ref{fig:db_cach}, where, during 4 AM and 9 PM (noise peaks), the presence of sperm whales is lowest. This last figure also shows that the reduced sperm whale presence is not due to an increased background noise, since sperm whale probability drops before the background noise rises.
+Moreover, as Fig.~\ref{fig:db_cach} illustrates, the data shows a significantly lower noise during the sperm whales' presence (Mann-Whitney U=14.44, sample size=300, \textit{p-value} < 0.01) for all octaves except 6,400\,Hz and 12,800\,Hz. This is further demonstrated in Fig.~\ref{fig:db_cach}, where, during 4 AM and 9 PM (noise peaks), the presence of sperm whales is lowest. This last figure also shows that the reduced sperm whale presence is not due to an increased background noise, since sperm whale probability drops before the background noise rises.
 
 
 \section{Conclusion}

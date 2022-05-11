@@ -30,7 +30,7 @@ Often during annotation procedures, we want to manually sort out true and false 
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{fig/thumbnail_sort.png}
+    \includegraphics[width=\linewidth]{fig/thunar.png}
     \caption{Example of thumbnails ready to be annotated (picked), using the Thunar file explorer \cite{thunar}. Here, files are clustered spectrograms of orca calls (see section~\ref{chap:autoencoder}).}
     \label{fig:png_annot}
 \end{figure}
@@ -53,13 +53,13 @@ The following paragraphs introduce two case studies of such approaches, one with
 
 \subsection{Spectrogram energy thresholding (orca calls)}\label{chap:spec_bin}
 \textit{This work was conducted in collaboration with Jan Schlüter and Marion Poupard, on the OrcaLab data (see section~\ref{chap:data_Toulon}).} \\
-The chosen approach to the preliminary detection of orca calls was inspired by \citet{lasseck2014large} on spectrogram segmentation for bird call detection. We first binarise spectrograms (see Fig.~\ref{fig:fig_binarisation}) with adaptive thresholds using rows and columns moments. Given a log compressed spectrogram $\mathbf{E}$, the threshold $\mathbf{T}$ of pixels at row $f$ and column $t$ are given by Eq.~\ref{lasseck} (as proposed by \citet{lasseck2014large}) and as empirically tuned by us in Eq.~\ref{binarise}.
+The chosen approach to the preliminary detection of orca calls was inspired by \citet{lasseck2014large} on spectrogram segmentation for bird call detection. We first binarise spectrograms (see Fig.~\ref{fig:fig_binarisation}) with adaptive thresholds using rows and columns moments. The original formulation proposed by \citet{lasseck2014large} for the threshold $T_{f,t}$ given a log compressed spectrogram $\mathbf{E}$ is given by Eq.~\ref{lasseck}. The goal being to detect pixels with energy values above the distribution of their row and column, we propose to rather use Eq.~\ref{binarise}.
 
 \begin{equation}\label{lasseck}
-    \mathbf{T}_{f,t} = \max(3 \times \underset{j}{\median}(\mathbf{E}_{f,j}), \; 3 \times \underset{i}{\median}(\mathbf{E}_{f,i})).
+    \mathrm{T}_{f,t} = \max(3 \times \underset{j}{\median}(\mathrm{E}_{f,j}), \; 3 \times \underset{i}{\median}(\mathrm{E}_{f,i})).
 \end{equation}
 \begin{equation}\label{binarise}
-    \mathbf{T}_{f,t} = \max( \underset{j}{\median}(\mathbf{E}_{f,j}) + 2 \times \underset{j}{\std}(\mathbf{E}_{f,j}), \; \underset{i}{\median}(\mathbf{E}_{i,t}) + \underset{i}{\std}(\mathbf{E}_{i,t})).
+    \mathrm{T}_{f,t} = \max( \underset{j}{\median}(\mathrm{E}_{f,j}) + 2 \times \underset{j}{\std}(\mathbf{E}_{f,j}), \; \underset{i}{\median}(\mathbf{E}_{i,t}) + \underset{i}{\std}(\mathbf{E}_{i,t})).
 \end{equation}
 
 \begin{figure}
@@ -117,15 +117,23 @@ Clustering allows for a strong optimisation of the annotation process. Indeed, o
 
 The key to clustering quality is the extraction of relevant features for similarity measurement. Hereby are presented three feature extraction approaches on different kinds of signals : humpback whale vocalisations, toothed whale clicks, and orca calls.
 
-Once features were extracted, they were usually projected using \ac{UMAP} \cite{mcinnes2018umap} before a \ac{DBSCAN} clustering \cite{ester1996density}. \citet{allaoui2020considerably} have shown that dimensionality reduction using \ac{UMAP} would improve the performance of clustering such as density based ones. The distribution of projection in turn motivated a density based approach to clustering such as \ac{DBSCAN}.
+Once features were extracted, they were usually projected using \ac{UMAP} \cite{mcinnes2018umap} before a \ac{DBSCAN} clustering \cite{ester1996density}. \citet{allaoui2020considerably} have shown that dimensionality reduction using \ac{UMAP} would improve the performance of clustering such as density based ones. The distribution of projection in turn motivated a density based approach to clustering such as \ac{DBSCAN} (Fig.~\ref{fig:cluster_interface_HB}).
 
 
-\subsection{Spectral features (humpback whale calls)}\label{chap:HB_annot}
+\subsection{Spectro-temporal features (humpback whale calls)} \label{chap:HB_annot}
 \textit{This work was conducted on the Carimam dataset (see section~\ref{chap:data_Toulon}).}\\
-To isolate vocalisations from the rest of the data (void, reef activity, boats, self noise of the sound card), spectral features of recording chunks (few seconds long) were extracted. They consist in temporally downsampled spectrograms with sorted frequency bins to reflect their energy distribution.
+The objective of the following procedure is to explore a large dataset with no samples of target signals given a priori. For this purpose, a relatively generic feature extraction was conducted before plotting and clustering their projection. Like so, we intend to isolate groups of similar events, and allow for a more efficient exploration of the data. Especially, the events we hope to find are click trains and cetacean vocalisations, but we also expect to retrieve events from other noise sources.
 
-Downsampling is done to keep as few features as possible (to avoid the curse of dimensionality during clustering). Moreover, to make abstraction of the temporal information (whether a signal is at the beginning of a chunk or at its end), we sort each frequency bin in descending order. This also allows, in a second step, to select specific columns: the first denoting the highest energy in the chunk for each frequency bin, and the last their lowest. Looking for short events for instance, we might want to select the first and second columns. Chunks with a large gap between the two should thus contain a short but strong acoustic event. Like so, it could be differentiated from chunks with stationary strong energy and chunks with a low overall energy, and this for specific frequency bins. For simplicity, this set of columns to be kept will be referred to as `quantiles'.
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{fig/HB_specextract.pdf}
+    \caption{Main steps of the spectral feature extraction procedure. The spectrogram is first max-pooled time-wise by a given factor. Then, each frequency bin is sorted (time-wise) to make abstraction of the temporal position of events.}
+    \label{fig:feat_spec}
+\end{figure}
 
+The extracted features process spectrogram chunks in two main steps in order to emphasis potential signals of interests (Fig.~\ref{fig:feat_spec}). First, to get a representation that preserves short events (such as clicks) but with a reduced size, we max-pool spectrograms time wise. Second, to make abstraction of the temporal information (whether an event is at the beginning of a chunk or at its end) we sort each frequency bin (time wise) in descending order.
+
+Doing so, the resulting matrix is no longer a spectrogram, but rather a representation of the energy distribution for each frequency bin. This allows to select specific columns as discriminating features, the first denoting the highest energy in the chunk for each frequency bin, and the last their lowest. For instance, looking for short events, we can select the first and second columns. Chunks with a large gap between the two should contain a short but strong acoustic event. It could thus be differentiated from chunks with stationary strong energy and chunks with a low overall energy, and this for specific frequency bins. For simplicity, this set of columns to be kept will be referred to as `quantiles'.
 The full procedure for this analysis is described in Listing~\ref{hb_cluster}.
 
 \begin{python}[caption={Feature extraction and clustering for humpback whale vocalisations. Steps are operated over a batch of signals on \ac{GPU} for computation speed.}, label={hb_cluster}]
@@ -161,7 +169,7 @@ embeddings = UMAP().fit_transform(features)
 clusters = DBSCAN().fit_predict(embeddings)
 \end{python}
 
-The variables \pythoninline{fmax}, \pythoninline{uds}, and \pythoninline{chunksize} need to be tuned to the type of signals we desire to isolate, especially in terms of spectrum range and spectrogram temporal resolution. As for the humpback whales, they were set to 8,000\,Hz, 14 and 20 respectively (chunks of 10\,sec with 20 time bins). Then, the first seconds and fifth quantiles were chosen.
+The variables \pythoninline{fmax}, \pythoninline{uds}, and \pythoninline{chunksize} need to be tuned to the type of signals we desire to isolate, especially in terms of spectrum range and spectrogram temporal resolution. \pythoninline{fmax} determines $f_s$ at which the signal is resampled, \pythoninline{uds} determines the downsampling factor used for max-pooling, and \pythoninline{chunksize} determines the sampling rate of the feature extraction process. As for the humpback whales, they were set to 8,000\,Hz, 14 and 20 respectively (chunks of 10\,sec with 20 time bins). Then, the first seconds and fifth quantiles were chosen.
 
 These choices were made via intuition and empiric testing. Once annotations were gathered, experiments were carried out to measure which configuration would have been the most efficient.
 
@@ -172,14 +180,14 @@ Once features have been extracted for a large amount of samples, we reduce their
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{fig/cluster_vocs_interface.png}
-    \caption{Interface for browsing clusters. The left panel displays clustered \ac{UMAP} projections of audio chunks spectral features, with red dots signaling points that have been clicked on. The right panel displays the spectrogram of the last selected audio as well as its meta data.}
+    \caption{Interface for browsing clusters. The left panel displays clustered \ac{UMAP} projections of audio chunks spectral features, with red dots signaling points that have been clicked on. The right panel displays the spectrogram of the last selected audio as well as its metadata.}
     \label{fig:cluster_interface_HB}
 \end{figure}
 
 Users can select an audio chunk by clicking on its projection on the scatter plot. The interface will then play the corresponding sound extract and display its spectrogram on a secondary window. This allows for the identification of discriminant clusters to be retained (containing only vocalisations, or only noise for instance). Eventually, we can plot samples belonging to selected clusters as .png files and use thumbnail picking (see section~\ref{chap:png_annot}) to sort out misclassified samples.
 
 
-\subsection{Clustering impulses' features (toothed whale clicks)}
+\subsection{Impulses' features (toothed whale clicks)}
 \textit{This work was strongly inspired by \citet{frasier2021machine}, conducted in collaboration with Maxence Ferrari and Marion Poupard, on the Carimam data (see section~\ref{chap:data_Toulon}).}\\
 In a similar approach, we might want to cluster clicks for their spectral features to infer \ac{ICI} characteristics, which helps discriminate toothed whales click trains from reef noise. To do so, using the \ac{STFT} as seen in the previous section is not appropriate. We would rather use a generic impulse detection mechanisms on the waveform, and extract their features. I thus propose the following steps :
 
@@ -219,7 +227,7 @@ This method was used to explore the data in view
 
 
 \subsection{AE embeddings (orca calls)} \label{chap:autoencoder}
-\textit{This work was conducted on the OrcaLab data (see section~\ref{chap:data_Toulon}).}\\
+\textit{This work was conducted on the OrcaLab data (see section~\ref{chap:data_Toulon}), and has been subject to a workshop intervention \cite{bestvihar}.}\\
 For this section, we are interested in the classification of pre-detected orca calls (dataset of 114k orca calls detected by a \ac{CNN} presented in section~\ref{chap:orca_detec}). Call types, as defined by \citet{ford1987catalogue} for \acp{NRKW}, are determined by their temporal pitch patterns. First experiments were thus conducted using a pitch based feature extraction to cluster calls \cite{poupard2019large}. However, the estimation of the pitch appeared to be quite unreliable in low and medium \ac{SNR} conditions (see section~\ref{chap:sota_pitch}). This led to a switch towards a larger scale extraction of shape (as opposed to local pitch estimates).
 
 Auto-encoders (introduced in section~\ref{chap:AE}) are trained to compress data in a lower dimensional embedding space while being able to reconstruct it. Moreover, since the reconstruction relies on learning structure in the data, the noise in the input (random and unstructured) is omitted in the output. This motivates the use of \acp{AE} for the feature extraction of orca calls, expecting the bottleneck to contain the shape of the call in a low dimensional space.
@@ -416,7 +424,6 @@ A special recording session was run at OrcaLab in 2019 by \citet{poupard2021intr
          OrcaLab network & 2015 - 2017 & 846 & 3,777 & 4,623 \\\hline
          OrcaLab network & 2019 & 111 & 177 & 288 \\
          \citet{poupard2021intra} & 2019 & 368 & 725 & 1,093 \\
-         Orca calls & 78\% & 22\% & 6,004 \\
     \end{tabular}
     \caption{Distribution of orca calls binary annotations. The data from 2019 (two different antennas) was used as test set.}
     \label{tab:recap_orca}
@@ -496,8 +503,9 @@ As seen throughout this chapter, techniques employed in pre-detection, feature e
     \label{tab:steps}
 \end{table}
 
-The following paragraphs summarise the advantages of some methods employed through these experiments, along with potential pitfalls to be kept in mind.
+Let us get an idea of the time it would have taken to annotate the sperm whale click database via random sampling for instance. Sperm whales were confirmed on 6\% of the files from Bombyx (see section \ref{chap:cacha_presence}). If we consider 30 seconds to manually check a file (between 1 and 5 minutes long), to yield the 2,300 positive labels collected here (they are each on separate files), one would need 320 hours. It took approximately 40 hours in total collect this database with the annotation approach described in \ref{chap:bombyx_annot}.
 
+The following paragraphs summarise the advantages of some methods employed through these experiments, along with potential pitfalls to be kept in mind.
 
 \subsection{Active learning}
 
@@ -513,4 +521,11 @@ Thumbnail picking allows to quickly validate detections or clusters to collect a
 This last advantage can also be dangerous in the annotation process. Indeed, when sorting large folders to try and keep only a class of call, one might always see similar calls at a time on the screen, but through scrolling, pitch contour shapes might shift progressively. When this occurs, the annotator might feel like all the calls in the folder are similar, when in fact, the ones at the beginning are very different from the ones at the end. To mitigate this, indexes should be randomly permuted, since this progressive shift in call contour is likely to occur if files are sorted time wise, but very unlikely otherwise.
 
 
-\subsubsection{Gain of time}
+\subsection{`Generic' spectral features extraction}
+
+Section \ref{chap:HB_annot} proposes a procedure suited to explore large banks of recordings by grouping events with similar content in terms of frequency energy distribution. It allowed to collect a first database of humpback whale calls. The success of such approach relies on several assumptions:
+\begin{itemize} \setlength{\itemsep}{1pt}
+    \item A minimal knowledge of the target signals is needed to configure the algorithm (e.g. frequency range, length).
+    \item Events are grouped independently of the temporal distribution of the energy in the spectrogram (e.g. upwards and downwards chirps will yield the same features). This is suited to discriminate between events of different temporal support, but would not work to discriminate some pitch patterns.
+    \item For the projection and the clustering to reveal a group of events, a sufficient number of instances are needed. This is the most probable explanation of why we failed to retrieve dolphin whistles and click trains using this method.
+\end{itemize}

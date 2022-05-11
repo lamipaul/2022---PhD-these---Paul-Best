@@ -1,4 +1,42 @@
-\chapter{Conclusion}
-\label{chap:conclude}
+\chapter{Conclusion and perspectives}
 
-Writing a long manuscript is easy ... only if one starts early enough. 
+\section{Thesis contributions}
+
+This thesis demonstrates several \ac{PAM} use cases, revolving about the use of \acp{ANN} to accelerate data analysis. It lies between a tutorial on how to use \ac{ANN}s for \ac{PAM}, an empirical study of what works and what doesn't, and the demonstration of the wide potential ahead of this approach. It is motivated by the following problematic: how to best use \acp{ANN} for cetacean vocalisation detection ? 
+This thesis answers the latter in 3 folds : data annotation, architecture design and training regularisation, and detection exploitation for biological insights.
+
+\paragraph{Methods in annotation}
+Robust detection systems are needed to save analysis time on long term \ac{PAM} recordings. \acp{ANN} offer an opportunity for this, but demand annotations to be trained and evaluated on. In the absence of already available robust analysis systems (detection or classification) and annotated databases, I proposed several procedures to enhance annotation efficiency, making the most out of recording characteristics and prior knowledge on target signals.
+
+The proposed procedures where illustrated with several use cases starting from raw recordings, yielding 6 annotated databases (5 for detection and 1 for classification).
+
+
+\paragraph{Training procedures}
+Given annotated databases, training \ac{ANN} allowed to solve the detection tasks for 12 target signals (5 from custom annotated databases, and 7 from the Antarctic mysticetes database). For signals with a limited variability such as sperm whale clicks and fin whale 20\,Hz pulses, relatively small (three depth-wise convolution) networks yield satisfactory performances, improved compared to previous handcraft algorithms.
+
+As for detecting the more variable orca calls, systematic searches and heavier models also yield satisfactory performances. Several insights arise from the exploration of network frontends, architectures and hyper-parameters, but they might be task specific.
+
+On the other hand, heavier models can also serve the detection of several target signals with a shared set of weights, as shown with Antarctic mysticete calls. In this context, performance metrics are discussed and an interpretable metric for \ac{PAM} uses is proposed.
+
+Eventually despite efforts in using unlabeled data for self supervised representation learning and semi-supervised learning, the regular supervised approach appeared to be the most efficient for the orca call type classification task.
+
+
+\paragraph{Applications}
+Perhaps the most ambitious objective of this thesis was to bridge the gap between training deep learning algorithms and their application to long term bioacoustic surveys. This was conducted for the study of 3 species: sperm whales, fin whale and orcas. For each of them, different orientations were taken for the analysis. Sperm whale presence was studied in relation to anthropogenic noise, the fin whale song structure was described by long-term trends, and sequences of orca call types were analysed in search of specific patterns and dependencies.
+
+
+\section{Future work}
+
+\paragraph{Frontend experiments}
+\ac{PCEN} is a promising frontend but does not lead to a systematic performance gain. Work should be oriented towards understanding better why it might be detrimental, especially when fixing its smoothing and compression parameters.
+
+In addition, to advance on embedded capacities for real time alert systems, analog feature extraction (stack of band-pass filters) should be experimented with. This would be relevant to tackle the main computational bottleneck of embedded bioacoustic analysis: the \ac{STFT}.
+
+\paragraph{Integration of spatial information} \label{chap:km3net_triang}
+The data available at DYNI has the potential to numerous other studies than the ones conducted so far. Work on the spatialisation of acoustic sources could be conducted on the data from KM3Net and OrcaLab data. This would allow to add a new dimension of analysis when processing vocalisation sequences.
+
+\paragraph{Intra call modulations}
+The analysis of orca call sequences presented in this work was subject to the prior discretisation by types. Some information is presumably lost in this process, such as within call variations. \citet{li2020learning} propose a deep learning based whistle contour extraction procedure, which seems robust to low \ac{SNR} and overlapping calls. Experiments with this approach would be relevant to the analysis of orca call sequences.
+
+\paragraph{Using ANNs for sequence modelling}
+Modern day language modelling is often conducted with \ac{ANN} based methods, especially with the recent boom of Transformer architectures \cite{devlin2018bert}. These models could be trained on orca call sequences and yield a notion predictability and / or perplexity more reliable than with n-gram models.
