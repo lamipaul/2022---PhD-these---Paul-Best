@@ -2,7 +2,7 @@
 
 \section{Cetacean acoustic detection and neural networks}
 
-After presenting \acp{CNN} in their original context of computer vision, let us discuss their application to cetacean monitoring. This section starts with techniques used before the apparition of \acp{ANN} in the field. It will then review acoustic pattern recognition via spectrogram images, followed by specific techniques and past use cases of \ac{PAM} using \acp{ANN}.
+After presenting \acp{CNN} in their original context of computer vision, let us discuss their application to cetacean monitoring in the literature. This section starts with techniques used before the apparition of \acp{ANN} in the field. It will then introduce methods involved in the frequency decomposition of signals into spectrogram images, followed by specific techniques and past use cases of \ac{PAM} using \acp{ANN}.
 
 
 \subsection{Automated PAM}
@@ -10,19 +10,18 @@ After presenting \acp{CNN} in their original context of computer vision, let us 
 
 \subsubsection{Template Matching}\label{chap:template}
 
-A straightforward way of implementing cetacean vocalisation detection mechanisms is to search for localised energy in a target frequency band, and yielding a detection when it surpasses a given threshold. %Validation for signals of interest can then use temporal characteristics of that energy. 
-For instance, it is known that some fin whale vocalisations are 20\,Hz centered pulses that last approximately 1sec. The signal can thus be analysed in search for localised energy peaks in that time / frequency range.%, and call it a detection when there is a match.
+A straightforward way to detect cetacean vocalisations is to search for localised energy in a target frequency band, and yielding a detection when it surpasses a given threshold. For instance, it is known that some fin whale vocalisations are pulses centered at 20\,Hz that last approximately 1 second. The signal can thus be analysed in search for localised energy peaks in that time / frequency range to automatically detect them.
 
-Further extending this concept, strong correlations between recordings and a prototype of target signal can be looked for directly. This can be achieved either in the time domain (waveforms), the frequency domain (spectrums), or in the spectro-temporal domain (spectrograms). We call these techniques template matching, or matched filter.
+Further extending this concept, strong correlations between recordings and a prototype of target signal can be looked for directly. This can be achieved either in the time domain (waveforms) \cite{weirathmueller2017spatial, aulich2019fin}, the frequency domain (spectrums), or in the spectro-temporal domain (spectrograms) \cite{bouffaut2018passive, mellinger2000recognizing}. We call these techniques template matching, or matched filter.
 
-Such approaches have been used extensively  \cite{bouffaut2018passive, mellinger2000recognizing, weirathmueller2017spatial, aulich2019fin, mellinger2000recognizing}, but still suffer from the fact that they only work when target signals show enough consistency to be described by one or several templates. This is not the case for orca vocalisations for example, that show great spectro-temporal variability. Techniques such as dynamic warping can, to some extent, help coping with this challenge, as demonstrated by \citet{somervuo2019time} for bird classification.
+Such approaches have been used extensively, but still suffer from the fact that they only work when target signals show enough consistency to be described by one or several templates. This is not the case for orca vocalisations for example, that show great spectro-temporal variability (techniques such as dynamic warping can help to some extent, as demonstrated by \citet{somervuo2019time} for bird classification).
 
 
 \subsubsection{Pitch tracking} \label{chap:sota_pitch}
 
-Other detection and classification algorithms rely on the fundamental frequency (or pitch) contour of vocalisations. It can be estimated via the instantaneous peak frequency, spectrogram thresholding, or spectrum auto-correlation for instance. Once the pitch contour is extracted, one can infer features such as the duration, frequency range, or frequency variation. These can later serve filtering and/or clustering of vocalisations, potentially enabling the identification of species or vocalisation units \cite{baumgartner2011generalized}. Contours can also be compared directly as pitch sequences to measure similarity between vocalisations. In this context, dynamic time warping can be used to cope with temporal distortions, as shown by \citet{brown2006classification} for orca call classification, and by \citet{deecke2006automated} for automated unit categorisation.
+Other detection and classification algorithms rely on the fundamental frequency (or pitch) contour of vocalisations. It can be estimated via the instantaneous peak frequency, spectrogram thresholding, or spectrum auto-correlation for instance. Once the pitch contour is extracted, one can infer features such as the duration, frequency range, or frequency variation. These can later serve filtering and/or clustering vocalisations, potentially enabling the identification of species and vocalisation units \cite{baumgartner2011generalized}. Contours can also be compared directly as pitch sequences to measure similarity between vocalisations. In this context, dynamic time warping helps to cope with temporal distortions, as shown by \citet{brown2006classification} for orca call classification, and by \citet{deecke2006automated} for automated unit categorisation.
 
-However, as Figure \ref{fig:pitch} demonstrates, these pitch based methods still suffer from the difficulty to robustly estimate frequency contours, especially in low \ac{SNR} conditions and in the presence of transitory impulses (odontocete clicks for instance). Nonetheless, more robust frequency contour estimation methods are being developed \cite{li2020learning}, (as compared to spectrum auto-correlation presented in Figure \ref{fig:pitch} and used by \citet{deecke2006automated}). 
+However, as Figure \ref{fig:pitch} illustrates, pitch estimates can be highly unreliable. They depend on manually tuned settings, and struggle in low \ac{SNR} conditions or in the presence of transitory impulses (e.g.~odontocete clicks). Nonetheless, more robust frequency contour estimation methods are being developed \cite{li2020learning}.
 
 \begin{figure}
     \centering
@@ -34,18 +33,24 @@ However, as Figure \ref{fig:pitch} demonstrates, these pitch based methods still
 
 \subsubsection{Machine learning}
 
-Once vocalisation features were extracted (via the pitch or \acp{MFCC} for instance), machine learning algorithms have been used to classify them in supervised and unsupervised settings. \citet{roch2008comparison} for instance compared \acp{SVM} and \acp{GMM} for the classification of odontocete clicks based on \acp{MFCC}. \citet{brown2009hidden} on the other hand used a \ac{GMM} and \ac{HMM} based approach to classify orca calls. \citet{esfahanian2014contour} on the other hand explored the classification of dolphin whistles using time-frequency contour features and an \ac{SVM}.
-
-These methods heavily depend on their input features, often either too specific and not estimated accurately (pitch) or too generic and giving only a gross description of the signals (\ac{MFCC}).
+Using pre-extracted vocalisation features (e.g.~pitch or \acp{MFCC}), machine learning algorithms have been used for classification in supervised and unsupervised settings:
+%
+\begin{itemize} \setlength{\itemsep}{1pt}
+    \item \citet{roch2008comparison} compared \acp{SVM} and \acp{GMM} to classify odontocete clicks based on \acp{MFCC},
+    \item \citet{brown2009hidden} used a \ac{GMM} and \ac{HMM} based approach to classify orca calls,
+    \item \citet{esfahanian2014contour} explored the classification of dolphin whistles using time-frequency contours and a \ac{SVM}.
+\end{itemize}
+%
+These methods heavily depend on their input features which might be either too specific and not estimated accurately (pitch) or too generic and giving only a gross description of the signals (\ac{MFCC}).
 
 
 \subsubsection{Overall limitations}\label{chap:limitations}
 
-All in all, despite efforts to build robust algorithms \cite{helble2012generalized}, they hardly cope with the wide variety of perturbations found in underwater recordings. Indeed, these induce acoustic masking and heavily alter signals, hindering template correlations and/or pitch estimates. Furthermore, noise from boats, waves, currents, sonars, or even earthquakes take a variety of acoustic forms, that potentially strongly correlate with whale vocalisation templates \cite{weirathmueller2017spatial}.
+All in all, despite efforts to build robust algorithms \cite{helble2012generalized}, difficulties remain to cope with the wide variety of perturbations found in underwater recordings. For instance, noise can induce acoustic masking and heavily alter signals, hindering template correlations and/or pitch estimates. Furthermore, noise from boats, waves, currents, sonars, or even earthquakes take a variety of acoustic forms, that potentially strongly correlate with whale vocalisation templates \cite{weirathmueller2017spatial}.
 
 In a general sense, for studies to base their results on automatic detections, underlying algorithms need to be robust to low \ac{SNR} conditions and heavy disturbances, or important biases will be introduced. Take for instance studies on the impact of marine traffic on the wildlife: if boats trigger or impeach detections, further interpretations will be dramatically falsified.
 
-Tuning templates and/or thresholds to cope with all possible perturbations can be very demanding, and sometimes the global compromise simply does not exist. In that sense, \ac{ANN}s might be able to push forward automated \ac{PAM} systems, by seamlessly learning robust feature representations for the detection and classification of cetacean vocalisations.
+Additionally, tuning templates and thresholds to cope with all possible perturbations can be very demanding, and sometimes the global compromise simply does not exist. In that sense, \ac{ANN}s might be able to push forward automated \ac{PAM} systems, seamlessly learning robust representations for the detection and classification of cetacean vocalisations.
 
 
 \subsection{Preparing the network's input (frontend)}
@@ -102,7 +107,7 @@ These parameters have a crucial impact on the spectrogram, and thus on how well 
 Sometimes, both temporal and frequency high resolutions are needed, and a satisfying Fourier window size does not exist. While Fourier uses the same window size for all frequencies, algorithms such as the wavelet transform propose a non uniform sampling of the time-frequency space, allowing for a better compromise in terms of temporal and frequency resolution.
 
 Only a wavelet transform allows for a satisfactory representation of both low frequency and high frequency events, which can be useful in \ac{PAM} applications.
-%Moreover, the Fourier transform is based on the correlation of the input signal with sinus waves at different frequencies (Eq.~\ref{eq:fourier}). This is well suited to measure frequency components that resemble sinuses (stationary signals), but not adapted to deal with transitory signals (e.g. cetacean clicks). On the other hand, wavelets have a transitory nature that makes them more relevant to correlate with click like signals.
+%Moreover, the Fourier transform is based on the correlation of the input signal with sinus waves at different frequencies (Eq.~\ref{eq:fourier}). This is well suited to measure frequency components that resemble sinuses (stationary signals), but not adapted to deal with transitory signals (e.g.~cetacean clicks). On the other hand, wavelets have a transitory nature that makes them more relevant to correlate with click like signals.
 
 Researchers have thus studied the use of wavelet transforms as frontends, for instance with cetacean click detection \cite{lopatka2005attractive}. Further studies have also experimented on combining Fourier and wavelet transforms into multi-channel spectrograms, as a frontend for speech recognition \cite{arias2021multi} or bird classification \cite{zhang2021bird}. Also, \citet{stowell2012framewise} have used chirplet transforms to analyse bird songs.
 
