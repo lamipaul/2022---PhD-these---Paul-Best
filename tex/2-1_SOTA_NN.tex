@@ -25,7 +25,7 @@ We first design an architecture $g$ before optimising its weights $\boldsymbol{\
     \boldsymbol{\hat{\theta}} = \underset{\boldsymbol{\theta}}{\argmin}\ \mathcal{L}(\mathbf{y}, g_{\boldsymbol{\theta}}(\mathbf{x}))
 \end{equation}
 
-Under the hood, the network learns a projection of the input images (called embedding) from the pixel space to a new abstract one. Put simply, the more neurons in a network, the more complex the resulting projection can be. Training thus becomes trying to learn the optimum embedding space to solve a given task.
+Under the hood, the network learns a projection of the input images (called embedding) from the pixel space to a new abstract one. Put simply, the more neurons in a network, the more complex the resulting projection can be. Training becomes trying to learn the optimum embedding space to solve a given task.
 
 There are two main limitations here, the first being the necessary computational power. Training a large \ac{ANN} typically demands thousands of iterations, each of which consists in an update of millions of neurons. This is in part why we had to wait for the development of parallel computation with \acp{GPU} to see the democratisation of \acp{ANN}. The second limitation, this time a human effort cost, is the necessary training data. To learn a robust solution, training typically demands thousands of examples for each class, with their associated label (often manually annotated) for the computation of the loss that will be optimised.
 
@@ -236,7 +236,7 @@ A \ac{CNN} layer is thus defined by the number of input features it processes, i
 
 \subsubsection{Depth-wise separable convolution}\label{chap:sota_dw}
 
-As presented in the previous section, convolution kernels are cuboids, with a depth that fits the depth of the input. The filters are thus designed to find patterns that are interconnected depth-wise. However, sometimes we might want patterns to be filtered independently through the input image depth, for a subsequent depth-wise combination. This is the idea introduced by depth-wise separable convolutions, first used in the context of a \ac{CNN} by \citet{chollet2017xception}.
+As presented in the previous section, convolution kernels are cuboids, with a depth that fits the depth of the input. The filters are designed in order to find patterns that are interconnected depth-wise. However, sometimes we might want patterns to be filtered independently through the input image depth, for a subsequent depth-wise combination. This is the idea introduced by depth-wise separable convolutions, first used in the context of a \ac{CNN} by \citet{chollet2017xception}.
 
 In this new type of convolution layer, we dissociate the spatial filtering and the feature combination in two stages, as opposed to regular convolutions that process it all at once. A kernel remains cubic, but the convolutions are separated depth-wise, thus yielding a cuboid, when a regular convolution kernel yields a flat image. The feature combination then happens with the point-wise stage, similar to a convolution with a kernel of width and height 1. This stage can be repeated to obtain an output depth (see Fig.~\ref{fig:depthwiseConv}).
 
@@ -323,17 +323,17 @@ The compression that \acp{AE} offer enables a removal of random or unstructured 
 Methods employed during training to reduce potential overfitting and enhance generalisation are called regularisation. They are especially relevant when a limited amount of training data is available (the case of many bioacoustics tasks). Some of these approaches come down to increasing variability, both in the input and in the activations of the network.
 
 
-\subsubsection{Data Augmentation}
+\subsubsection{Data Augmentation}\label{chap:data_augm}
 
-Introducing variability to the input data is widely used to avoid overfitting. The idea is to generate new data samples out of the existing ones, thus virtually increasing the dataset size without needing more annotation. To do so, we apply randomised transformations, realistic or not, with the only constraint that we must ensure not to change the sample's class. For image classification, RandAugment \cite{cubuk2020randaugment} might be the most common augmentation policy, combining texture and shape transformations (Fig.~\ref{fig:randAugm}). We will go through data augmentation for acoustic tasks in section \ref{accoustic_augm}.
+Introducing variability to the input data is widely used to avoid overfitting. The idea is to virtually increase the dataset size without needing more annotation by generating new data samples out of existing ones. To do so, we apply randomised transformations, realistic or not, with the only constraint that we must ensure not to change the sample's class. For image classification, RandAugment \cite{cubuk2020randaugment} might be the most common augmentation policy, combining texture and shape transformations (Fig.~\ref{fig:randAugm}). We will go through data augmentation for acoustic tasks in section \ref{accoustic_augm}.
 
 \begin{figure}
     \centering
-    \includegraphics[width=.75\linewidth]{fig/randaugmt.pdf}
+    \includegraphics[width=.7\linewidth]{fig/randaugmt.pdf}
     \caption{Using data augmentation enables new samples to be derived from original ones, while conserving the label. Transformations are randomly sampled among several texture and position alterations.}\label{fig:randAugm}
 \end{figure}
 
-Another branch of data augmentation worth mentioning is MixUp \cite{zhang2017mixup}, which combines two input samples and their labels, thus creating ``in-between'' data points. The combination takes form as a simple weighted mean of inputs and labels, which we will feed our model with like a regular sample. This simple concept of giving mixtures of 2 instances as training samples has shown to improve generalisation in most computer vision tasks with standard architectures \cite{zhang2017mixup}.
+Another branch of data augmentation worth mentioning is MixUp \cite{zhang2017mixup}, which combines two input samples and their labels, creating ``in-between'' data points. The combination takes form as a simple weighted mean of inputs and labels, which we will feed our model with (like a regular sample). This simple concept of giving mixtures of 2 instances as training samples has shown to improve generalisation in most computer vision tasks with standard architectures \cite{zhang2017mixup}.
 
 
 \subsubsection{Within-network regularisation}

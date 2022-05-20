@@ -169,7 +169,7 @@ Training \acp{ANN} is the chosen approach for the automation of \ac{PAM} through
 
 \section{Thesis objectives}
 
-\subsection{Context and motivation}
+\subsubsection{Context and motivation}
 
 This thesis was co-financed by the GIAS European project, aiming at improving navigation security in the Mediterranean sea (western bassin). It takes part in one axis of this project: the mitigation of whale-ship collision risk. For that purpose, a `smart bioacoustic buoy' was designed, with the intent to acoustically detect large cetaceans of the zone (sperm whales and fin whales). Then, alerts can be transmitted close to real-time, for ships to adapt their speed or route accordingly.
 
@@ -178,7 +178,12 @@ Being a thesis in computer science, its goal is to design and implement the acou
 The work of training \acp{ANN} for the detection of cetacean vocalisations quickly expanded well beyond the initial needs of the GIAS project. Indeed, the team participates in a variety of projects (see section \ref{chap:data_Toulon}). In each of them, our role is typically to analyse large amounts of recordings to advance on biological questions. Hence the need for cetacean acoustic detection and classification mechanisms. Moreover, the performance demonstrated by \acp{ANN} in early experiments motivated to use them extensively on other species. This is how the objective of this work dissociated from the GIAS implementation to become a general study of applying \acp{ANN} to cetacean acoustic detection and classification.
 
 
-\subsection{Structure of the manuscript}
+\subsubsection{Research problematic}
+
+Given the context described above, this thesis oriented its work around the following problematic: ``how to best train deep learning models to solve cetacean vocalisation detection and classification tasks''.
+
+
+\subsubsection{Structure of the manuscript}
 
 \begin{figure}
     \centering
@@ -192,7 +197,7 @@ This document is organised as follows. First, chapter \ref{chap:sota} introduces
 Chapter \ref{chap:annotation} starts with the construction of training databases, describing annotation procedures suited for a variety of constraints (depending on the recordings at hand and the target signals). Then, to train \acp{ANN} on these databases, chapter \ref{chap:training} describes architectures and frameworks to yield robust detection and classification mechanisms (this time depending on constraints of computational power and target signals). Finally, for some of the trained models, chapters \ref{chap:conservation} and \ref{chap:com} illustrate their applications around two main uses: species conservation (for Mediterranean fin whales and sperm whales) and communication modelling (for fin whales and orcas).
 
 
-\subsection{Contributions}
+\subsubsection{Contributions}
 
 Following the \ac{SOTA} and material description, each chapter of this manuscript puts forward several contributions to the field of \ac{PAM} using \acp{ANN}:
 
@@ -201,7 +206,7 @@ Following the \ac{SOTA} and material description, each chapter of this manuscrip
     
     \item Chapter \ref{chap:training} presents a light weight but effective \acs{CNN} architecture to be embedded in low power \acsp{MCU}. Also, it gives insights on of \acs{PCEN} behaviour, and reports on the resolution of 6 different tasks using deep learning (5 of detection and 1 of classification). Finally, it proposes a new performance metric for detection systems.
     
-    \item Chapter \ref{chap:conservation} first illustrates the application of a \acs{CNN} model in a real-time alert system for collision risk mitigation. Then, again using a \acs{CNN} based detection system, a long term survey of Mediterranean sperm whales is analysed, revealing presence patterns in relationship with ferries traffic.
+    \item Chapter \ref{chap:conservation} illustrates the application of a \acs{CNN} model in a real-time alert system for collision risk mitigation. Then, again using a \acs{CNN} based detection system, a long term survey of Mediterranean sperm whales is analysed, revealing presence patterns in relationship with ferries traffic.
     
-    \item Chapter \ref{chap:com} first characterises the long term evolution of the Mediterranean fin whale song (obviously based on \acs{CNN} detections) and puts it in relation to other populations worldwide. Finally, as a last contribution to this thesis, orca call sequences are studied (at a larger scale than ever before), advancing questions on their potential structure.
+    \item Chapter \ref{chap:com} characterises the long term evolution of the Mediterranean fin whale song (obviously based on \acs{CNN} detections) and puts it in relation to other populations worldwide. Finally, as a last contribution to this thesis, orca call sequences are studied (at a larger scale than ever before), advancing questions on their potential structure.
 \end{itemize}

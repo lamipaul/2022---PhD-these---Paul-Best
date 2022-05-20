@@ -3,18 +3,18 @@
 
 \section{Context and objective}
 
-The previous chapter demonstrated how robust detection systems can be used for species conservation purposes. A second axis of use can also be the study of animal communication systems. In the past, \ac{PAM} has put forward several examples of song and social communication systems in cetaceans. This allows comparative studies to reflect on the natural evolution of music and language \cite{fitch2006biology}. For that same purpose, robust detection and classification mechanisms are able to analyse large datasets and yield new insights. This is demonstrated in the following chapter with the long term evolution of the Mediterranean fin whale song and communication patterns of the \ac{NRKW}.
+The previous chapter showed how detection systems can be used for species conservation purposes. Another axis of use is the study of animal communication systems. In the past, \ac{PAM} has put forward several examples of song and social communication systems in cetaceans. They contribute to comparative studies that reflect on the evolution of music and language in the animal kingdom \cite{fitch2006biology}. For that same purpose, robust detection and classification mechanisms are able to analyse large datasets and yield new insights. This is demonstrated in this chapter with the long term evolution of the Mediterranean fin whale song and communication patterns of the \acl{NRKW}.
 
 
 \section{Fin whale song structure and temporal trends}
 \label{chap:fin_song}
 \subsection{Context and objective}
 
-In parallel to the sperm whale study with the Bombyx dataset, a similar one was conducted on fin whales of the Ligurian sea, again making use of the detection system designed for the GIAS buoy. The trained \ac{CNN} described in section \ref{chap:lightweight} was run over three available datasets : Boussole, Bombyx, and KM3Net (see section \ref{chap:data_Toulon}). This time, instead of presence monitoring, the study focused on fin whale song patterns, yet poorly documented in the Mediterranean sea. It is also subject to a journal publication \cite{finsong}, which results are reported here.
+In parallel to the sperm whale study with the Bombyx dataset, a similar one was conducted on fin whales of the Ligurian sea, again making use of the detection system designed for the GIAS buoy. The trained \ac{CNN} described in section \ref{chap:lightweight} was run over three available datasets : Boussole, Bombyx, and KM3Net (see section \ref{chap:data_Toulon}). This time, instead of presence monitoring, the study focused on fin whale song patterns, which remain poorly documented in the Mediterranean sea. This work is currently under submission for a journal publication \cite{finsong}, whose results are reported here.
 
-As other cetacean species, fin whales show geographical acoustic differentiation \cite{helble2020fin, morano2012seasonal, castellote2012fin}, hypothesised to be cultural in some cases \cite{weirathmueller2017spatial}. The divergence of mysticetes songs in different populations is presumably a result of drifts emerging from the conformity and creativity constraints of song production \cite{payne2000progressively}. Moreover, the character displacement theory with songs serving as a discrimination marker for allopatric populations has been hypothised for fin whales of the Northern Atlantic \cite{delarue2009geographic}. As for the Mediterranean population, it has been shown to be resident and genetically dissociated from the North Atlantic population \cite{berube1998population}, and their songs (especially the \ac{IPI}) were shown to allow for their identification \cite{castellote2012fin, pereira2020fin}. The Mediterranean fin whales do not follow strict migration patterns or reproduction periods unlike their oceanic conspecifics \cite{Notarbartolo}, so their song can be heard all year round.
+As other cetacean species, fin whales show geographical acoustic differentiation \cite{helble2020fin, morano2012seasonal, castellote2012fin}, hypothesised to be cultural in some cases \cite{weirathmueller2017spatial}. The divergence of mysticetes songs in different populations is presumably a result of drifts emerging from the conformity and creativity constraints of song production \cite{payne2000progressively}. Moreover, the character displacement theory with songs serving as a discrimination marker for allopatric populations has been speculated for fin whales of the Northern Atlantic \cite{delarue2009geographic}. As for the Mediterranean population, it has been shown to be resident and genetically dissociated from the North Atlantic population \cite{berube1998population}. Moreover, their songs (especially the \ac{IPI}) allow their identification \cite{castellote2012fin, pereira2020fin}. The Mediterranean fin whales do not follow strict migration patterns or reproduction periods unlike their oceanic conspecifics \cite{Notarbartolo}, so their song can be heard all year round.
 
-The base unit of the songs, the 20\,Hz pulse, is shared by all fin whales. These pulses occur in sequences that typically last several hours \cite{Watkins_Tyack_Moore_Bird_1987}, with highly regular pulse intervals between 10 and 40 seconds. The main differentiation of songs lies in the \ac{IPI} and pulse spectra \cite{Thompson, hatch2004acoustic}. Alike fin whales of the Pacific \cite{weirathmueller2017spatial, helble2020fin}, Mediterranean 20\,Hz pulses fall into 2 distinct types, one with a slightly higher frequency content than the other \cite{ClarkBorsani2002, sciacca2015annual} (Fig.~\ref{fig:spectro}). These two categories are sometimes labelled 20\,Hz pulse and back-beat, they will be referred to as type A and B for short, with A being the higher pitched pulse. Fin whales of the Pacific and Atlantic often exhibit sequences that alternate between A and B pulses. These are called doublet patterns, as opposed to singlets where only one of the pulse types occur. In doublets there is a strong relationship between \ac{IPI} and pulse type: two different \acp{IPI} are found, one from A to B, and another one from B to A \cite{Oleson, constaratas2021fin, furumaki2021fin, morano2012seasonal, helble2020fin}. On the other hand, singlets also follow their own stereotypical \ac{IPI}.
+The base unit of the songs, the 20\,Hz pulse, is shared by all fin whales. These pulses occur in sequences that typically last several hours \cite{Watkins_Tyack_Moore_Bird_1987}, with highly regular pulse intervals between 10 and 40 seconds. The main differentiation of songs lies in the \ac{IPI} and pulse spectra \cite{Thompson, hatch2004acoustic}. Alike fin whales 20\,Hz pulses of the Pacific \cite{weirathmueller2017spatial, helble2020fin}, Mediterranean ones fall into 2 distinct types, one with a slightly higher frequency content than the other \cite{ClarkBorsani2002, sciacca2015annual} (Fig.~\ref{fig:spectro}). These two categories are sometimes labelled 20\,Hz pulse and back-beat, they will be referred to as type A and B for short, with A being the higher pitched pulse. Fin whales of the Pacific and Atlantic often exhibit sequences that alternate between A and B pulses. These are called doublet patterns, as opposed to singlets where only one of the pulse types occur. In doublets there is a strong relationship between \ac{IPI} and pulse type: two different \acp{IPI} are found, one from A to B, and another one from B to A \cite{Oleson, constaratas2021fin, furumaki2021fin, morano2012seasonal, helble2020fin}. On the other hand, singlets also follow their own stereotypical \ac{IPI}.
 
 Mediterranean fin whale songs present more diversity in the consecution of pulse types than simple singlets and doublets (Fig.~\ref{fig:spectro}). Nonetheless, two studies present stereotypical \acp{IPI}. Based on recordings from 1999, \citet{ClarkBorsani2002} observe a link between pulse type and \ac{IPI} in the Mediterranean sea for two bouts (about 100 pulses). About ten years later, \citet{castellote2012fin} observe a common \ac{IPI} around 14.9\,sec for that same population, but do not mention its relationship with pulse types.
 
@@ -27,7 +27,7 @@ Until now, no large scale analysis has been conducted on Mediterranean fin whale
 
 \subsubsection{Model inference}
 
-While the model was trained to detect pulse presence in 5-second segments, the convolutional stack is designed to maintain the temporal resolution of the predictions throughout the network. Discarding the max pooling layer at the end of the CNN, pulse times were retained as the highest predictions above a given threshold within sliding 4 second windows. These timings are approximate up to the size of the receptive field of the network (0.8 seconds).
+While the model was trained to detect pulse presence in 5-second segments, the convolutional stack is designed to maintain the temporal resolution of the predictions throughout the network. Discarding the max pooling layer at the end of the CNN, pulse times were retained as the highest predictions above a given threshold within sliding 4\,sec windows. These timings are approximate up to the size of the receptive field of the network (0.8 seconds).
 
 Thresholds were set at the balance point of the \ac{ROC} curves (equal sensitivity and specificity). This setting lead to sensitivities and specificities of 0.96 and 0.97 for the Bombyx and Boussole data respectively. For the KM3Net data, since the \ac{ROC} curve is unknown (no annotation are available), a threshold of 0.12 was chosen so that there is approximately the same proportion of detections as in Bombyx and Boussole ($\approx$ 0.5\%) .
 
@@ -75,14 +75,14 @@ For this analysis, an 8\,sec window surrounding the prediction peak is selected 
 From this spectrogram, the precise time position of the pulse \(\hat{t}\) is first estimated by selecting the column of the maximum value in the 18-22\,Hz frequency band (Eq.~\ref{eq:time}). This value will be kept for \ac{IPI} measurements. 
 
 \begin{equation}
-\hat{t} = \argmax_{t \in T}\left( \max_{f \in [18,22]}\left( \mathbf{S}_{f, t}\right)\right),
+\hat{t} = \argmax_{t \in T}\left( \max_{f \in [18,22]}\left( \mathrm{S}\right)\right),
 \label{eq:time}
 \end{equation}
 
 To measure the spectral envelope of the pulse, a 1.2\,sec window around $\hat{t}$ is max-pooled time wise. Background components are withdrawn (to focus on the pulse spectra only) by subtracting an estimate of the background spectrum: the median of each frequency bin within the window $T$ (Eq.~\ref{eq:spec}). Doing so, effects such as the impact of \ac{SNR} on peak frequency and bandwidth (observed by \citet{helble2020fin}) are mitigated.
 
 \begin{equation}
-E(f) = \max_{t \in [\hat{t}-0.6, \hat{t}+0.6]} \left(\mathbf{S}_{f, t}\ \right) - \   \underset{t \in T}{\mathrm{median}}\ \left( \mathbf{S}_{f, t}\right)
+E(f) = \max_{t \in [\hat{t}-0.6, \hat{t}+0.6]} \left(\mathrm{S}_{f, t}\ \right) - \   \underset{t \in T}{\mathrm{median}}\ \left( \mathrm{S}_{f, t}\right)
 \label{eq:spec}
 \end{equation}
 
@@ -99,9 +99,9 @@ For later filtering by pulse quality, the \ac{SNR} is also computed following Eq
 
 \begin{equation}
 \begin{split}
-E_{Background} & = \underset{T \setminus [\hat{t}-1,\hat{t}+3]}{\underset{\ f \in [15, 25]}{\mathrm{median}}}\ \mathbf{S}_{f, t}, \\
-E_{Pulse} & = \max_{f}E(f), \\
-SNR & = 10\log_{10}\left(\frac{E_{Pulse}}{E_{Background}}\right).
+P_{Background} & = \underset{T \setminus [\hat{t}-1,\hat{t}+3]}{\underset{\ f \in [15, 25]}{\mathrm{median}}}\ \mathrm{S}_{f, t}, \\
+P_{Pulse} & = \max_{f}E(f), \\
+SNR & = 10\log_{10}\left(\frac{P_{Pulse}}{P_{Background}}\right).
 \label{eq:bckgnd}
 \end{split}
 \end{equation}
@@ -120,7 +120,7 @@ To classify between A and B types, a two component \ac{GMM} was fitted on the ce
 
 \subsubsection{Stereotypical \ac{IPI}}
 
-The time between a pair of consecutive pulses in a sequence (the \ac{IPI}) appears to be strongly determined by their type (see Fig.~\ref{fig:histIPI}). The typical interval for an `AB' bi-gram is 2sec longer than that of `AA' or `BA'. On the other hand, the 'BB' pairs (less frequent but still commonly found) are 11sec longer on average, but present larger variability than the others.
+The time between a pair of consecutive pulses in a sequence (the \ac{IPI}) appears to be strongly determined by their type (see Fig.~\ref{fig:histIPI}). The typical interval for an `AB' bi-gram is 2sec longer than that of `AA' or `BA'. On the other hand, the `BB' pairs (less frequent but still commonly found) are 11sec longer on average, but present larger variability than the others.
 
 \begin{figure}[ht]
      \centering
@@ -171,7 +171,7 @@ To dissociate this analysis from the link between pulse types and \ac{IPI}, 3 co
 
 \subsubsection{Mediterranean sea stereotypical \acp{IPI}}
 
-The present study led to the confirmation of the local stereotypical \acp{IPI} being determined by pulse bi-grams. These results were previously shown on relatively a small corpora of around 100 pulses \cite{ClarkBorsani2002}, they are hereby confirmed with a corpus larger by an order of magnitude, and over a span of 10 years.
+The present study led to the confirmation of the local stereotypical \acp{IPI} being determined by pulse bi-grams. These results were previously shown on a relatively small corpora of around 100 pulses \cite{ClarkBorsani2002}, they are hereby confirmed with a corpus larger by an order of magnitude, and over a span of 10 years.
 
 Moreover, two temporal trends were observed. They are put in relation to other fin whale song studies in Tab.~\ref{tab:summTrends} and discussed in the following sections.
 
@@ -205,7 +205,7 @@ Inter-annual shifts in \ac{IPI} are rather recent and poorly documented. \citet{
 As for the \ac{IPI} shift slopes, it seems plausible that the differences between Pacific and Mediterranean populations arise culturally. Whether they are originally caused by the same factors or not, the singing patterns drift independently, with song conformity only taking place within a given population. If environmental or physiological factors alone were responsible for such patterns, they would have to be present both in the Pacific and in the Mediterranean sea, but operating at different rates. The hypothesis of the post-whaling population recovery (increasing density and animal sizes) explaining those trends suits the latter conditions, as recovery rates could differ between Mediterranean and Pacific waters. On the other hand, cultural features such as contact rate between individuals could explain slope differences as well, regardless of the root cause of the shift.
 
 % IPI intra year
-On the other hand, studies of Atlantic and Pacific fin whales \cite{morano2012seasonal,Watkins_Tyack_Moore_Bird_1987, Oleson, weirathmueller2017spatial} point to \ac{IPI} increases during winter, before dropping back to autumn values. These trends are hypothesised to be directly linked to the reproductive season \cite{Oleson} (due to hormonal activity or progressive dilution of the competition for instance). No such trend was observed in the present data, but the irregular data sampling through seasons might create an observational bias in that sense.
+As for within-year variations, studies of Atlantic and Pacific fin whales \cite{morano2012seasonal,Watkins_Tyack_Moore_Bird_1987, Oleson, weirathmueller2017spatial} point to \ac{IPI} increases during winter, before dropping back to autumn values. These trends are hypothesised to be directly linked to the reproductive season \cite{Oleson} (due to hormonal activity or progressive dilution of the competition for instance). No such trend was observed in the present data, but the irregular data sampling through seasons might create an observational bias in that sense.
 
 
 \subsubsection{Pulse frequency trends} % inter annual
@@ -216,21 +216,23 @@ Inter-annual shifts in vocalisation frequencies were already documented in blue 
 No inter-annual frequency shift was found in the analysed data. Mediterranean fin whales could thus be an exception to this widespread trend. Nonetheless, an intra-annual decrease in center frequencies was observed (-0.08\,Hz/month). Such phenomenon was previously observed in large mysticetes of the Indian Ocean including fin whales \cite{leroy2018long}. The latter study hypothesised pulse frequencies to follow seasonal ambient noise level variations (notably due to melting ice). Such phenomenon does not apply to the Mediterranean sea.
 
 
+\newpage
+
 \section{Orca call sequences}
 \subsection{General context and objective}
 
 As previously mentioned, part of mysticete communication systems have been characterised as songs for being associated with courtship. No such phenomenon has been observed in odontocetes. Nonetheless, toothed whale communication has been studied extensively, especially with bottlenose dolphins and orcas. Their vocal displays (whistles and pulsed calls) have been suggested to serve social signaling and bonding purposes \cite{janik2014cetacean}. Bottlenose dolphins use individual specific signature whistles \cite{tyack2012review}, whereas orcas use community specific pulsed calls \cite{ford1987catalogue} (the set of call types are specific at several levels such as clans and pods).
 
-For orcas, the observation of stereotyped calls in relation to behavioural states has suggested no strict relationship between the two, but rather a group identification function. \citet{ford1989acoustic} has manually analysed 20 thousands calls from 43 days of boat observation from 1978 to 1983, and reported call type bi-gram distributions (Fig.~\ref{fig:transition_fordvself}). Some call type distributions differed across activities, especially when involving multiple pods. \citet{filatova2013dependence} have manually analysed 32 hours of recordings for calls to be assigned among 4 categories, and showed that activity did not affect proportions of occurrence but multi-pod interactions did.
+For orcas, the study of stereotyped calls in relation to behavioural states  \cite{ford1989acoustic, filatova2013dependence} has suggested no causal dependency between the two, but rather a group identification function. \citet{ford1989acoustic} has manually analysed 20 thousands calls from 43 days of boat observation from 1978 to 1983, and reported call type bi-gram distributions (Fig.~\ref{fig:transition_fordvself}). Some call type distributions differed across activities, especially when involving multiple pods. \citet{filatova2013dependence} have manually analysed 32 hours of recordings for calls to be assigned among 4 categories, and showed that activity did not affect proportions of occurrence but multi-pod interactions did.
 
-Given the available 5 years of continuous recordings from the OrcaLab observatory (section \ref{chap:OL}), the following study will focus on the \ac{NRKW} population of British Columbia. First, the detection \ac{CNN} presented in section \ref{chap:orca_detec} was run on the summers from 2015 to 2020 (season of presence of the \ac{NRKW}), detecting more than 300 thousands calls. Then, the classification \ac{CNN} presented in section \ref{chap:orca_classif} allowed to automatically recognise 7 common call types, and to tell when other calls are encountered.
+Given the available 5 years of continuous recordings from the OrcaLab observatory (section \ref{chap:OL}), the following study will focus on the \ac{NRKW} population of British Columbia. First, the detection \ac{CNN} presented in section \ref{chap:orca_detec} was run on the summers from 2015 to 2020 (season of presence of the \ac{NRKW}), detecting more than 300 thousands calls. Then, the classification \ac{CNN} presented in section \ref{chap:orca_classif} allowed to automatically recognise 7 common call types, and to know when other calls are encountered.
 
-The intent of this work is to study the potential structure in the sequences of call types, trying to make the most out of the large but blind corpus at hand (no information is available on associated behaviour or on the individual that emitted a call). We start by estimating the repertoire complexity following the Zipf power law coefficient approach. Then, to question the randomness / predictability of the sequences of types, we compare the occurrence of specific events with random simulations.
+The intent of this work is to study the structure in the sequences of call types, trying to make the most out of the large but blind corpus at hand (no information is available on associated behaviour or on the individual that emitted a call). We start by estimating the repertoire complexity following the Zipf power law coefficient approach. Then, to question the randomness / predictability of the sequences of types, we compare the occurrence of specific events with random simulations.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{fig/transitions_.pdf}
-    \caption{Comparison between the transition matrix from \citet{ford1989acoustic} (left) and the present study (right). The `Total' columns denotes the proportion of each call in the dataset.}
+    \caption{Comparison between the transition matrix from \citet{ford1989acoustic} (left) and the present study (right). The `Total' columns denotes the proportion of each call in the dataset. Only calls present in the two studies are reported.}
     \label{fig:transition_fordvself}
 \end{figure}
 
@@ -245,13 +247,14 @@ For the following analysis, sequences of calls were extracted from the \ac{CNN} 
 
 
 \subsection{Zipf's law and call type repertoire}
+
 \subsubsection{Context}
 
 In several studies, Zipf’s Law \cite{zipf1949human} has been used to quantitatively evaluate animal communication system repertoires (for humans \cite{yu2018zipf} and non-humans \cite{mccowan2005appropriate, kershenbaum2021shannon}). Such analysis rely on the estimation of the \ac{PLC} which reflects the relationship between a word's rank $r$ (for the most frequent word $r=1$ and so on) and its frequency $f$, following Eq.~\ref{eq:zipf}.
 \begin{equation}\label{eq:zipf}
     f = \alpha \times r ^ {\mathrm{PLC}}
 \end{equation}
-The \ac{PLC} denotes how stereotyped a system is, $PLC=0$ meaning a uniform distribution, and $\mathrm{PLC}<<-1$ meaning a high predictability. \citet{zipf1949human} states that for a system that follows constraints of efficiency (``least effort''), the \ac{PLC} would converge to -1. This is supported by the fact that most human languages have a \ac{PLC} close to -1 \cite{yu2018zipf}. A \ac{PLC} would thus be a necessary condition for a communication system to be language-like \cite{kershenbaum2021shannon, mccowan2005appropriate}.
+The \ac{PLC} denotes how stereotyped a system is, $\mathrm{PLC}=0$ meaning a uniform distribution, and $\mathrm{PLC}<<-1$ meaning a high predictability. \citet{zipf1949human} states that for a system that follows constraints of efficiency (``least effort''), the \ac{PLC} would converge to -1. This is supported by the fact that most human languages have a \ac{PLC} close to -1 \cite{yu2018zipf}. A \ac{PLC} would thus be a necessary condition for a communication system to be language-like \cite{kershenbaum2021shannon, mccowan2005appropriate}.
 
 
 \subsubsection{Method}
@@ -279,7 +282,7 @@ The large gap between the \acp{PLC} from the whole dataset and that of the selec
 
 \subsubsection{Context}
 
-An approach to measure the randomness or predictability of sequences is to measure the \ac{MI} between call types. The \ac{MI} measures the \ac{KL} divergence between marginal and joint probability distributions of two random variables. Applying this concept to dolphin whistle sequences, \citet{ferrer2012span} propose to measure the \ac{MI} between calls $X$ and $Y$ at a distance $d$ (Eq.~\ref{eq:mi_calls}). The distance here is measured in number of calls that separate a pair, $d=1$ denoting a consecutive pair.
+After the Zipf analysis of call repertoire, the following experiment focuses on long term dependencies in call sequences. For this purpose, a statistical analysis measures the impact call types have on subsequent ones, and this at varying distances. Following \citet{ferrer2012span} (analysis of dolphin whistle sequences), we estimate the \acf{MI} between calls $X$ and $Y$ at a distance $d$ (Eq.~\ref{eq:mi_calls}). The distance here is measured in number of calls that separate a pair, $d=1$ denoting a consecutive pair.
 
 \begin{equation}\label{eq:mi_calls}
 \begin{aligned}
@@ -287,6 +290,8 @@ An approach to measure the randomness or predictability of sequences is to measu
   & \sum_{x,y} p(X=x,Y=y|D=d)  \log\big(\frac{p(X=x,Y=y|D=d)}{p(X=x| D=d)p(Y=y | D=d)}\big)
 \end{aligned}
 \end{equation}
+
+The \ac{MI} measures the \ac{KL} divergence between marginal and joint probability distributions of two random variables. Put in the context of orca call sequences, it quantifies the impact a call type has on the probability of occurrence of another call type (after $d-1$ intermediary calls). If the call type $X$ has no influence on the probability of occurrence of the call type $Y$, the \ac{MI} is 0. Conversely, if knowing the type of $X$ helps to guess the type of $Y$, the \ac{MI} is high.
 
 
 \subsubsection{Method}
@@ -297,124 +302,169 @@ To have a reference against which measures of $\mathrm{I}(X;Y|D=d)$ can be compa
     \item \textbf{Local randomisation}: shuffle the concatenation of all pairs at distance $d$ before extracting pairs from the resulting vector.
 \end{itemize}
 
-In each of these methods, we generate as many pairs as observed in the data. They are more or less equivalent to generating sequences via a first order Markov model (taking into account only the probability of occurrence of a call). I propose to rather use a second order Markov model (or bi-gram model) to generate sequences and extract call pairs. Doing so, we integrate the propensity of consecutive calls to be of the same type, as observed by \citet{ford1989acoustic} and shown by Fig.~\ref{fig:transition_fordvself}.
+In each of these methods, we generate as many pairs as observed in the data. They are more or less equivalent to generating sequences via a zero order Markov model (taking into account only the probability of occurrence of a call). I propose to rather use a first order Markov model (or bi-gram model) to generate sequences and extract call pairs. Doing so, we integrate the propensity of consecutive calls to be of the same type, as observed by \citet{ford1989acoustic} and shown by Figure \ref{fig:transition_fordvself}.
 
 \begin{figure}
     \centering
-    \includegraphics[width=.8\linewidth]{fig/MI_d.pdf}
-    \caption{(solid lines) \ac{MI} between pairs of call types depending on their relative distance $d$. For randomised \ac{MI} (10,000 trials for each method), the mean $\pm$ standard deviation is given. (dashed lines) associated p-value for the null-hypothesis that the randomised pairs have a higher \ac{MI} than the observed ones.}
+    \includegraphics[width=\linewidth]{fig/MI_d.pdf}
+    \caption{(solid lines) \ac{MI} between pairs of call types depending on their relative distance $d$. For randomised \ac{MI} (10,000 trials for each method), the mean $\pm$ standard deviation is given. (dashed lines) associated \textit{p-value} for the null-hypothesis that the randomised pairs have a higher \ac{MI} than the observed ones.}
     \label{fig:MI_d}
 \end{figure}
 
-Using these randomisation methods, we can generate call pairs (as many as in the real data), measure $\mathrm{I}(X;Y|D=d)$, and compare it to that of the real data. Doing so, and for each distance $d$, we can count the number of times the random pairs show an \ac{MI} higher than the real ones (in this case out of 10,000 trials). Again following \citet{ferrer2012span}, we estimate the \textit{p-value} of the null-hypothesis that random pairs have a higher \ac{MI} than real ones, defined as the number of trials with a higher \ac{MI} divided by the total number of trials. 
+Using these randomisation methods, we can generate call pairs (as many as in the real data), measure $\mathrm{I}(X;Y|D=d)$, and compare it to that of the real data. Doing so, and for each distance $d$, we can count the number of times the random pairs show a higher \ac{MI} than the real ones (in this case out of 10,000 trials). Again following \citet{ferrer2012span}, we estimate the \textit{p-value} of the null-hypothesis that random pairs have a higher \ac{MI} than real ones, defined as the number of trials with a higher \ac{MI} divided by the total number of trials. 
+
 
 \subsubsection{Discussion}
 
-Figure \ref{fig:MI_d} shows the evolution of the \ac{MI} with a growing distance between calls. The fact that less long sequences are available (Fig.~\ref{fig:log_survivor}) might explain why the \ac{MI} grows for $d>11$. Non-surprisingly, the bi-gram generated pairs have the same \ac{MI} than real ones at $d=2$. Nonetheless, the \ac{MI} of the observed pairs is significantly higher than the global, local and bi-gram randomisation, showing that single and second order Markov models do not suffice in modelling the observed sequences.
+Figure \ref{fig:MI_d} shows the evolution of the \ac{MI} with a growing distance between calls, which is interpreted in the following discussion.
+
+The fact that less long sequences are available (Fig.~\ref{fig:log_survivor}) might explain why the \ac{MI} grows for $d>11$ (small datasets can induce observation biases).
+
+Non-surprisingly, the bi-gram generated pairs have the same \ac{MI} than real ones at $d=1$.
+
+Nonetheless, the \ac{MI} of the observed pairs is significantly higher than the global, local and bi-gram randomisation, for $d \in [2;14]$ (\textit{p-value}<0.01), showing that relatively long term dependencies exist in orca call sequences. To put in perspective, the maximum distance at which \citet{ferrer2012span} found a significantly high \ac{MI} is 7.
 
 
 \subsection{Propensity for specific patterns}
 
+\subsubsection{Context}
+
+Now that results suggest a long range dependency of call types in sequences, this section studies the propensity for specific patterns in consecutive calls (n-grams). The approach, similarly to the last section, is to generate n-grams using a lower order Markov model and compare resulting frequencies with observed ones. I will introduce the methodology with 4-grams before generalising it to varying orders.
+
+31,287 4-grams were observed in the data, among which 324 were `N4 N9 N9 N4' (1\%, out of 2,401 possible 4-grams). For such 4-gram, we can wonder if a second order Markov model would generate a similar amount of occurrences. Put in other words, if we sample types only considering the two last calls, would we have as many `N4 N9 N9 N4'?
+
+The expectation for generating the `N4 N9 N9' tri-gram using a second order Markov model simply reflects its frequency of occurrence in the data. However, to draw the fourth call of the 4-gram, only `N9 N9' will be considered, thus potentially changing the amount of generated `N4 N9 N9 N4' as compared to the observed frequency.
+
+To compare observations with random expectations, we can run a second order Markov model and generate 31,287 n-grams (as many as observed) and count the frequency of `N4 N9 N9 N4'. Furthermore, to get a robust estimation of n-gram frequency, we can run this for many trials (10,000 in our case). 
+
+We thus have a distribution for the frequency of each n-grams (as expected by the second order Markov model). For instance, across trials, the `N4 N9 N9 N4' appeared 243 times in average ($std = 15$, the observed frequency is 324). We could thus conclude that if a `N4' precedes `N9 N9', there is a higher chance for a `N4' to follow than expected in average after `N9 N9'.
+
+
 \subsubsection{Method}
 
-This sections studies the propensity for patterns in consecutive calls of observed sequences. It focuses on patterns of 4 consecutive call types (tri-grams) noted $f_r(X=x, Y=y, Z=z)$. Following a similar approach than in the last section, we generate as many tri-grams as observed in the data using a second-order Markov model. Doing so, we can compare the frequencies of generated tri-grams ($f_g(X=x, Y=y, Z=z)$) against real ones. Repeating this procedure for several trials (1,000 in this case), we can count the number of times a tri-grams appears more in the generated data than in the observed data, noted $N_g(X=x, Y=y, Z=z)$ (Eq.~\ref{eq:count_trigram}).
+The procedure described for the `N4 N9 N9 N4' 4-gram was applied for all observed n-grams for varying values of n ($n \in {3..6}$). Each time, a Markov model of order n-2 was used to generate as many n-grams as observed, and this for 10,000 trials. We then want to test whether the observed data is significantly different from the generated one.
 
-\begin{equation}\label{eq:count_trigram}
-\begin{aligned}
-& {N}_g(X=x, Y=y, Z=z) = \\
-& \sum_{i=1}^{1,000}
-\begin{cases}
-    1 & \text{if } f_r(X=x, Y=y, Z=z) \leq f_g(X=x, Y=y, Z=z) \\
-    0 & \text{otherwise}
-\end{cases}
-\end{aligned}
-\end{equation}
+To get a notion of statistical significance for such hypothesis, we can get a distribution of observed frequencies by cutting our observations by recording year (5 years are available from 2015 to 2020). For each n-gram, we can then compare observed and generated distributions of frequencies using the Kruskal-Wallis H-test for independent samples. 
 
-$N_g$ allows to test the null-hypothesis that the frequency of a tri-gram is explained by the bi-gram distribution alone. If $N_g$ is below 0.01, the tri-gram appears significantly more than expected with the bi-gram model. Conversely, if $N_g$ is above 0.99, tri-gram appears significantly less than expected with the bi-gram model.
+
+\subsubsection{Result}
+
+To summarise this experiment's output, Figure \ref{fig:ngram_sim} reports the amount n-grams that have a significantly different distribution of frequencies in the observed data (5 samples) and in the generated data (10,000 samples). N-grams with a \textit{p-value}<0.01 were counted, and divided by the total amount of possible n-grams ($7^n$) to get a proportion.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{fig/ngram_sim.pdf}
+    \caption{Amount of n-grams with significantly different observed and generated frequencies.}
+    \label{fig:ngram_sim}
+\end{figure}
+
+These results do not only report on n-grams that were more observed than generated (as seen with the example of `N4 N9 N9 N4') but also on n-grams that were less observed than generated.
 
 
 \subsubsection{Discussion}
 
-As stated by \citet{kershenbaum2016acoustic}, ``The most common application of the Markov model is to test whether or not units occur independently in a sequence''. We make follow this incentive and compare randomly simulated n-gram frequencies with observed ones. Doing so, we can test whether an smaller order model suffices in explaining a higher order one. 
-54 tri-grams appeared less than expected, and 52 tri-grams appeared more (out of 343 possible ones).
 
 
-\subsection{Propensity for specific patterns}
+% \iffalse
+% \subsection{Propensity for specific patterns}
+% \subsubsection{Method}
 
-\subsubsection{Method}
+% This sections studies the propensity for patterns in consecutive calls of observed sequences. It focuses on patterns of 4 consecutive call types (tri-grams) noted $f_r(X=x, Y=y, Z=z)$. Following a similar approach than in the last section, we generate as many tri-grams as observed in the data using a second-order Markov model. Doing so, we can compare the frequencies of generated tri-grams ($f_g(X=x, Y=y, Z=z)$) against real ones. Repeating this procedure for several trials (1,000 in this case), we can count the number of times a tri-grams appears more in the generated data than in the observed data, noted $N_g(X=x, Y=y, Z=z)$ (Eq.~\ref{eq:count_trigram}).
 
-This sections studies the propensity for patterns in consecutive calls of observed sequences. It focuses on patterns of 4 consecutive call types (quadri-grams) noted $f_r(X=\{a, b, c, d\})$. Following a similar approach than in the last section, we generate as many quadri-grams as observed in the data, this time using a third-order Markov model. Doing so, we can compare the frequencies of generated quadri-grams ($f_g(X=\{a, b, c, d\})$) against real ones. Repeating this procedure for several trials ($n=1^5$ in this case), we can count the number of times a quadri-gram appears more in the generated data than in the observed data, noted $N_g(X=\{a, b, c, d\})$ (Eq.~\ref{eq:count_quadrigram}).
+% \begin{equation}\label{eq:count_trigram}
+% \begin{aligned}
+% & {N}_g(X=x, Y=y, Z=z) = \\
+% & \sum_{i=1}^{1,000}
+% \begin{cases}
+%     1 & \text{if } f_r(X=x, Y=y, Z=z) \leq f_g(X=x, Y=y, Z=z) \\
+%     0 & \text{otherwise}
+% \end{cases}
+% \end{aligned}
+% \end{equation}
 
-\begin{equation}\label{eq:count_quadrigram}
-\begin{aligned}
-& {N}_g(X=\{a, b, c, d\}) = \\
-& \frac{1}{n}\times \sum_{i=1}^{n}
-\begin{cases}
-    1 & \text{if } f_r(X=\{a, b, c, d\}) \leq f_g(X=\{a, b, c, d\}) \\
-    0 & \text{otherwise}
-\end{cases}
-\end{aligned}
-\end{equation}
-
-$N_g$ allows to test the null-hypothesis that the frequency of a quadri-gram is explained by the bi-gram distribution alone. If $N_g$ is below 0.01, the quadri-gram appears significantly more than expected with the tri-gram model. Conversely, if $N_g$ is above 0.99, the quadri-gram appears significantly less than expected with the tri-gram model.
-
-
-\subsubsection{Discussion}
-
-As stated by \citet{kershenbaum2016acoustic}, ``The most common application of the Markov model is to test whether or not units occur independently in a sequence''. We follow this incentive and compare randomly simulated n-gram frequencies with observed ones. Doing so, we can test whether a smaller order model suffices in explaining a higher order one.
-
-For instance, out of 100,000 trials (each generating 31,287 quadri-grams using a third order Markov model) the quadri-gram `N4 N9 N9 N4' appeared 243 times in average ($std = 15$). On the other hand, this quadri-gram was observed 324 times in the real data, and therefore none of the random generations yielded a higher frequency of occurrence for it. This means that if a `N4' precedes `N9 N9', there is a higher chance for a `N4' to follow than expected in average after `N9 N9'.
-
-\begin{table}[!htb]
-    \centering
-  \caption{Quadri-grams appearing significantly more or less than expected with a third-order Markov model. The most frequent quadri-gram starting with the same tri-gram is also given (right column).
-  }
-    \begin{tabular}{ccc}
-    \textbf{Quadri-gram} & $N_g$ & \textbf{Most frequent} \\ \hline
-    \multicolumn{3}{c}{Observed more than in random generations} \\
-    \hline
-        N23 N23 N23 N23 & 0.0048 & N23 N23 N23 N23 \\ 
-        N4 N4 N4 N4 & 0.0 & N4 N4 N4 N4 \\ 
-        N4 N5 N5 N4 & 0.00016 & N4 N5 N5 N4 \\ 
-        N4 N9 N9 N4 & 0.0 & N4 N9 N9 N4 \\ 
-        N5 N5 N5 N5 & 0.0016 & N5 N5 N5 N5 \\ 
-        N9 N4 N4 N9 & 0.0 & N9 N4 N4 N4 \\ 
-        N9 N4 N9 N9 & 0.00736 & N9 N4 N9 N4 \\ 
-    \hline
-    \multicolumn{3}{c}{Observed less than in random generations} \\
-        \hline
-        N1 N4 N4 N4 & 0.9968 & N1 N4 N4 N4 \\ 
-        N4 N4 N4 N23 & 0.99984 & N4 N4 N4 N4 \\ 
-        N4 N4 N4 N5 & 0.99664 & N4 N4 N4 N4 \\ 
-        N5 N4 N4 N4 & 0.99536 & N5 N4 N4 N4 \\ 
-        N9 N5 N4 N4 & 0.99872 & N9 N5 N4 N4 \\ 
-        N9 N9 N4 N4 & 0.99952 & N9 N9 N4 N4 \\
-        \hline \\
-    \end{tabular}
-\end{table}
+% $N_g$ allows to test the null-hypothesis that the frequency of a tri-gram is explained by the bi-gram distribution alone. If $N_g$ is below 0.01, the tri-gram appears significantly more than expected with the bi-gram model. Conversely, if $N_g$ is above 0.99, tri-gram appears significantly less than expected with the bi-gram model.
 
 
-Considering 
-54 tri-grams appeared less than expected, and 52 tri-grams appeared more (out of 343 possible ones).
+% \subsubsection{Discussion}
+
+% As stated by \citet{kershenbaum2016acoustic}, ``The most common application of the Markov model is to test whether or not units occur independently in a sequence''. We follow this incentive and compare randomly simulated n-gram frequencies with observed ones. Doing so, we can test whether a smaller order model suffices in explaining a higher order one. 
+% 54 tri-grams appeared less than expected, and 52 tri-grams appeared more (out of 343 possible ones).
+
+
+% \subsection{Propensity for specific patterns}
+
+% \subsubsection{Method}
+
+% This sections studies the propensity for patterns in consecutive calls of observed sequences. It focuses on patterns of 4 consecutive call types (quadri-grams) noted $f_r(X=\{a, b, c, d\})$. Following a similar approach than in the last section, we generate as many quadri-grams as observed in the data, this time using a third-order Markov model. Doing so, we can compare the frequencies of generated quadri-grams ($f_g(X=\{a, b, c, d\})$) against real ones. Repeating this procedure for several trials ($n=1^5$ in this case), we can count the number of times a quadri-gram appears more in the generated data than in the observed data, noted $N_g(X=\{a, b, c, d\})$ (Eq.~\ref{eq:count_quadrigram}).
+
+% \begin{equation}\label{eq:count_quadrigram}
+% \begin{aligned}
+% & {N}_g(X=\{a, b, c, d\}) = \\
+% & \frac{1}{n}\times \sum_{i=1}^{n}
+% \begin{cases}
+%     1 & \text{if } f_r(X=\{a, b, c, d\}) \leq f_g(X=\{a, b, c, d\}) \\
+%     0 & \text{otherwise}
+% \end{cases}
+% \end{aligned}
+% \end{equation}
+
+% $N_g$ allows to test the null-hypothesis that the frequency of a quadri-gram is explained by the bi-gram distribution alone. If $N_g$ is below 0.01, the quadri-gram appears significantly more than expected with the tri-gram model. Conversely, if $N_g$ is above 0.99, the quadri-gram appears significantly less than expected with the tri-gram model.
+
+
+% \subsubsection{Discussion}
+
+% As stated by \citet{kershenbaum2016acoustic}, ``The most common application of the Markov model is to test whether or not units occur independently in a sequence''. We follow this incentive and compare randomly simulated n-gram frequencies with observed ones. Doing so, we can test whether a smaller order model suffices in explaining a higher order one.
+
+% For instance, out of 100,000 trials (each generating 31,287 quadri-grams using a third order Markov model) the quadri-gram `N4 N9 N9 N4' appeared 243 times in average ($std = 15$). On the other hand, this quadri-gram was observed 324 times in the real data, and therefore none of the random generations yielded a higher frequency of occurrence for it. This means that if a `N4' precedes `N9 N9', there is a higher chance for a `N4' to follow than expected in average after `N9 N9'.
+
+% \begin{table}[!htb]
+%     \centering
+%   \caption{Quadri-grams appearing significantly more or less than expected with a third-order Markov model. The most frequent quadri-gram starting with the same tri-gram is also given (right column).
+%   }
+%     \begin{tabular}{ccc}
+%     \textbf{Quadri-gram} & $N_g$ & \textbf{Most frequent} \\ \hline
+%     \multicolumn{3}{c}{Observed more than in random generations} \\
+%     \hline
+%         N23 N23 N23 N23 & 0.0048 & N23 N23 N23 N23 \\ 
+%         N4 N4 N4 N4 & 0.0 & N4 N4 N4 N4 \\ 
+%         N4 N5 N5 N4 & 0.00016 & N4 N5 N5 N4 \\ 
+%         N4 N9 N9 N4 & 0.0 & N4 N9 N9 N4 \\ 
+%         N5 N5 N5 N5 & 0.0016 & N5 N5 N5 N5 \\ 
+%         N9 N4 N4 N9 & 0.0 & N9 N4 N4 N4 \\ 
+%         N9 N4 N9 N9 & 0.00736 & N9 N4 N9 N4 \\ 
+%     \hline
+%     \multicolumn{3}{c}{Observed less than in random generations} \\
+%         \hline
+%         N1 N4 N4 N4 & 0.9968 & N1 N4 N4 N4 \\ 
+%         N4 N4 N4 N23 & 0.99984 & N4 N4 N4 N4 \\ 
+%         N4 N4 N4 N5 & 0.99664 & N4 N4 N4 N4 \\ 
+%         N5 N4 N4 N4 & 0.99536 & N5 N4 N4 N4 \\ 
+%         N9 N5 N4 N4 & 0.99872 & N9 N5 N4 N4 \\ 
+%         N9 N9 N4 N4 & 0.99952 & N9 N9 N4 N4 \\
+%         \hline \\
+%     \end{tabular}
+% \end{table}
+
+
+% Considering 
+% 54 tri-grams appeared less than expected, and 52 tri-grams appeared more (out of 343 possible ones).
 
 
 
-
-\iffalse
-\begin{table}[ht]
-    \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} \hline
- & N1 & N2 & N23 & N3 & N4 & N5 & N9 & other & Total \\ \hline 
- N1 &0.21 & 0.03 & 0.06 & 0.01 & 0.24 & 0.1 & 0.12 & 0.09 & 15,551 \\ \hline 
- N2 &0.07 & 0.15 & 0.06 & 0.01 & 0.23 & 0.1 & 0.11 & 0.1 & 6,446 \\ \hline 
- N23 &0.07 & 0.03 & 0.23 & 0.01 & 0.23 & 0.05 & 0.1 & 0.1 & 15,752 \\ \hline 
- N3 &0.04 & 0.02 & 0.04 & 0.39 & 0.17 & 0.05 & 0.09 & 0.05 & 5,187 \\ \hline 
- N4 &0.05 & 0.02 & 0.04 & 0.01 & 0.54 & 0.06 & 0.11 & 0.06 & 82,625 \\ \hline 
- N5 &0.07 & 0.03 & 0.04 & 0.01 & 0.27 & 0.22 & 0.14 & 0.08 & 17,722 \\ \hline 
- N9 &0.06 & 0.02 & 0.05 & 0.01 & 0.31 & 0.08 & 0.27 & 0.06 & 29,808 \\ \hline 
- other &0.05 & 0.02 & 0.05 & 0.01 & 0.18 & 0.05 & 0.07 & 0.1 & 27,081 \\ \hline
-    \end{tabular}
-    \caption{Caption}
-    \label{tab:my_label}
-\end{table}
-\fi
+% \begin{table}[ht]
+%     \centering
+%     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} \hline
+%  & N1 & N2 & N23 & N3 & N4 & N5 & N9 & other & Total \\ \hline 
+%  N1 &0.21 & 0.03 & 0.06 & 0.01 & 0.24 & 0.1 & 0.12 & 0.09 & 15,551 \\ \hline 
+%  N2 &0.07 & 0.15 & 0.06 & 0.01 & 0.23 & 0.1 & 0.11 & 0.1 & 6,446 \\ \hline 
+%  N23 &0.07 & 0.03 & 0.23 & 0.01 & 0.23 & 0.05 & 0.1 & 0.1 & 15,752 \\ \hline 
+%  N3 &0.04 & 0.02 & 0.04 & 0.39 & 0.17 & 0.05 & 0.09 & 0.05 & 5,187 \\ \hline 
+%  N4 &0.05 & 0.02 & 0.04 & 0.01 & 0.54 & 0.06 & 0.11 & 0.06 & 82,625 \\ \hline 
+%  N5 &0.07 & 0.03 & 0.04 & 0.01 & 0.27 & 0.22 & 0.14 & 0.08 & 17,722 \\ \hline 
+%  N9 &0.06 & 0.02 & 0.05 & 0.01 & 0.31 & 0.08 & 0.27 & 0.06 & 29,808 \\ \hline 
+%  other &0.05 & 0.02 & 0.05 & 0.01 & 0.18 & 0.05 & 0.07 & 0.1 & 27,081 \\ \hline
+%     \end{tabular}
+%     \caption{Caption}
+%     \label{tab:my_label}
+% \end{table}
+% \fi

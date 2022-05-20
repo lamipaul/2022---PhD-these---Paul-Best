@@ -10,7 +10,7 @@ After presenting \acp{CNN} in their original context of computer vision, let us 
 
 \subsubsection{Template Matching}\label{chap:template}
 
-A straightforward way to detect cetacean vocalisations is to search for localised energy in a target frequency band, and yielding a detection when it surpasses a given threshold. For instance, it is known that some fin whale vocalisations are pulses centered at 20\,Hz that last approximately 1 second. The signal can thus be analysed in search for localised energy peaks in that time / frequency range to automatically detect them.
+A straightforward way to detect cetacean vocalisations is to search for localised energy in a target frequency band, and yielding a detection when it surpasses a given threshold. For instance, it is known that some fin whale vocalisations are pulses centered at 20\,Hz that last approximately 1 second. In that case, the signal can be analysed in search for localised energy peaks in that time / frequency range to automatically detect them.
 
 Further extending this concept, strong correlations between recordings and a prototype of target signal can be looked for directly. This can be achieved either in the time domain (waveforms) \cite{weirathmueller2017spatial, aulich2019fin}, the frequency domain (spectrums), or in the spectro-temporal domain (spectrograms) \cite{bouffaut2018passive, mellinger2000recognizing}. We call these techniques template matching, or matched filter.
 
@@ -53,37 +53,37 @@ In a general sense, for studies to base their results on automatic detections, u
 Additionally, tuning templates and thresholds to cope with all possible perturbations can be very demanding, and sometimes the global compromise simply does not exist. In that sense, \ac{ANN}s might be able to push forward automated \ac{PAM} systems, seamlessly learning robust representations for the detection and classification of cetacean vocalisations.
 
 
-\subsection{Preparing the network's input (frontend)}
+\subsection{Preparing the network's input (front-end)}
 
-A widespread preliminary feature extraction of acoustic signals is its frequency decomposition, this section describes how waveforms can be compiled into images (spectrograms).
+The frequency decomposition of signals is a powerful tool to their analysis. It is the preliminary feature extraction step in many acoustic studies, this thesis included. This section goes through some of the implications of such approach, describing how waveforms can be compiled into images (spectrograms).
 
 Let us start with an acoustic recording. It is described digitally by a sequence of samples \(\mathbf{x}=\{x[i]\}_{1..n}\) that denotes the evolution of pressure through time. The number of samples recorded per second is given by the sampling frequency, noted $f_s$.
 
 
 \subsubsection{Fourier}
 
-The Fourier transform is a major tool in signal processing. It allows to describe any signal as a sum of sinuses, each characterised by an amplitude and a phase. This representation is called the spectrum. Given our acoustic signal \(\mathbf{x}\), the \ac{DFT} will yield a spectrum \(\mathcal{X}_f\) that gives complex numbers as a function of frequencies. These complex numbers describe each frequency component of the signal, with the amplitude as the modulus and phase as the angle. The behaviour of the \ac{DFT} \(\mathcal{F}\) of a signal of size $N$ is described by Eq.~\ref{eq:fourier}.
+The Fourier transform is a major tool in signal processing. It allows to describe any signal as a sum of sinuses, each characterised by an amplitude and a phase. This representation is called the spectrum. Given our acoustic signal \(\mathbf{x}\), the \ac{DFT} will yield a spectrum \(\mathcal{X}\) that gives complex numbers as a function of frequencies. These complex numbers describe each frequency component of the signal, with the amplitude as the modulus and phase as the angle. The behaviour of the \ac{DFT} \(\mathcal{F}\) of a signal of size $N$ is given in Eq.~\ref{eq:fourier}.
 
 \begin{equation}\label{eq:fourier}
      \mathcal{X}_f = \mathcal{F}(\mathbf{x})_f = \sum_{n = 0}^{N} x[n] e^{-i\frac{2\pi }{N} fn}.
 \end{equation}
 
-\ac{FFT} implementations of the \ac{DFT} are available, enabling a reduction of the complexity from $O(n^2)$ to $O(nlog(n))$.
+In terms of computational application, \ac{FFT} implementations of the \ac{DFT} are available, enabling a significant complexity reduction from $O(n^2)$ to $O(nlog(n))$.
 
 
-\subsubsection{\acl{STFT}}
+\subsubsection{Time-frequency analysis}
 
 Numerous signal processing techniques, especially those presented in this thesis, rely on spectrograms. A spectrogram is a matrix representation of a signal, with values denoting magnitudes (square modulus of Fourier values) for each frequency and time bin (rows and columns respectively). It results from the juxtaposition of successive \acp{DFT}, computed by sliding a window over the signal.
 
 \begin{equation}
-     \mathbf{S}_{f,t} = \Bigl|\sum_{n = 0}^{NFFT} \mathbf{x}[t \times hop + n] e^{-i\frac{2\pi }{NFFT} fn}\Bigr| ^2. 
+     \mathrm{S}_{f,t} = \Bigl|\sum_{n = 0}^{NFFT} x[t \times hop + n] e^{-i\frac{2\pi }{NFFT} fn}\Bigr| ^2. 
 \end{equation}\label{eq:stft}
 
-Throughout this thesis, spectrogram rows and columns will be referred to as frequency bins and time bins respectively.
+%Throughout this thesis, spectrogram rows and columns will be referred to as frequency bins and time bins respectively.
 
-Several parameters are to be set prior to the \ac{STFT} computation, that define the sliding window's behaviour: the window size $NFFT$ and the hop size \(hop\). Along with the sampling frequency \(f_s\), these will define the range and resolution of our resulting spectrogram :
+Several parameters are to be set prior to the \ac{STFT} computation responsible for the generation of a spectrogram. They define the sliding window's behaviour: the window size $NFFT$ and the hop size \(hop\). Along with the sampling frequency \(f_s\), these will define the range and resolution of our resulting spectrogram :
 \begin{itemize}
-    \item The sampling frequency will affect the maximum frequency represented by our spectrogram: \(f \leq \frac{1}{2} f_s \) (Nyquist theorem). \\ We sometimes downsample the signal during preprocessing to withdraw high frequency contents when non relevant. Downsampling also drastically reduces the downstream computation complexity.
+    \item The sampling frequency will affect the maximum frequency represented by our spectrogram: \(f_{max} \leq \frac{1}{2} f_s \) (Nyquist theorem). \\ We sometimes downsample the signal during preprocessing to withdraw high frequency contents when non relevant. Downsampling also drastically reduces the downstream computation complexity.
     
     \item The window size defines the length of the signal to be decomposed. \\A bigger window will yield a more detailed representation frequency wise. However, it will also blur short transitory events (the yielded spectrum is an average of the frequency contents in the window). 
     
@@ -100,29 +100,35 @@ Several parameters are to be set prior to the \ac{STFT} computation, that define
     \label{fig:nfft_spec}
 \end{figure}
 
-These parameters have a crucial impact on the spectrogram, and thus on how well our target signal(s) will be represented (see Fig.\ref{fig:nfft_spec}). Finding the appropriate spectrogram settings is thus the first step in building any spectral based detection algorithm, \ac{ANN}s included.
+These parameters have a crucial impact on the spectrogram and especially on how well our target signal(s) will be represented (Fig.~\ref{fig:nfft_spec}). Therefore, finding the appropriate spectrogram settings is the first step in building any spectral based detection algorithm, \ac{ANN}s included.
 
 
 \paragraph{Alternative to the Fourier transform}
-Sometimes, both temporal and frequency high resolutions are needed, and a satisfying Fourier window size does not exist. While Fourier uses the same window size for all frequencies, algorithms such as the wavelet transform propose a non uniform sampling of the time-frequency space, allowing for a better compromise in terms of temporal and frequency resolution.
+Sometimes, both temporal and frequency high resolutions are needed, and a satisfying window size does not exist. While Fourier uses the same window size for all frequencies, algorithms such as the wavelet transform propose a non uniform sampling of the time-frequency space, enabling a better compromise in terms of temporal and frequency resolution.
 
-Only a wavelet transform allows for a satisfactory representation of both low frequency and high frequency events, which can be useful in \ac{PAM} applications.
+Only a wavelet transform allows a satisfactory representation of both low frequency and high frequency events, which can be useful in \ac{PAM} applications.
 %Moreover, the Fourier transform is based on the correlation of the input signal with sinus waves at different frequencies (Eq.~\ref{eq:fourier}). This is well suited to measure frequency components that resemble sinuses (stationary signals), but not adapted to deal with transitory signals (e.g.~cetacean clicks). On the other hand, wavelets have a transitory nature that makes them more relevant to correlate with click like signals.
+Researchers have studied the use of wavelet transforms as front-ends, for instance with cetacean click detection \cite{lopatka2005attractive}. Further studies have also experimented on combining Fourier and wavelet transforms into multi-channel spectrograms, as a front-end for speech recognition \cite{arias2021multi} or bird classification \cite{zhang2021bird}. Additionally, the chirplet transform has been used by \citet{stowell2012framewise} to analyse bird songs.
 
-Researchers have thus studied the use of wavelet transforms as frontends, for instance with cetacean click detection \cite{lopatka2005attractive}. Further studies have also experimented on combining Fourier and wavelet transforms into multi-channel spectrograms, as a frontend for speech recognition \cite{arias2021multi} or bird classification \cite{zhang2021bird}. Also, \citet{stowell2012framewise} have used chirplet transforms to analyse bird songs.
-
-Nonetheless, the Fourier transform remains the choice in a wide majority of applications, because of its convenience of use and its efficient \ac{FFT} implementation. Throughout this thesis, the large majority of experiments are based on the Fourier transform, to focus more on the effects of other components of the analysis such as downstream processing.
+Nonetheless, the Fourier transform remains the choice in a wide majority of applications, because of its convenience of use and its efficient \ac{FFT} implementation. Throughout this thesis, the large majority of experiments are based on the Fourier transform, focusing more on the effects of other components of the analysis such as downstream processing.
 
 
 \paragraph{Beyond the empirical choice of \ac{STFT} parameters}
-In machine learning frameworks, finding the best spectrogram parameters can be part of the optimisation process.  For instance, it can be done via \ac{STFT} differentiation \cite{zhao2021optimizing}, or trainable Gabor filters \cite{zeghidour2021leaf} that recently reached \ac{SOTA} performances on several acoustic recognition tasks.
+In machine learning frameworks, finding the best spectrogram parameters can be part of the optimisation process. For instance, it can be done via \ac{STFT} differentiation \cite{zhao2021optimizing}.
 
 Indeed, when there is a wide variety of target signals, the empirical choice of the right \ac{STFT} parameters can be challenging. Optimising them through learning will lead to a compromise between several parameters, but may not be optimally suited for each type of target signals. Multi-channel spectrograms offer a solution to this issue, by giving a stack of spectrograms with different parameters to the model (they must be interpolated to match in time / frequency resolutions). Studies that have experimented on this technique have not seen a significant improvement so far \cite{murphy2021analysis, thomas2019marine}, let aside the computational cost implied by such approach.
 
 
+\paragraph{Learnable front-ends}
+
+Alternatively to learning \ac{STFT} parameters during optimisation, researchers have experimented on trainable transforms to extract features from input signals. Some directly learn convolution kernels to be applied in the time domain \cite{ferrari2020docc10, palaz2015convolutional}. Others optimise known filters parameters, such as cardinal sinus \cite{ravanelli2018speaker}, spline \cite{balestriero2018spline}, gammatone \cite{sainath2015learning}, or gabor \cite{zeghidour2021leaf}.
+
+The latter, called Leaf, has outperformed \ac{SOTA} in 8 different acoustic recognition tasks, but is still quite recent and remains very costly in computation (two orders of magnitude higher than a regular \ac{STFT}). Consequently, to this day the \ac{STFT} and optionally its Mel transform remain the standard approach to feature extraction for acoustic recognition.%, despite their debatable anthropocentric nature and all the efforts invested in replacing them.
+
+
 \subsubsection{Mel-spectrograms}
 
-Humans have a logarithmic sensibility to frequencies: we perceive a constant tonal shift when frequencies are multiplied by a constant. Besides, harmonic structures of acoustic signals also often show logarithmic behaviours. To have a spectrogram representation that reflects this phenomenon, the Mel transform changes the linear layout of a frequency domain into a logarithmic one: the Mel scale. The Mel scale describes a frequency layout that follows human perception of tones in terms of hearing range, but also such that a constant shift in Mel bin will be perceived as a constant shift in tone. However, we can extend this scale to a wider range of frequencies, thus extrapolating the human perception into frequencies suited for the hearing range of cetaceans for example.
+Humans have a logarithmic sensibility to frequencies: we perceive a constant tonal shift when frequencies are multiplied by a constant. Besides, harmonic structures of acoustic signals also often show logarithmic behaviours. To have a spectrogram representation that reflects this phenomenon, the Mel transform changes the linear frequency layout into a logarithmic one: the Mel scale. The Mel scale describes a frequency layout that follows human perception of tones in terms of hearing range, but also such that a constant shift in Mel bin will be perceived as a constant shift in tone. However, we can extend this scale to a wider range of frequencies, extrapolating the human perception into frequencies suited for the hearing range of cetaceans for example.
 
 \begin{figure}
     \centering
@@ -131,7 +137,7 @@ Humans have a logarithmic sensibility to frequencies: we perceive a constant ton
     \label{fig:mel}
 \end{figure}
 
-To build a Mel-spectrogram, a dot product is computed between a matrix of logarithmically spaced triangular filters, and the \ac{STFT} magnitudes. The relationship in Eq.~\ref{eq:mel} is used to convert frequencies to mel bins, and an example of a resulting Mel-spectrogram is given in Fig.~\ref{fig:compression}.
+To build a Mel-spectrogram, a dot product is computed between a matrix of logarithmically spaced triangular filters (Fig.~\ref{fig:mel}) and \ac{STFT} magnitudes. The relationship in Eq.~\ref{eq:mel} is used to convert frequencies to mel bins, and an example of a resulting Mel-spectrogram is given in Fig.~\ref{fig:compression}.
 
 \begin{equation}\label{eq:mel}
     f_{mel} = 1127 \times \log \left( \frac{f_{Hz}}{700} + 1\right).
@@ -140,51 +146,46 @@ To build a Mel-spectrogram, a dot product is computed between a matrix of logari
 
 \subsubsection{Range compression}
 
-In acoustics, the energy is usually measured in decibels (dB), a logarithmic transformation of measured magnitudes such that \(\mathbf{E} = 10 \log_{10}(\mathbf{S})\). Typically, for spectrograms, this will shift the values from a logarithmic distribution to a Gaussian distribution. The strength of the shift can be modulated by applying a factor $10^a$ to the magnitudes before computing the logarithm ($log(1 + x \times 10^a)$, see Fig.~\ref{fig:compression}). The optimisation of the exponent $a$ can also be part of the learning framework, as proposed by \citet{schluter2017deep}.
+In acoustics, the energy is usually measured in decibels (dB), a logarithmic transformation of measured magnitudes such that \(\mathbf{E} = 10 \log_{10}(\mathbf{S})\). Typically, for spectrograms, this will shift the values from a logarithmic distribution to a Gaussian distribution.
+
+The strength of the shift can be modulated by amplifying magnitudes before computing the logarithm. For this purpose, \citet{schluter2017deep} proposes to make this amplification a trainable parameter using $\mathbf{E} = \log(1 + \mathbf{S} \times 10^a)$ (Fig.~\ref{fig:compression})).
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{fig/range_compression.pdf}
-    \caption{Comparison of frequency layouts (regular \ac{STFT} versus Mel transformed) and compressions for an orca call spectrogram. Notice how the 4\,kHz stationary noise gets removed with \acs{PCEN}.}
+    \caption{Comparison of frequency layouts (regular \ac{STFT} versus Mel transformed) and range compression for an orca call spectrogram. Notice how the 4\,kHz stationary noise gets removed with \acs{PCEN}.}
     \label{fig:compression}
 \end{figure}
 
-On the other hand, presumably more robust methods have emerged, especially with the \ac{PCEN} \cite{wang2017trainable}. This method introduces a dynamic gain control to adapt the compression range depending on local loudness and reduce stationary noise (estimated via an \ac{IIR} filter for each frequency bin, see Fig.~\ref{fig:compression}). The formula for \ac{PCEN} is given by Eq.~\ref{eq:pcen}, given an input spectrogram $\mathbf{E}$, and parameters $\epsilon$, $\alpha$, $\delta$ and $r$. $\mathbf{M}$ denotes the \ac{IIR} filtered version of the spectrogram, as given by Eq.~\ref{eq:filter}, depending on the smoothing coefficient $s$ that impacts the filter's latency. This method requires 5 hyper-parameters to be set for initialisation and potentially to be optimised end-to-end with the downstream model.
+Moreover, adding a dynamic gain control to the range compression, \ac{PCEN} \cite{wang2017trainable} has recently gained attention in speech recognition and animal vocalisation detection. This method adapts the compression range depending on local loudness and reduce stationary noise (estimated via an \ac{IIR} filter for each frequency bin, see Fig.~\ref{fig:compression}). The formula for \ac{PCEN} is given by Eq.~\ref{eq:pcen}, given an input spectrogram $\mathbf{S}$, and parameters $\epsilon$, $\alpha$, $\delta$ and $r$. $\mathbf{M}$ denotes the \ac{IIR} filtered version of the spectrogram (Eq.~\ref{eq:filter}), depending on the smoothing coefficient $s$ that impacts the filter's latency. This method requires 5 hyper-parameters to be set for initialisation and potentially to be optimised end-to-end with the downstream model.
 
 \begin{equation}\label{eq:filter}
-    \mathrm{M}_{f,t} = (1-s)\mathrm{M}_{f,t-1} + s\mathrm{S}_{f,t},
+    \mathrm{M}_{f,t} = (1-s)\mathrm{M}_{f,t-1} + s \times \mathrm{S}_{f,t},
 \end{equation}
 \begin{equation}\label{eq:pcen}
     \mathrm{PCEN}_{f,t} = \left(\frac{\mathrm{S}_{f,t}}{(\epsilon+\mathrm{M}_{f,t})^\alpha} + \delta \right)^r - \delta^r.
 \end{equation}
 
 
-\subsubsection{Learnable frontends}
-
-Probably more than in any field, in the machine learning community, researchers flee ad-hoc and hand-crafted approaches to rather choose fully learnable adaptive frameworks. This is applicable to the spectrogram computation, a major step in acoustic recognition. Several approaches have been proposed to learn custom spectrograms and break free from the \ac{STFT}. 
-
-Some directly learn convolution kernels from scratch to be applied in the time domain \cite{ferrari2020docc10, palaz2015convolutional}. Others optimise known filters parameters, such as cardinal sinus \cite{ravanelli2018speaker}, spline \cite{balestriero2018spline}, gammatone \cite{sainath2015learning}, or gabor \cite{zeghidour2021leaf}.
-
-The latter, called Leaf, has outperformed \ac{SOTA} in 8 different acoustic recognition tasks, but is still quite recent and remains very costly in computation (two orders of magnitude higher than a regular \ac{STFT}). Thus, to this day the \ac{STFT} and optionally its Mel transform remain the standard approach to feature extraction for acoustic recognition, despite their debatable anthropocentric nature and all the efforts invested in replacing them.
-
-
 \subsection{Data augmentations for acoustics} \label{accoustic_augm}
 
-As previously mentioned for image classification tasks, data augmentation is a crucial regularisation method, especially when dealing with bioacoustics tasks with very few labels available \cite{stowell2021computational}. This section presents known acoustic data augmentation methods, for the time domain and the spectro-temporal domain.
+Last section described how to get a time-frequency representation of signals, taking the form of spectrogram images. We will refer to it as `front-end', as it is the preliminary feature extraction step before the \ac{CNN} inference.
+
+As previously mentioned for image classification tasks, data augmentation is a crucial regularisation method when training models. It is especially relevant when dealing with bioacoustics tasks with very few labels available \cite{stowell2021computational}. This section presents several acoustic data augmentation policies, both fort the time domain and for the time-frequency domain.
 
 
 \subsubsection{Addition of noise}
 
 Acoustic signals can simply be summed to be combined. A first augmentation technique thus comes down to adding randomly generated noise to the input sample in the time domain \cite{nanni2020data}. One can add white noise (flat spectrum), pink noise (spectrum following $1/f$) or brown noise (spectrum following $-20dB/decade$). The latter being the closest to underwater ambient noise, it is the most relevant to \ac{PAM} of cetaceans.
 
-Instead of synthesising random noise, one can also add soundscape recordings \cite{lasseck2018acoustic}. To some extent, this is equivalent to the MixUp approach aforementioned.
+Instead of synthesising random noise, one can also add soundscape recordings \cite{lasseck2018acoustic}. To some extent, this is equivalent to the MixUp approach aforementioned (section \ref{chap:data_augm}).
 
-Whether it is synthesised or recorded in situ, a weight needs to be set when adding noise, defining its strength relatively to the input signal (the \ac{SNR}). This value can be fixed for the whole training, or sampled randomly for each generation.
+Whether it is synthesised or recorded in situ, a weight needs to be set when adding noise, defining its strength relatively to the input signal (the \ac{SNR}). This value can be fixed for the whole training, or sampled randomly at each generation.
 
 
 \subsubsection{SpecAugment}
 
-Alike RandAugment for images \cite{cubuk2020randaugment}, a suite of generic audio augmentation policies has been proposed for spectrograms: SpecAugment \cite{park2019specaugment}. It includes time wise dilation or compression (via the interpolation of pixels values), as well as the masking of random time and frequency bands (see Fig.\ref{fig:augm}).
+Alike RandAugment for images \cite{cubuk2020randaugment}, a suite of audio augmentation policies has been proposed for spectrograms: SpecAugment \cite{park2019specaugment}. It includes time wise dilation or compression (via the interpolation of pixels values), as well as the masking of random time and frequency bands (Fig.~\ref{fig:augm}).
 
 The authors did not include frequency stretching in their SpecAugment suite, perhaps because it was not appropriate for their task at hand, or since it is more common to operate pitch shifts on waveforms \cite{lostanlen2019robust} rather than on spectrograms \cite{hwang2020mel}.
 
@@ -200,12 +201,13 @@ SpecAugment has shown \ac{SOTA} results in several acoustic recognition tasks \c
 
 \subsubsection{Temporal / frequency shifts}
 
-Temporal and frequency shifts of spectrograms seem like a straightforward efficient way of augmenting the data, by simply displacing patterns to be recognised (in realistic ranges). As for the time shifts, as previously mentioned, \acp{CNN} offer spatial invariance, making such data augmentation non significant. However, pitch modulation potentially implies more than just a vertical shift for the resulting spectrogram (see Fig.\ref{fig:augm}). By simply speeding up or slowing down the input sample (via resampling the waveform), the spectrogram is shifted frequency wise but also stretched time wise. Pitch shifting has thus proven to be a relevant data augmentation approach \cite{lostanlen2019robust}.
+Temporal and frequency shifts of spectrograms seem like a straightforward way of augmenting the data, by simply displacing patterns to be recognised (in realistic ranges). As for the time shifts, as previously mentioned, \acp{CNN} offer spatial invariance, making such data augmentation non significant. On the other hand, pitch modulation potentially implies more than just a vertical shift for the resulting spectrogram (see Fig.~\ref{fig:augm}). By speeding up or slowing down the input sample (waveform resampling), the spectrogram is shifted frequency wise but also stretched time wise. Pitch shifting is thereby a relevant data augmentation approach even for \acp{CNN} \cite{lostanlen2019robust}.
+
 
 
 \subsection{Applications to bioacoustics}
 
-Now that \acp{CNN} have been introduced in their original field of computer vision, along with their use in acoustics, I will finally present how the bioacoustics community has made it its own, trying to overcome the domain specific challenges that come along.
+We have seen how time-frequency representation of signals can be fed to \acp{CNN}, allowing to train them on acoustic classification tasks. This section reviews how the bioacoustic community made use of this opportunity in several use cases.
 
 
 \subsubsection{Annotation optimisation}
@@ -213,13 +215,13 @@ Now that \acp{CNN} have been introduced in their original field of computer visi
 The amount of training data is crucial to a robust deep learning model. Besides, despite efforts to develop reliable unsupervised algorithms, the performance they offer is still not sufficient for relevant use in \ac{PAM} contexts without human intervention. Therefore, large amounts of labelled examples are still needed prior to developing automated detection systems.
 
 The usual annotation scenario starts with the access to a bank of audio signals. When recorded by autonomous antennas, this typically means weeks or months of recordings, with no other prior information than the presumed presence of some species' vocalisations. Listening to the whole recordings would be too tedious and is therefore not viable. To efficiently browse through recordings and potentially annotate certain sections, several approaches are found in the literature :
-
-\begin{itemize}
+%
+\begin{itemize}\setlength{\itemsep}{1pt}
     \item \ac{LTSA} enables a quick glimpse at frequency distributions of several hours of data at a time \cite{sirovic2011marine},
-    \item Running high recall hand crafted detection mechanisms allows for a first extraction of potential signals of interests (pre-detections) \cite{frasier2021machine, escobar2022automatic},
-    \item Hand crafted filtering rules can sort out known false positives among pre-detections \cite{weirathmueller2017spatial},
-    \item Clustering pre-detections via hand crafted features can group similar acoustic events together \cite{frasier2021machine},
-    \item Dedicated interfaces can improve the efficiency of visualisation and annotation of pre-detections and clusters \cite{steinfath2021fast, coffey2019deepsqueak} (see Fig.~\ref{fig:deepsqueak}).
+    \item Running high recall handcrafted detection mechanisms allows a first extraction of potential signals of interests (pre-detections) \cite{frasier2021machine, escobar2022automatic},
+    \item Handcrafted filtering rules can sort out known false positives among pre-detections \cite{weirathmueller2017spatial},
+    \item Clustering pre-detections via handcrafted features can group similar acoustic events together \cite{frasier2021machine},
+    \item Dedicated interfaces can improve the efficiency of visualisation and annotation of pre-detections and clusters \cite{steinfath2021fast, coffey2019deepsqueak} (Fig.~\ref{fig:deepsqueak}).
 \end{itemize}
 
 \begin{figure}
@@ -229,23 +231,27 @@ The usual annotation scenario starts with the access to a bank of audio signals.
     \label{fig:deepsqueak}
 \end{figure}
 
-Using one or several techniques mentioned above should suffice in yielding several dozen positive and negative annotations, enough to start learning small \ac{CNN} models. To further increase the system's performance, which is often not yet robust enough when trained with few samples, active learning is the usual adopted solution. Active learning consists in an iteration of three steps: training the model, running it on unlabelled data, and validating or invalidating the model's predictions via human intervention. Looking for false positives with strong confidence (hard negative mining) and vice versa will enhance the process by focusing on samples that confuse the model \cite{shiu2020deep}.
+Using one or more of these techniques should suffice in yielding dozens of positive and negative annotations, enough to start training small \ac{CNN} models. To further increase the system's performance, which is often not yet robust enough, active learning is the usual adopted solution. Active learning consists in an iteration of three steps: training the model, running it on unlabelled data, and validating or invalidating the model's predictions via human intervention. Looking for false positives with strong confidence (hard negative mining) and vice versa will enhance the process by focusing on samples that confuse the model \cite{shiu2020deep}.
 
-The yielded annotations will found the basis of knowledge for our model, and will further serve performance measurements. It is therefore crucial that no labeling errors slip into our database, or it will negatively impact all following procedures. A first pitfall is in the gathering of the initial database for active learning. Depending on their frequency and source level, certain vocalisation might be missed by the chosen algorithm or annotation procedure. If so, the model will never learn to detect them. A second source of bias can be human annotators, for which \citet{duc2021assessing} has demonstrated the potential subjectivity. To mitigate this effect, we can cross-validate labels with several experts, and propose the `unsure' label during annotation.
+The yielded annotations will found the basis of knowledge for our model, and will further serve performance measurements. For this reason, it is crucial that no labeling errors slip into our database, or it will negatively impact all following procedures. A first pitfall is in the gathering of the initial database for active learning. Depending on their frequency and source level, certain vocalisation might be missed by the chosen algorithm or annotation procedure. If so, the model will never learn to detect them. A second source of bias can be human annotators, for which \citet{duc2021assessing} has demonstrated the potential subjectivity. To mitigate this effect, we can cross-validate labels with several experts, and propose the `unsure' label during annotation.
 
 
 \paragraph{Deep representation learning for bioacoustic signals}\label{SSL_bioac}
-Clustering similar signals into groups can drastically reduce the annotation effort. For this purpose, similarity can be measured using hand-crafted features such as \ac{MFCC} \cite{cuevas2017unsupervised}, or features learnt via \ac{SSL} for instance. Several papers explored this approach such as \citet{tolkova2021parsing} for birdsong annotation using an \ac{AE} framework, \citet{goffinet2019inferring} similarly with a variational \ac{AE} \cite{kingma2019introduction}, or \citet{Jahangirnezhad_Mashhadi_2021} combining an \ac{AE} reconstruction loss with the \ac{DEC} loss \cite{Xie_Girshick_Farhadi_2016}.
+Clustering similar signals into groups can drastically reduce the annotation effort. For this purpose, similarity can be measured using hand-crafted features such as \ac{MFCC} \cite{cuevas2017unsupervised}, or features learnt via \ac{SSL} for instance. Several papers explored this approach such as \citet{tolkova2021parsing} for birdsong annotation using an \ac{AE} framework, \citet{goffinet2019inferring} similarly with a variational \ac{AE} \cite{kingma2019introduction}, or \citet{Jahangirnezhad_Mashhadi_2021} combining an \ac{AE} reconstruction loss with the \ac{DEC} loss \cite{Xie_Girshick_Farhadi_2016}. In the case of using embeddings for annotation via clustering, attention should be paid to the potential biases induced (some classes might be favored by the similarity metric employed).
 
-The embedding space learnt via deep representation learning can not only enable clustering for efficient annotation, but also serve classification models directly. Indeed, either via a semi-supervised loss, or via network pre-training, the performance of classifiers can be enhanced despite a reduced quantity labels when fine tuning from relevant embedding spaces. In the case of using embeddings for annotation via clustering, attention should be paid to the potential biases induced (some classes might be favored by the similarity metric employed).
+Additionally, models trained via deep representation learning can also serve the classification task directly. Indeed, either via a semi-supervised loss, or via network pre-training, the performance of classifiers can be enhanced when fine tuning from relevant embedding spaces, despite a reduced quantity labels.
 
 \paragraph{Transfer learning}
-The method of using weights optimised on a third party task to initialise a model (pre-training or transfer learning) has indeed proven its effectiveness, especially when dealing with small datasets. The third party task can be for instance a \ac{SSL} paradigm such as training an \ac{AE} on data similar to that of the target task \cite{bergler2019deep, thakur2019deep}. On the other hand, it can also be a a totally unrelated task. Indeed, fine-tuning from models trained on AudioSet \cite{hershey2017cnn} or even ImageNet \cite{deng2009imagenet} was shown to be relevant for bioacoustics event detection \cite{baptista2021bioacoustic, zhong2020beluga, thakur2019deep}. The assumption here is that early feature extraction are quite generic, and that knowledge gained from very large datasets are useful for other tasks.
+The method of using weights optimised on a third party task to initialise a model (pre-training or transfer learning) has indeed proven its effectiveness, especially when dealing with small datasets. For instance, the third party task can be a \ac{SSL} paradigm such as training an \ac{AE} on data similar to that of the target task \cite{bergler2019deep, thakur2019deep}. On the other hand, it can also be a a totally unrelated task. Indeed, fine-tuning from models trained on AudioSet \cite{hershey2017cnn} or even ImageNet \cite{deng2009imagenet} was shown to be relevant for bioacoustics event detection \cite{baptista2021bioacoustic, zhong2020beluga, thakur2019deep}. The assumption here is that early feature extraction are quite generic, and that knowledge gained from very large datasets are useful for other tasks.
 
 
 \subsubsection{Available databases}
 
-A common practice in the computer science community is to publish databases for researchers to try their automatic systems on. They enable shared performance metrics, essential to the objective comparison of models. An important element is to be taken into account regarding the types of available annotations: some denote the presence of events in a large window of recordings (up to several minutes), they are called weak labels. On the other hand, strong labels give exact time positions associated with target events. I will hereby present some of the available databases for the detection and classification of cetacean vocalisations.
+A common practice in the computer science community is to publish databases for researchers to evaluate their automatic systems on. They enable shared performance metrics, essential to the objective comparison of models.
+
+Public databases in bioacoustics are found with different annotation systems: some denote the presence of events in a large window of recordings (up to several minutes), they are called weak labels. On the other hand, strong labels give exact time positions associated with target events.
+
+I will hereby present some public databases for cetacean vocalisation detection along with their associated deep learning experiments.
 
 \begin{itemize}
     \item The Watkins marine mammals sound database \cite{sayigh2016watkins} proposes excerpts for numerous marine mammal species from different recorders. It was used by \citet{lu2021detection} with an AlexNet architecture (pretrained on ImageNet), and by \citet{murphy2021analysis} with a ResNet architecture and multi-channel spectrograms. One limitation of this database is that most of the recording devices and locations are species specific, which hinders good generalisation measures.
@@ -254,7 +260,7 @@ A common practice in the computer science community is to publish databases for 
     
     \item The \ac{DCLDE} workshops have published numerous datasets with different target species and labeling (some of them offer only weak labels). It was used by \citet{shiu2020deep} for \ac{NRW} upcall detection using LeNet and BirdNet architectures.
     
-    \item The DOCC10 database \cite{ferrari2020docc10} is an extension of the \ac{DCLDE} 2018 dataset that used an automated algorithm to extract strong labels from the available weak labeling. Samples include clicks from 10 odontocete species. It was used in the same study to train an end to end deep classifier of a custom architecture.
+    \item The DOCC10 database \cite{ferrari2020docc10} is an extension of the \ac{DCLDE} 2018 dataset that used an automated algorithm to extract strong labels from the available weak labeling. Samples include clicks from 10 different odontocete species. It was used in the same study to train an end to end deep classifier of a custom architecture.
     
     \item The acoustic trends blue fin library \cite{miller2021open} offers almost 2,000 hours of recordings from the Southern Ocean, annotated by a consortium of experts. Several thousands of samples are available for each of the 7 call types from 2 mysticete species: the blue whale and the fin whale. By covering several recorders, locations, environmental conditions and years, this database offers an opportunity to robustly measure models' generalisation performances.
 \end{itemize}
@@ -263,10 +269,16 @@ A common practice in the computer science community is to publish databases for 
 \subsubsection{Deep classifiers for bioacoustics}
 \label{chap:PAM_use_cases}
 
-Since the introduction of \acp{CNN} in bioacoustics a few years back, numerous experiments were published on the topic, either with public or private databases. Most of them report their experiment with a standard \ac{CNN} architecture on some database, like a ResNet for orca vocalisation detection for instance \cite{bergler2019orca}. Some also report empirical studies of varying parameters such as data augmentation, frontend or architecture \cite{shiu2020deep, allen2021convolutional}. 
-
-Other architectures than regular \acp{CNN} are encountered, such as a \ac{RNN}+\ac{CNN} that integrates the prior of call rates into the detection process \cite{madhusudhana2021improve}, an LSTM on spectrogram for click detection \cite{duan2022detection}, an \ac{ANN} that classifies odontocetes' clicks without convolution \cite{roch2021using}, Siamese networks for classifying blue whale calls \cite{zhong2021detecting}, transformers for bird recognition \cite{pugetstft}, or a context adaptive \ac{CNN} that makes use of soundscape features to gain robustness \cite{lostanlen2019robust}.
+Since the introduction of \acp{CNN} in bioacoustics, numerous experiments were published, either with public or private databases. Most of them report their experiment with a standard \ac{CNN} architecture on some database, like a ResNet for orca vocalisation detection for instance \cite{bergler2019orca}. Some also report empirical studies of varying settings such as data augmentation, front-end or architecture \cite{shiu2020deep, allen2021convolutional}. Other architectures than regular \acp{CNN} are also encountered:
+\begin{itemize}\setlength{\itemsep}{1pt}
+    \item a \ac{RNN}+\ac{CNN} that integrates the prior of call rates into the detection process, \cite{madhusudhana2021improve}
+    \item a \ac{LSTM} on spectrograms for click detection \cite{duan2022detection},
+    \item an \ac{ANN} that classifies odontocetes' clicks \cite{roch2021using},
+    \item siamese networks for classifying blue whale calls \cite{zhong2021detecting},
+    \item transformers for bird recognition \cite{pugetstft},
+    \item a context adaptive \ac{CNN} that makes use of soundscape features to gain robustness \cite{lostanlen2019robust}.
+\end{itemize}
 
 \citet{stowell2021computational} proposes a review gathering 159 articles on bioacoustics using deep learning, 30 of which concern marine mammals. One important insight of this review is a report on chosen \ac{CNN} architectures. The most popular mentioned are Resnet (23 papers), and \ac{VGG} or VGGish (17 papers). Other tendencies are described, but besides perhaps the use of spectrograms as inputs for \acp{CNN}, no clear advantage emerges for a specific architecture or set of hyper-parameters.
 
-Such reviews demonstrate how the automatic analysis of bioacoustic recordings is still an open research subject. In this context, \citet{brown2021automatic} explored a wide range of settings evaluated on multiple bird recognition tasks. They show how there is not one generic workflow that is well adapted to every task. In a similar paradigm, this thesis explores several methods trying to extract reusable knowledge on their potential efficiency.
+Such reviews demonstrate how the automatic analysis of bioacoustic recordings is still an open research subject. In this context, \citet{brown2021automatic} explored a wide range of settings evaluated on multiple bird recognition tasks. They show how there is not one generic workflow that is well adapted to every task. In a similar perspective, this thesis explores the application of several deep learning methods to marine bioacoustic tasks. The objective is to extract reusable knowledge to guide decision making when implementing such systems.
